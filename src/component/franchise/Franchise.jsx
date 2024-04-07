@@ -12,12 +12,12 @@ const Franchise = () => {
                 className="text-center mb-[10px] hidden"
               >
                 <a
-                  href="https://files.betacorp.vn/files/ecm/2021/07/02/1920x1080-nhuong-quyen-162612-020721-74.jpg"
+                  href="#"
                   title=""
                   className="swipebox"
                 >
                   <img
-                    src="https://files.betacorp.vn/files/ecm/2021/07/02/1920x1080-nhuong-quyen-162612-020721-74.jpg"
+                    src={require(`../../assets/images/franchise/lspt.jpg`)}
                     className="align-middle border-0"
                     alt=""
                   />
@@ -73,7 +73,7 @@ const Franchise = () => {
               <p>
                 <img
                   alt=""
-                  src="https://files.betacorp.vn/files/ecm/2022/10/06/redesign-134855-061022-29.png"
+                  src={require(`../../assets/images/franchise/lspt.jpg`)}
                   className="w-[100%] h-[100%] align-middle border-0"
                 />
               </p>
@@ -91,8 +91,8 @@ const Franchise = () => {
               <p className="text-center align-middle flex justify-center">
                 <img
                   alt=""
-                  src="https://files.betacorp.vn/files/ecm/2023/08/01/map-beta-viet-nam-01-1-115716-010823-66.png"
-                  className="w-[60%] h-[60%]"
+                  src={require(`../../assets/images/franchise/chuoirapbeta.png`)}
+                  className="w-[100%] h-[60%]"
                 />
               </p>
 
@@ -372,7 +372,7 @@ const Franchise = () => {
               <h2 className=" text-center align-middle  !text-[27px] leading-[1.5em] !font-[300] fontos flex justify-center">
                 <img
                   alt=""
-                  src="https://files.betacorp.vn/files/ecm/2022/09/29/quytrinh-finals-113852-290922-80.png"
+                  src={require(`../../assets/images/franchise/quytrinhthamgia.jpg`)}
                   className="w-[1603px] h-[840px] align-middle border-0"
                 />
               </h2>
@@ -406,7 +406,7 @@ const Franchise = () => {
 
               <p>
                 <em>
-                  <a href="">
+                  <a href="" className="text-[#337ab7]">
                     <strong>
                       LIÊN HỆ ĐỂ NẮM BẮT CƠ HỘI ĐẦU TƯ NGAY HÔM NAY!!!
                     </strong>
@@ -427,11 +427,6 @@ const Franchise = () => {
               <p className="flex justify-center">
                 <a href="">
                   <strong>
-                    <img
-                      alt=""
-                      src="https://files.betacorp.vn/files/ecm/2022/09/29/resize-06-06-190712-060922-65-113116-290922-55.png"
-                      className="w-[100%] h-[100%] align-middle border-0"
-                    />
                   </strong>
                 </a>
               </p>
@@ -542,7 +537,7 @@ const Franchise = () => {
                         <a>
                           <div className="h-[333px] !rounded-[10px]  relative overflow-hidden">
                             <img
-                              src={item.image}
+                              src={require(`../../assets/images/franchise/muonmaubeta.png`)}
                               alt=""
                               className="absolute top-0 left-[-21.4157px] w-[438px] h-[333px] max-w-none"
                             />
@@ -558,7 +553,7 @@ const Franchise = () => {
                             !cursor-pointer
                             !text-center"
                           >
-                            {item.title}
+                            MUÔN MÀU BETA - VẠN QUÀ XINH XỈU
                           </a>
                         </h4>
                       </Link>
@@ -588,7 +583,7 @@ const Franchise = () => {
                         <a>
                           <div className="h-[107.5px] !rounded-[10px]  relative overflow-hidden">
                             <img
-                              src={item.image}
+                              src={require(`../../assets/images/franchise/muonmaubeta.png`)}
                               alt=""
                               className="absolute top-0 left-[-21.4157px] width-[142px] h-[108px] max-w-none"
                             />

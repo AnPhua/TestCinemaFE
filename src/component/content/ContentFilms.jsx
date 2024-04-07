@@ -2,7 +2,7 @@
 import hot from "../../assets/images/hot.png";
 import { useRef, useState } from "react";
 import Modal from "antd/es/modal/Modal";
-import YouTube from 'react-youtube';
+import YouTube from "react-youtube";
 import { Link } from "react-router-dom";
 const ContentFilms = ({
   id,
@@ -21,7 +21,6 @@ const ContentFilms = ({
   const viewTrailer = () => {
     setOpen(true);
   };
-
   const handleX = () => {
     setOpen(false);
     if (youtubeRef.current) {
@@ -29,8 +28,8 @@ const ContentFilms = ({
     }
   };
   const opts = {
-    height: '377',
-    width: '100%',
+    height: "377",
+    width: "100%",
     playerVars: {
       autoplay: 0,
     },
@@ -74,9 +73,11 @@ const ContentFilms = ({
           </div>
           <div className="lg:w-[100%] md:w-[100%] sm:w-[100%]">
             <div className="h-[120px] min-h-[120px]">
-            <Link to={`detailsFilm/${id}`}>
-              <h3
-                className="text-center 
+              <Link
+                to={`/detailsFilm/${id}`}
+              >
+                <h3
+                  className="text-center 
                         sm:text-left  
                         !font-bold 
                         mt-[5px] 
@@ -91,23 +92,23 @@ const ContentFilms = ({
                         overflow-hidden
                         text-ellipsis
                         "
-              >
-                <a className="cursor-pointer">{name}</a>
-              </h3>
+                >
+                  <a className="cursor-pointer tracking-tighter">{name}</a>
+                </h3>
               </Link>
               <ul className="list-none pl-0 fontsan md:text-[15px] sm:text-[14px]">
                 <li className="max-h-[50px]">
-                  <span className="font-bold">Thể loại:</span> {category}
+                  <span className="font-bold ">Thể loại:</span> {category}
                 </li>
-                <li>
-                  <span className="font-bold">Thời lượng:</span> {time} phút
+                <li className="my-1">
+                  <span className="font-bold ">Thời lượng:</span> {time} phút
                 </li>
                 {launchDate && (
                   <li>
                     <span className="font-bold">Ngày khởi chiếu:</span>
                     <span className="fontoswa !text-[#03599d]">
                       {" "}
-                      {launchDate}  
+                      {launchDate}
                     </span>
                   </li>
                 )}
@@ -147,7 +148,7 @@ const ContentFilms = ({
             </h3>
           </div>
           <div className="relative p-[15px] pb-[20px] text-center">
-            <YouTube videoId={youtube} opts={opts} ref={youtubeRef}/>
+            <YouTube videoId={youtube} opts={opts} ref={youtubeRef} />
           </div>
         </div>
       </Modal>

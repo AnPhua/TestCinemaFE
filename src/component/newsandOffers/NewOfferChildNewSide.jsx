@@ -79,7 +79,7 @@ const NewOfferChildNewSide = () => {
                 <p>
                   <img
                     alt=""
-                    src={offer.image}
+                    src={require(`../../assets/images/offer/${offer.image}`)}
                     className="w-[100%]] h-[100%]"
                   />
                 </p>
@@ -145,7 +145,7 @@ const NewOfferChildNewSide = () => {
                         <a>
                           <div className="h-[107.5px] !rounded-[10px]  relative overflow-hidden">
                             <img
-                              src={item.image}
+                              src={require(`../../assets/images/offer/${item.image}`)}
                               alt=""
                               className="absolute top-0 left-[-21.4157px] width-[142px] h-[108px] max-w-none"
                             />

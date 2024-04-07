@@ -22,7 +22,7 @@ const NewOffers = () => {
                   <div className="!rounded-[10px] h-[415px] relative overflow-hidden">
                     <Link to={`newofferchild/${item.id}`}>
                       <img
-                        src={item.image}
+                        src={require(`../../assets/images/offer/${item.image}`)}
                         className="absolute top-0 left-[-0.248555px] w-[545px] h-[415px] max-w-[none] align-middle border-0"
                         alt=""
                       />
@@ -52,7 +52,7 @@ const NewOffers = () => {
                       <div className="h-[207.5px] !rounded-tl-[10px]  !rounded-tr-[10px]  relative overflow-hidden">
                         <Link to={`newofferchild/${item.id}`}>
                           <img
-                            src={item.image}
+                            src={require(`../../assets/images/offer/${item.image}`)}
                             className="absolute top-[-1.42109e-14px] left-[-7.57831px] w-[273px] h-[208px] max-w-none align-middle border-0"
                             alt=""
                           />
@@ -87,7 +87,7 @@ const NewOffers = () => {
                       <div className="h-[207.5px] !rounded-tl-[10px]  !rounded-tr-[10px]  relative overflow-hidden">
                         <Link to={`newofferchild/${item.id}`}>
                           <img
-                            src={item.image}
+                            src={require(`../../assets/images/offer/${item.image}`)}
                             className="absolute top-[-1.42109e-14px] left-[-7.57831px] w-[273px] h-[208px] max-w-none align-middle border-0"
                             alt=""
                           />
@@ -135,7 +135,7 @@ const NewOffers = () => {
                   <div className="!rounded-[10px] h-[415px] relative overflow-hidden">
                     <Link to={`newofferchildnewside/${item.id}`}>
                       <img
-                        src={item.image}
+                        src={require(`../../assets/images/offer/${item.image}`)}
                         className="absolute top-0 left-[-0.248555px] w-[545px] h-[415px] max-w-[none] align-middle border-0"
                         alt=""
                       />
@@ -165,7 +165,7 @@ const NewOffers = () => {
                       <div className="h-[207.5px] !rounded-tl-[10px]  !rounded-tr-[10px]  relative overflow-hidden">
                         <Link to={`newofferchildnewside/${item.id}`}>
                           <img
-                            src={item.image}
+                            src={require(`../../assets/images/offer/${item.image}`)}
                             className="absolute top-[-1.42109e-14px] left-[-7.57831px] w-[273px] h-[208px] max-w-none align-middle border-0"
                             alt=""
                           />
@@ -200,7 +200,7 @@ const NewOffers = () => {
                       <div className="h-[207.5px] !rounded-tl-[10px]  !rounded-tr-[10px]  relative overflow-hidden">
                         <Link to={`newofferchildnewside/${item.id}`}>
                           <img
-                            src={item.image}
+                            src={require(`../../assets/images/offer/${item.image}`)}
                             className="absolute top-[-1.42109e-14px] left-[-7.57831px] w-[273px] h-[208px] max-w-none align-middle border-0"
                             alt=""
                           />
