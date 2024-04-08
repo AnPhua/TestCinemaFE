@@ -108,7 +108,7 @@ const DetailsFilm = () => {
           </div>
         </div>
         <div className="mx-[-15px]">
-          <div className="lg:w-[100%] lg:float-left  relative min-h-[1px] px-[15px] tab-style-1 margin-bottom-35 fonta ">
+          <div className="lg:w-[100%] lg:float-left  relative min-h-[1px] px-[15px] tab-style-1 mb-[35px] fonta ">
             <ul className="tf navtab pb-[1px] text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
               {daysofweek.map((item, index) => (
                 <li

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 export default function Carousel({ slides }) {
   const [current, setCurrent] = useState(0);
 
@@ -28,9 +29,23 @@ export default function Carousel({ slides }) {
             transform: `translateX(-${current * 100}%)`,
           }}
         >
-          {slides.map((s) => {
-            return <img src={s} className="w-[1900px] h-[693px]" alt="" />;
-          })}
+          <Link
+            to={
+              current === 0
+                ? `/newoffers/newofferchild/${slides[0].id}`
+                : `/newoffers/newofferchildnewside/${slides[current].id}`
+            }
+            className="flex"
+          >
+            {slides.map((s, i) => (
+              <img
+                key={s.id}
+                src={s.image}
+                className="w-[1900px] h-[693px] "
+                alt=""
+              />
+            ))}
+          </Link>
         </div>
 
         <div className="btleft w-[95px] absolute top-0  h-full  justify-between items-center flex text-white px-10 text-4xl">
@@ -51,12 +66,13 @@ export default function Carousel({ slides }) {
           {slides.map((s, i) => {
             return (
               <div
+                id={slides.id}
                 onClick={() => {
                   setCurrent(i);
                 }}
                 key={"circle" + i}
                 className={`rounded-[18px] w-5 h-5 cursor-pointer border-[2px] border-[#c9cdce]  ${
-                  i == current ? "bg-[#6F7A7C]" : "bg-[transparent]"
+                  i === current ? "bg-[#6F7A7C]" : "bg-[transparent]"
                 }`}
               ></div>
             );

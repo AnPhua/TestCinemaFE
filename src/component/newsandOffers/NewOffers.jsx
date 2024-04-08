@@ -129,7 +129,7 @@ const NewOffers = () => {
             </a>
           </h1>
           {km1[1].map((item, index) => {
-            if (item.id === 1) {
+            if (item.id === 8) {
               return (
                 <div className="lg:w-[50%] lg:float-left relative min-h-[1px] px-[15px] mb-[30px] h-[415px]">
                   <div className="!rounded-[10px] h-[415px] relative overflow-hidden">
@@ -157,7 +157,7 @@ const NewOffers = () => {
                   </div>
                 </div>
               );
-            } else if (item.id >= 2 && item.id <= 3) {
+            } else if (item.id >= 9 && item.id <= 10) {
               return (
                 <div className="lg:w-[25%] lg:float-left relative min-h-[1px] px-[15px] mb-[30px] h-[415px]">
                   <div className="!rounded-[10px] h-[415px]">

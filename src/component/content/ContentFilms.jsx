@@ -1,9 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import hot from "../../assets/images/hot.png";
-import { useRef, useState } from "react";
+import { useRef, useState,useContext } from "react";
 import Modal from "antd/es/modal/Modal";
 import YouTube from "react-youtube";
+import detailday from "../data/dayseat";
 import { Link } from "react-router-dom";
+import { PassingData } from "../../App";
+
 const ContentFilms = ({
   id,
   name,
@@ -16,13 +19,35 @@ const ContentFilms = ({
   ageLimit,
   youtube,
 }) => {
-  const [open, setOpen] = useState(false);
+  const selectcinema = useContext(PassingData);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const handleOnClick = (i, e) => {
+    e.preventDefault();
+    setActiveIndex(i);
+  };
+  const daysofweek = [
+    { days: "07", dtday: "/04 - CN" },
+    { days: "08", dtday: "/04 - T2" },
+    { days: "09", dtday: "/04 - T3" },
+    { days: "10", dtday: "/04 - T4" },
+    { days: "11", dtday: "/04 - T5" },
+  ];
+  const selectedObject = detailday[activeIndex];
+  const [openYoutube, setopenYoutube] = useState(false);
+  const [openTicket, setopenTicket] = useState(false);
   const youtubeRef = useRef(null);
+  
   const viewTrailer = () => {
-    setOpen(true);
+    setopenYoutube(true);
+  };
+  const viewTicket = () => {
+    setopenTicket(true);
+  };
+  const closeModalTicket = () => {
+    setopenTicket(false);
   };
   const handleX = () => {
-    setOpen(false);
+    setopenYoutube(false);
     if (youtubeRef.current) {
       youtubeRef.current.internalPlayer.pauseVideo();
     }
@@ -73,9 +98,7 @@ const ContentFilms = ({
           </div>
           <div className="lg:w-[100%] md:w-[100%] sm:w-[100%]">
             <div className="h-[120px] min-h-[120px]">
-              <Link
-                to={`/detailsFilm/${id}`}
-              >
+              <Link to={`/detailsFilm/${id}`}>
                 <h3
                   className="text-center 
                         sm:text-left  
@@ -120,6 +143,7 @@ const ContentFilms = ({
                 <a
                   href="#showtimes-pop-up"
                   className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[5px] !px-[14px]"
+                  onClick={() => viewTicket()}
                 >
                   <span>
                     <i
@@ -136,7 +160,7 @@ const ContentFilms = ({
       </div>
       <Modal
         title={null}
-        open={open}
+        open={openYoutube}
         onCancel={handleX}
         footer={null}
         className="!w-[700px] max-w-[100%] text-left align-middle overflow-auto "
@@ -152,6 +176,94 @@ const ContentFilms = ({
           </div>
         </div>
       </Modal>
+      <Modal
+        title={null}
+        open={openTicket}
+        onCancel={closeModalTicket}
+        footer={null}
+        className="!w-[1000px] max-w-[100%] text-left align-middle overflow-auto "
+      >
+        <div className="p-0 overflow-x-hidden bg-[inherit] relative">
+          <div className="p-[15px] border-b border-[#e5e5e5] min-h-[16.42857143px]">
+            <h3 className="fontos leading-[1.5em] text-[23px] font-[300] text-[inherit]">
+              LỊCH CHIẾU - <span>{name}</span>
+            </h3>
+          </div>
+          <div class="modal-body h-[430px] overflow-y-auto">
+            <input
+              type="hidden"
+              id="hdFilmId"
+              value="6a5af641-9ebd-45c8-ac42-0ef6b2e0b285"
+            />
+
+            <h1 class="text-center inline-block w-[100%] mt-0 !text-[33px]">
+              Rạp <span id="tenrap-showtimes">{selectcinema}</span>
+            </h1>
+
+            <div class="tab-style-1 !mb-[35px] fontos" id="content-showtimes">
+              <div className="">
+              <ul className="tf navtab  text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
+              {daysofweek.map((item, index) => (
+                <li
+                  key={index}
+                  onClick={(e) => handleOnClick(index, e)}
+                  className={activeIndex === index ? "active" : " "}
+                  style={{
+                    borderBottom: "4px solid transparent",
+                    width: "14.285%",
+                    display: "block",
+                    position: "relative",
+                    textAlign: "center",
+                    margin: "0",
+                    padding: "0",
+                    marginBottom: "-1px",
+                    float:"left"
+                  }}
+                >
+                  <a
+                    href="#"
+                    className=" py-0 !px-[10px] text-center text-[18px]   relative block"
+                    id={index}
+                  >
+                    <span className="md:!text-[38px] sm:!text-[30px] ">
+                      {item.days}
+                    </span>
+                    {item.dtday}
+                  </a>
+                </li>
+              ))}
+            </ul>
+              </div>
+            
+            <div className="py-[15px] px-0 " id="tab-content">
+              <div className="tab-pane fade in active" id="88">
+                <div className="mx-[-15px]">
+                  <div className="lg:w-[100%] col-sm-16 sm:w-[100%] relative min-h-[1px] px-[15px] my-[10px]">
+                    <span className="text-lg font-bold uppercase tracking-[-0.05em]">
+                      2D Phụ đề
+                    </span>
+                  </div>
+
+                  <div className="flex">
+                    {selectedObject.map((seat) => (
+                      <div
+                        key={seat.id}
+                        className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
+                      >
+                        <a className="btnticket default w-[100%]">{seat.time}</a>
+                        <div className="text-[11px] !pt-[5px] opacity-75">
+                          {seat.seat} ghế trống
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
 
       <style jsx>{`
         @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
@@ -161,6 +273,67 @@ const ContentFilms = ({
         }
         .fontos {
           font-family: Oswald !important;
+        }
+        .btnticket.default {
+          color: #333333;
+          background-color: #e5e5e5;
+        }
+        .btnticket {
+          flex: 1 1 auto;
+          text-align: center;
+          transition: 0.5s;
+          background-size: 200% auto;
+          color: white;
+          /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2); */
+          /* box-shadow: 0 0 20px #eee; */
+          border-radius: 10px;
+        }
+        .btnticket {
+          text-transform: uppercase;
+        }
+        .btnticket {
+          border-width: 0;
+          padding: 5px 14px;
+          font-size: 14px;
+          outline: none !important;
+          background-image: none !important;
+          filter: none;
+          -webkit-box-shadow: none;
+          -moz-box-shadow: none;
+          box-shadow: none;
+          text-shadow: none;
+        }
+        .btnticket {
+          display: inline-block;
+          margin-bottom: 0;
+          font-weight: normal;
+          text-align: center;
+          vertical-align: middle;
+          -ms-touch-action: manipulation;
+          touch-action: manipulation;
+          cursor: pointer;
+          background-image: none;
+          border: 1px solid transparent;
+          white-space: nowrap;
+          padding: 6px 12px;
+          font-size: 14px;
+          line-height: 1.42857143;
+          border-radius: 4px;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        .btnticket.default:hover,
+        .btnticket.default:focus,
+        .btnticket.default:active,
+        .btnticket.default.active {
+          color: #333333;
+          background-color: lightgray;
+          cursor: pointer;
+        }
+        .btnticket:hover {
+          background-position: right center;
         }
         .st {
           position: absolute;

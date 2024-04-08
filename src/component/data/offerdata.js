@@ -53,35 +53,35 @@ export default [
   ],
   [
     {
-      id: 1,
+      id: 8,
       title: "ADT HITEK - THỜI TRANG NAM CÔNG NGHỆ MỚI",
       image: "thoitrangnam.jpg",
       description:
         "Sau nhiều năm phát triển trong lĩnh vực thời trang, lắng nghe ý kiến của Khách hàng từng ngày đã thôi thúc ông Antonio De Torres - CEO/ Head Designer của ADT HITEK nghiên cứu phát triển sản phẩm may đo từ loại vải hi-tech để đáp ứng nhu cầu của những người thường xuyên di chuyển, cần một bộ suit không nhàu sau khi giặt nước. Và ông đã dành ra đã dành ra hơn 5 năm để làm điều này. Loại vải tích hợp hơn 10 chức năng, điển hình như khả năng chống nước hoàn toàn, không tĩnh điện, sợi vải không bị vón cục, không xù lông, co giãn 2 chiều, co giãn 4 chiều… và hiện tại chúng tôi đang trong quá trình nghiên cứu để thiết kế thêm 10 tính năng khác. Loại vải này được thiết kế bởi một công ty nổi tiếng tại Nhật Bản, có lịch sử sản xuất vải cho Boeing, NASA, và nhiều dự án công nghệ vải khác",
     },
     {
-      id: 2,
+      id: 9,
       title: "LỊCH CHIẾU PHIM ĐÀO, PHỞ VÀ PIANO",
       image: "lichchieudaopho.png",
       description:
         "Beta hiểu được tình cảm bạn dành cho Đào, Phở và Piano cũng như cụm rạp Beta Cinemas trong khoảng thời gian này lớn như thế nào. Rạp đang rất cố gắng để có thêm nhiều suất chiếu đáp ứng được nhu cầu của tất cả mọi người. Hiện tại, phim đã mở bán online trên website và mobile app để thuận tiện cho các khách ở xa. Các bạn đặt vé qua Beta xem phim nha ❤️",
     },
     {
-      id: 3,
+      id: 10,
       title: "Beta Trần Quang Khải, TP Hồ Chí Minh",
       image: "betatranquangkhai.jpeg",
       description:
         "Rạp Beta Cinemas Trần Quang Khải sở hữu 5 phòng chiếu, hơn 340 ghế ngồi với phong cách kiến trúc trẻ trung năng động, mang đậm âm hưởng Sài Gòn.\nRạp tọa lạc tại Tầng 2 Trung tâm văn hóa đa năng IMC, số 62 Trần Quang Khải, phường Tân Định, Quận 1, Thành phố Hồ Chí Minh là điểm đến lý tưởng của giới trẻ Sài Thành bởi không gian siêu đẹp cùng với chất lượng âm thanh ánh sáng siêu đỉnh. Beta Cinemas Trần Quang Khải có vị trí thuận lợi, gần khu vực sinh sống đông dân cư cũng như trung tâm thương mại đầy đủ tiện nghi. Rạp được trang bị hệ thống màn chiếu tiên tiến với máy chiếu kỹ thuật số hiện đại bậc nhất hiện nay theo tiêu chuẩn Hollywood 100% nhập khẩu từ nước ngoài. Mỗi phòng chiếu đều được lắp đặt hệ thống âm thanh Dolby 7.1 và hệ thống cách âm chuẩn quốc tế. Độ sáng và bền màu của máy chiếu laser tại Beta Trần Quang Khải được đánh giá rất cao, sở hữu cường độ sáng lớn và hình ảnh sắc nét. Vì vậy mà mỗi thước phim được chiếu tại rạp đều là những thước phim rõ nét nhất, với âm thanh và hiệu ứng sống động nhất.",
     },
     {
-      id: 4,
+      id: 11,
       title: "Beta Lào Cai (Khai trương ngày 07/02/2024)",
       image: "betalaocai.jpeg",
       description:
         "Rạp Beta Cinemas Lào Cai  sở hữu 3 phòng chiếu với hơn 350 ghế ngồi, cùng phong cách kiến trúc nổi bật nhờ sự khác biệt trong thiết kế và sáng tạo trong sử dụng màu. Nhờ vậy, rạp hứa hẹn sẽ đem lại cảm giác mới mẻ và trẻ trung năng động, trở thành một trong những địa điểm giải trí không thể thiếu đối với người dân sinh sống và làm việc tại tỉnh Lào Cai.",
     },
     {
-      id: 5,
+      id: 12,
       title:
         "SHARK MINH ALPHA KÝ KẾT NHƯỢNG QUYỀN “RẠP CHIẾU PHIM TRIỆU LIKE”,NÂNG TỔNG SỐ LÊN 19 CỤM RẠP BETA CINEMAS",
       image: "kycamket.png",
@@ -89,14 +89,14 @@ export default [
         "Lễ ký kết đem đến cơ hội đầu tư “uy tín - an toàn” với mô hình nhượng quyền rạp phim đa dạng về các phân khúc. Đây cũng là thương hiệu rạp chiếu phim nhượng quyền đầu tiên tại Việt Nam, hiện đang có 19 cụm rạp trải dài khắp cả nước và vẫn đang tiếp tục mở rộng.",
     },
     {
-      id: 6,
+      id: 13,
       title: "BETA TRMALL PHÚ QUỐC CHÍNH THỨC KHAI TRƯƠNG VÀO 10/11/2023",
       image: "betatrmall.jpg",
       description:
         "NGÀY ẤY ĐÃ ĐẾN!!!\n🎉🎉🎉 BETA TRMALL PHÚ QUỐC CHÍNH THỨC KHAI TRƯƠNG VÀO THỨ 6 TUẦN NÀY (10/11/2023) 🎉🎉🎉",
     },
     {
-      id: 7,
+      id: 14,
       title: "INDONESIA CÓ THÊM MỘT TỈ PHÚ ĐI LÊN TỪ KINH DOANH RẠP CHIẾU PHIM",
       image: "indonesia.jpg",
       description:

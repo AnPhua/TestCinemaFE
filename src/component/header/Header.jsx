@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import uk from "../../assets/images/united-kingdom.png";
 import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import citystage from "../data/dataCinemaStage";
 import { Modal } from "antd";
 import dataCinemaStage from "../data/dataCinemaStage";
 
-const Header = () => {
+const Header = ({ onSelectCinema }) => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectCinema, setSelectCinema] = useState("");
   const [cinemaBranches, setCinemaBranches] = useState([]);
@@ -15,17 +15,18 @@ const Header = () => {
   const [open, setOpen] = useState(true);
 
   const handleSelectCinema = (cinemaName) => {
-    localStorage.setItem('selectCinema', cinemaName);
+    localStorage.setItem("selectCinema", cinemaName);
     window.location.reload();
   };
   useEffect(() => {
-    const selectedCinema = localStorage.getItem('selectCinema');
+    const selectedCinema = localStorage.getItem("selectCinema");
     if (selectedCinema) {
       setSelectCinema(selectedCinema);
+      onSelectCinema(selectedCinema);
     }
-    if(selectedCinema !== "Beta Giải Phóng"){
+    if (selectedCinema !== "Beta Giải Phóng") {
       setOpen(false);
-  }
+    }
   }, []);
   const handleCityChange = (event) => {
     const selectedCity = event.target.value;
@@ -55,14 +56,11 @@ const Header = () => {
     };
   }, []);
 
-
   useEffect(() => {
     if (selectedCity?.branch != null) {
       setOpen(false);
     }
   }, [selectedCity, cinemaBranches]);
-
-  
 
   const handleX = () => {
     setOpen(false);
@@ -141,7 +139,10 @@ const Header = () => {
           </div>
         </div>
       </Modal>
-      <div style={{ lineHeight: "15px", fontSize: "13px" }} className=" bg-black text-white  md:px-[380px]">
+      <div
+        style={{ lineHeight: "15px", fontSize: "13px" }}
+        className=" bg-black text-white  md:px-[380px]"
+      >
         <div className="sub-header-content flex items-center justify-end md:mx-1 lg:mx-2 xl:mx-5">
           <Link to="/loginandSignin">
             <span className="download mx-1 cursor-pointer hover:underline">
@@ -163,7 +164,15 @@ const Header = () => {
             : "relative top-0 w-full z-50 bg-[#FFFFFF] h-[75px] border-b border-[#ECECEC]"
         }
       >
-        <div style={{ lineHeight: "75px", boxShadow: "0 1px 3px #fff", zIndex: "999", position: "relative" }} className=" bg-white md:px-[375px] md:pt-[0]">
+        <div
+          style={{
+            lineHeight: "75px",
+            boxShadow: "0 1px 3px #fff",
+            zIndex: "999",
+            position: "relative",
+          }}
+          className=" bg-white md:px-[375px] md:pt-[0]"
+        >
           <Link to="/">
             <div className="float-left text-[23px] font-[400] mr-[67px] pt-[11px] pb-[9px] cursor-pointer">
               <img src={logo} className="h-[55px]" alt="" />
@@ -196,9 +205,11 @@ const Header = () => {
             {citystage.map((item, index) => (
               <li key={index} class="dropdown border-b border-[#eee]">
                 <a
-                  className={`${index === 0
-                    ? 'bg-[#fff] hover:bg-[#337AB7] hover:text-[#fff] flex items-center justify-between pt-[-3px] py-[10px] px-[15px]  whitespace-no-wrap w-[175px] h-[38px] text-[#9EA4AB] border-t-[3px] border-[#337AB7]'
-                    : 'bg-[#fff] hover:bg-[#337AB7] hover:text-[#fff] flex items-center justify-between pt-[-3px] py-[10px] px-[15px]  whitespace-no-wrap w-[175px] h-[38px] text-[#9EA4AB]'}`}
+                  className={`${
+                    index === 0
+                      ? "bg-[#fff] hover:bg-[#337AB7] hover:text-[#fff] flex items-center justify-between pt-[-3px] py-[10px] px-[15px]  whitespace-no-wrap w-[175px] h-[38px] text-[#9EA4AB] border-t-[3px] border-[#337AB7]"
+                      : "bg-[#fff] hover:bg-[#337AB7] hover:text-[#fff] flex items-center justify-between pt-[-3px] py-[10px] px-[15px]  whitespace-no-wrap w-[175px] h-[38px] text-[#9EA4AB]"
+                  }`}
                   href="#"
                 >
                   {item.maincity}
@@ -269,6 +280,7 @@ const Header = () => {
           </Link>
         </div>
       </div>
+      {/*  */}
       <style jsx>
         {`
           @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Source+Sans+3&display=swap");
@@ -293,4 +305,3 @@ const Header = () => {
 };
 
 export default Header;
-

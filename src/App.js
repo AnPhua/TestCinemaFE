@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import Header from "./component/header/Header";
 import "./App.css";
 import Footer from "./component/footer/Footer";
@@ -6,9 +6,10 @@ import Routers from "./component/Router/Routers";
 import Chat from "../src/component/main/Chat";
 import GoToTop from "../src/component/main/GoToTop";
 
+export const PassingData = createContext();
 function App() {
   const [showChat, setShowChat] = useState(true);
-
+  const [selectedCinema, setSelectedCinema] = useState("");
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 650) {
@@ -23,17 +24,20 @@ function App() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
+  const handleSelectCinema = (cinemaName) => {
+    setSelectedCinema(cinemaName);
+  };
   return (
     <>
-      <div className="App bg-white relative">
-        <Header />
-        <Routers />
-        <Footer />
-        {showChat && <Chat />}
-        {!showChat && <GoToTop />}
-      </div>
-
+      <PassingData.Provider value={selectedCinema}>
+        <div className="App bg-white relative">
+          <Header onSelectCinema={handleSelectCinema} />
+          <Routers />
+          <Footer />
+          {showChat && <Chat />}
+          {!showChat && <GoToTop />}
+        </div>
+      </PassingData.Provider>
       <style jsx>
         {`
           @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap");
