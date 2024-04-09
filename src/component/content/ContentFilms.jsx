@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import hot from "../../assets/images/hot.png";
-import { useRef, useState,useContext } from "react";
+import { useRef, useState, useContext } from "react";
 import Modal from "antd/es/modal/Modal";
 import YouTube from "react-youtube";
 import detailday from "../data/dayseat";
@@ -21,22 +21,29 @@ const ContentFilms = ({
 }) => {
   const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
-  const handleOnClick = (i, e) => {
-    e.preventDefault();
-    setActiveIndex(i);
-  };
+ 
   const daysofweek = [
-    { days: "07", dtday: "/04 - CN" },
-    { days: "08", dtday: "/04 - T2" },
-    { days: "09", dtday: "/04 - T3" },
-    { days: "10", dtday: "/04 - T4" },
-    { days: "11", dtday: "/04 - T5" },
+    { days: "07", dtday: "/04 - CN", details: "07/04/2024" },
+    { days: "08", dtday: "/04 - T2", details: "08/04/2024" },
+    { days: "09", dtday: "/04 - T3", details: "09/04/2024" },
+    { days: "10", dtday: "/04 - T4", details: "10/04/2024" },
+    { days: "11", dtday: "/04 - T5", details: "11/04/2024" },
   ];
   const selectedObject = detailday[activeIndex];
   const [openYoutube, setopenYoutube] = useState(false);
   const [openTicket, setopenTicket] = useState(false);
+  const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedSeat, setSelectedSeat] = useState("");
+
   const youtubeRef = useRef(null);
-  
+
+  const handleOnClick = (i, e) => {
+    e.preventDefault();
+    setActiveIndex(i);
+    const selectedDayDetails = daysofweek[i].details;
+    setSelectedDay(selectedDayDetails);
+  };
   const viewTrailer = () => {
     setopenYoutube(true);
   };
@@ -45,6 +52,14 @@ const ContentFilms = ({
   };
   const closeModalTicket = () => {
     setopenTicket(false);
+  };
+
+  const viewConfirmTicket = (time) => {
+    setSelectedSeat(time);
+    setopenConfirmTicket(true);
+  };
+  const closeModalConfirmTicket = () => {
+    setopenConfirmTicket(() => false);
   };
   const handleX = () => {
     setopenYoutube(false);
@@ -181,7 +196,7 @@ const ContentFilms = ({
         open={openTicket}
         onCancel={closeModalTicket}
         footer={null}
-        className="!w-[1000px] max-w-[100%] text-left align-middle overflow-auto "
+        className="!w-[1000px] text-left align-middle overflow-auto "
       >
         <div className="p-0 overflow-x-hidden bg-[inherit] relative">
           <div className="p-[15px] border-b border-[#e5e5e5] min-h-[16.42857143px]">
@@ -202,69 +217,176 @@ const ContentFilms = ({
 
             <div class="tab-style-1 !mb-[35px] fontos" id="content-showtimes">
               <div className="">
-              <ul className="tf navtab  text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
-              {daysofweek.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={(e) => handleOnClick(index, e)}
-                  className={activeIndex === index ? "active" : " "}
-                  style={{
-                    borderBottom: "4px solid transparent",
-                    width: "14.285%",
-                    display: "block",
-                    position: "relative",
-                    textAlign: "center",
-                    margin: "0",
-                    padding: "0",
-                    marginBottom: "-1px",
-                    float:"left"
-                  }}
-                >
-                  <a
-                    href="#"
-                    className=" py-0 !px-[10px] text-center text-[18px]   relative block"
-                    id={index}
-                  >
-                    <span className="md:!text-[38px] sm:!text-[30px] ">
-                      {item.days}
-                    </span>
-                    {item.dtday}
-                  </a>
-                </li>
-              ))}
-            </ul>
-              </div>
-            
-            <div className="py-[15px] px-0 " id="tab-content">
-              <div className="tab-pane fade in active" id="88">
-                <div className="mx-[-15px]">
-                  <div className="lg:w-[100%] col-sm-16 sm:w-[100%] relative min-h-[1px] px-[15px] my-[10px]">
-                    <span className="text-lg font-bold uppercase tracking-[-0.05em]">
-                      2D Phụ đề
-                    </span>
-                  </div>
-
-                  <div className="flex">
-                    {selectedObject.map((seat) => (
-                      <div
-                        key={seat.id}
-                        className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
+                <ul className="tf navtab  text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
+                  {daysofweek.map((item, index) => (
+                    <li
+                      key={index}
+                      onClick={(e) => handleOnClick(index, e)}
+                      className={activeIndex === index ? "active" : " "}
+                      style={{
+                        borderBottom: "4px solid transparent",
+                        width: "14.285%",
+                        display: "block",
+                        position: "relative",
+                        textAlign: "center",
+                        margin: "0",
+                        padding: "0",
+                        marginBottom: "-1px",
+                        float: "left",
+                      }}
+                    >
+                      <a
+                        href="#"
+                        className=" py-0 !px-[10px] text-center text-[18px] relative block"
+                        id={index}
                       >
-                        <a className="btnticket default w-[100%]">{seat.time}</a>
-                        <div className="text-[11px] !pt-[5px] opacity-75">
-                          {seat.seat} ghế trống
+                        <span
+                          className="md:!text-[38px] sm:!text-[30px]"
+                          value={selectedDay}
+                        >
+                          {item.days}
+                        </span>
+                        {item.dtday}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="py-[15px] px-0 " id="tab-content">
+                <div className="tab-pane fade in active" id="88">
+                  <div className="mx-[-15px]">
+                    <div className="lg:w-[100%] col-sm-16 sm:w-[100%] relative min-h-[1px] px-[15px] my-[10px]">
+                      <span className="text-lg font-bold uppercase tracking-[-0.05em]">
+                        2D Phụ đề
+                      </span>
+                    </div>
+
+                    <div className="flex">
+                      {selectedObject.map((seat) => (
+                        <div
+                          key={seat.id}
+                          className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
+                        >
+                          <a
+                            className="btnticket default w-[100%]"
+                            onClick={() => viewConfirmTicket(seat.time)}
+                            value={selectedSeat}
+                          >
+                            {seat.time}
+                          </a>
+                          <div className="text-[11px] !pt-[5px] opacity-75">
+                            {seat.seat} ghế trống
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        title={null}
+        open={openConfirmTicket}
+        onCancel={closeModalConfirmTicket}
+        footer={null}
+        className="!w-[800px] max-w-[100%] text-left align-middle overflow-auto h-[650px] fontos"
+      >
+        <div
+          id="datve-pop-up"
+          className="fancybox-content inline-block !w-[800px] max-h-[100%]"
+        >
+          <button
+            data-fancybox-close=""
+            class="fancybox-close-small"
+            title="Close"
+          >
+            <svg viewBox="0 0 32 32">
+              <path d="M10,10 L22,22 M22,10 L10,22"></path>
+            </svg>
+          </button>
+          <div className="p-0 overflow-x-hidden bg-[inherit] relative">
+            <div className="p-[15px] border-b border-[#e5e5e5] min-h-[16.42857143px]">
+              <h3 className="fontos leading-[1.5em] !text-[23px] font-[400] text-[inherit]">
+                BẠN ĐANG ĐẶT VÉ XEM PHIM
+              </h3>
+            </div>
+            <div class="relative p-[15px]">
+              <h1
+                class="!text-[#03599d] text-center !text-[33px] font-[400] mt-[20px] mb-[10px] leading-[1.5em] border-b border-[#f4f4f4] pb-0"
+                id="tenphim-datve"
+              >
+                {name}
+              </h1>
+              <table className="table w-[100%] max-w-[100%] mb-[20px] border-collapse table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Rạp chiếu
+                      </h4>
+                    </th>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Ngày chiếu
+                      </h4>
+                    </th>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Giờ chiếu
+                      </h4>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center text-[23px] font-[600] ">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="rap">
+                          <span class="font-[500]">{selectcinema}</span>
+                        </span>
+                      </h3>
+                    </td>
+                    <td class="text-center text-[23px] font-[600]">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="ngaychieu">
+                          <span class="font-[500]">{selectedDay || daysofweek[0].details}</span>
+                        </span>
+                      </h3>
+                    </td>
+                    <td class="text-center text-[23px] font-[600]">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="giochieu">
+                          <span class="font-[500]">{selectedSeat}</span>
+                        </span>
+                      </h3>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="modal-footer">
+              <div className="text-center pb-[30px] ml-[275px]">
+                <a
+                  href="#showtimes-pop-up"
+                  className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
+                >
+                  <span>
+                    <i
+                      className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                  <span className="text-[14px]">ĐỒNG Ý</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </Modal>
-
       <style jsx>{`
         @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
 
@@ -273,6 +395,57 @@ const ContentFilms = ({
         }
         .fontos {
           font-family: Oswald !important;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) {
+          background-color: #f9f9f9;
+        }
+        .modal-footer {
+          padding: 15px;
+          border-top: 1px solid #e5e5e5;
+        }
+        tr {
+          display: table-row;
+          vertical-align: inherit;
+          unicode-bidi: isolate;
+          border-color: inherit;
+        }
+        .fancybox-content {
+          background: #fff;
+          display: inline-block;
+          margin: 0 0 6px 0;
+          max-width: 100%;
+          overflow: auto;
+          padding: 0;
+          padding: 24px;
+          position: relative;
+          text-align: left;
+          vertical-align: middle;
+        }
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+          padding: 8px;
+          line-height: 1.42857143;
+          vertical-align: top;
+          border-top: 1px solid #ddd;
+        }
+        .table > thead:first-child > tr:first-child > th {
+          border-top: 0;
+        }
+        .table thead tr th {
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .table > thead > tr > th {
+          vertical-align: bottom;
+          border-bottom: 2px solid #ddd;
+        }
+        .table > thead > tr > th {
+          padding: 8px;
+          line-height: 1.42857143;
         }
         .btnticket.default {
           color: #333333;

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
@@ -32,7 +33,9 @@ export default function Carousel({ slides }) {
           <Link
             to={
               current === 0
-                ? `/newoffers/newofferchild/${slides[0].id}`
+                ? `/detailsFilm/${slides[0].id}`
+                : current === 1
+                ? `/newoffers/newofferchild/${slides[1].id}`
                 : `/newoffers/newofferchildnewside/${slides[current].id}`
             }
             className="flex"
