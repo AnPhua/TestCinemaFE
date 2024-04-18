@@ -370,8 +370,9 @@ const ContentFilms = ({
             </div>
             <div className="modal-footer">
               <div className="text-center pb-[30px] ml-[275px]">
+              <Link to={`/room/${id}/${name}/${selectedSeat}/${encodeURIComponent(selectedDay || daysofweek[0].details)}`}>
                 <a
-                  href="#showtimes-pop-up"
+                  href=""
                   className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
                 >
                   <span>
@@ -382,6 +383,7 @@ const ContentFilms = ({
                   </span>
                   <span className="text-[14px]">ĐỒNG Ý</span>
                 </a>
+                </Link>
               </div>
             </div>
           </div>

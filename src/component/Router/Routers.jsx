@@ -9,6 +9,7 @@ import NewOfferChildNewSide from "../newsandOffers/NewOfferChildNewSide";
 import Franchise from "../franchise/Franchise";
 import Mainlgrft from "../login/Mainlgrgt";
 import DetailsFilm from "../films/DetailsFilm";
+import Room from "../roomSeat/Room";
 
 const Routers = () => {
     return (
@@ -25,6 +26,7 @@ const Routers = () => {
             <Route path="/allmovie" element={<Content />}/>
             <Route path="/franchise" element={<Franchise/>}/>
             <Route path="/loginandSignin" element={<Mainlgrft/>}/>
+            <Route path="/room/:id/:name/:seat/:day" element={<Room/>}/>
         </Routes>
     )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect} from "react";
 import uk from "../../assets/images/united-kingdom.png";
@@ -76,10 +77,10 @@ const Header = ({ onSelectCinema }) => {
         className="mt-[150px] !w-[700px]"
       >
         <div className="flex !text-[14px] fontslt !font-[400] p-5">
-          <div class="max-w-[100%] mx-auto ">
+          <div className="max-w-[100%] mx-auto ">
             <label
               for="countries"
-              class="block mb-2 text-sm !font-[400] text-gray-900 dark:text-white text-center"
+              className="block mb-2 text-sm !font-[400] text-gray-900 dark:text-white text-center"
             >
               Tỉnh / Thành phố
             </label>
