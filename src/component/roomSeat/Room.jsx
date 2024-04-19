@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { Link } from "react-router-dom";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import seatunselectnormal from "../../assets/images/seat/seat-unselect-normal.png";
 import seatsetnormal from "../../assets/images/seat/seat-set-normal.png";
 import seatselectnormal from "../../assets/images/seat/seat-select-normal.png";
@@ -16,10 +16,18 @@ import seatunselectdouble from "../../assets/images/seat/seat-unselect-double.pn
 import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
 import datafilms from "../data/datanoarrays";
+import { useDispatch ,useSelector} from 'react-redux';
+import { updateAmountNOR,updateAmountVIP,resetState } from "../redux/Slice/seatSlice";
 const Room = () => {
+  const dispatch = useDispatch();
+  const [listnameseat, setListNameSeat] = useState('');
+  const amountVIP = useSelector(state => state.seat.amountVIP);
+  const amountNOR = useSelector(state => state.seat.amountNOR);
   const selectcinema = useContext(PassingData);
   const { id, name, seat, day } = useParams();
   const decodedDay = decodeURIComponent(day);
+  const [timeLeft, setTimeLeft] = useState('10:00');
+  const timerRef = useRef(null);
   const data = datafilms.find((value) => value.id === parseInt(id));
   let ageLimitMessage = "";
   if (data.ageLimit === "c-18.png") {
@@ -39,255 +47,259 @@ const Room = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  useEffect(() => {
+    dispatch(resetState());
+  }, [dispatch]);
+  
   const seatLayoutdata = [
     [
-      { name: "K", status: "seat-for-way seat-normal" },
-      { name: "K1", status: "seat-for-way seat-normal" },
-      { name: "K2", status: "seat-for-way seat-normal" },
-      { name: "K3", status: "seat-for-way seat-normal" },
-      { name: "K4", status: "seat-for-way seat-normal" },
-      { name: "K5", status: "seat-for-way seat-normal" },
-      { name: "K6", status: "seat-for-way seat-normal" },
-      { name: "K7", status: "seat-for-way seat-normal" },
-      { name: "K8", status: "seat-for-way seat-normal" },
-      { name: "K9", status: "seat-for-way seat-normal" },
-      { name: "K10", status: "seat-for-way seat-normal" },
-      { name: "K11", status: "seat-for-way seat-normal" },
-      { name: "K12", status: "seat-for-way seat-normal" },
-      { name: "K13", status: "seat-for-way seat-normal" },
-      { name: "K14", status: "seat-for-way seat-normal" },
-      { name: "K15", status: "seat-for-way seat-normal" },
-      { name: "K16", status: "seat-for-way seat-normal" },
-      { name: "K17", status: "seat-for-way seat-normal" },
-      { name: "K18", status: "seat-for-way seat-normal" },
-      { name: "K19", status: "seat-for-way seat-normal" },
+      { id:"1", name: "K", status: "seat-for-way seat-normal" },
+      { id:"2", name: "K1", status: "seat-for-way seat-normal" },
+      { id:"3", name: "K2", status: "seat-for-way seat-normal" },
+      { id:"4", name: "K3", status: "seat-for-way seat-normal" },
+      { id:"5", name: "K4", status: "seat-for-way seat-normal" },
+      { id:"6", name: "K5", status: "seat-for-way seat-normal" },
+      { id:"7", name: "K6", status: "seat-for-way seat-normal" },
+      { id:"8", name: "K7", status: "seat-for-way seat-normal" },
+      { id:"9", name: "K8", status: "seat-for-way seat-normal" },
+      { id:"10",name: "K9", status: "seat-for-way seat-normal" },
+      { id:"11",name: "K10", status: "seat-for-way seat-normal" },
+      { id:"12",name: "K11", status: "seat-for-way seat-normal" },
+      { id:"13",name: "K12", status: "seat-for-way seat-normal" },
+      { id:"14",name: "K13", status: "seat-for-way seat-normal" },
+      { id:"15",name: "K14", status: "seat-for-way seat-normal" },
+      { id:"16",name: "K15", status: "seat-for-way seat-normal" },
+      { id:"17",name: "K16", status: "seat-for-way seat-normal" },
+      { id:"18",name: "K17", status: "seat-for-way seat-normal" },
+      { id:"19",name: "K18", status: "seat-for-way seat-normal" },
+      { id:"20",name: "K19", status: "seat-for-way seat-normal" },
     ],
     [
-      { name: "J", status: "seat-for-way seat-normal" },
-      { name: "J1", status: "seat-empty seat-used seat-normal" },
-      { name: "J2", status: "seat-empty seat-used seat-normal" },
-      { name: "J3", status: "seat-empty seat-used seat-normal" },
-      { name: "J4", status: "seat-empty seat-used seat-normal" },
-      { name: "J5", status: "seat-empty seat-used seat-normal" },
-      { name: "J6", status: "seat-empty seat-used seat-normal" },
-      { name: "J7", status: "seat-empty seat-used seat-normal" },
-      { name: "J8", status: "seat-empty seat-used seat-normal" },
-      { name: "J9", status: "seat-empty seat-used seat-normal" },
-      { name: "J10", status: "seat-empty seat-used seat-normal" },
-      { name: "J11", status: "seat-empty seat-used seat-normal" },
-      { name: "J12", status: "seat-empty seat-used seat-normal" },
-      { name: "J13", status: "seat-empty seat-used seat-normal" },
-      { name: "J14", status: "seat-empty seat-used seat-normal" },
-      { name: "J15", status: "seat-empty seat-used seat-normal" },
-      { name: "J16", status: "seat-empty seat-used seat-normal" },
-      { name: "J17", status: "seat-empty seat-used seat-normal" },
-      { name: "J18", status: "seat-empty seat-used seat-normal" },
-      { name: "J", status: "seat-for-way seat-normal" },
+      { id:"21", name: "J", status: "seat-for-way seat-normal" },
+      { id:"22", name: "J1", status: "seat-empty seat-used seat-normal" },
+      { id:"23", name: "J2", status: "seat-empty seat-used seat-normal" },
+      { id:"24", name: "J3", status: "seat-empty seat-used seat-normal" },
+      { id:"25", name: "J4", status: "seat-empty seat-used seat-normal" },
+      { id:"26", name: "J5", status: "seat-empty seat-used seat-normal" },
+      { id:"27", name: "J6", status: "seat-empty seat-used seat-normal" },
+      { id:"28", name: "J7", status: "seat-empty seat-used seat-normal" },
+      { id:"29", name: "J8", status: "seat-empty seat-used seat-normal" },
+      { id:"30",name: "J9", status: "seat-empty seat-used seat-normal" },
+      { id:"31",name: "J10", status: "seat-empty seat-used seat-normal" },
+      { id:"32",name: "J11", status: "seat-empty seat-used seat-normal" },
+      { id:"33",name: "J12", status: "seat-empty seat-used seat-normal" },
+      { id:"34",name: "J13", status: "seat-empty seat-used seat-normal" },
+      { id:"35",name: "J14", status: "seat-empty seat-used seat-normal" },
+      { id:"36",name: "J15", status: "seat-empty seat-used seat-normal" },
+      { id:"37",name: "J16", status: "seat-empty seat-used seat-normal" },
+      { id:"38",name: "J17", status: "seat-empty seat-used seat-normal" },
+      { id:"39",name: "J18", status: "seat-empty seat-used seat-normal" },
+      { id:"40",name: "J", status: "seat-for-way seat-normal" },
     ],
     [
-      { name: "I", status: "seat-for-way seat-normal" },
-      { name: "I1", status: "seat-empty seat-used seat-normal" },
-      { name: "I2", status: "seat-empty seat-used seat-normal" },
-      { name: "I3", status: "seat-empty seat-used seat-normal" },
-      { name: "I4", status: "seat-empty seat-used seat-normal" },
-      { name: "I5", status: "seat-empty seat-used seat-normal" },
-      { name: "I6", status: "seat-empty seat-used seat-normal" },
-      { name: "I7", status: "seat-empty seat-used seat-normal" },
-      { name: "I8", status: "seat-empty seat-used seat-normal" },
-      { name: "I9", status: "seat-empty seat-used seat-normal" },
-      { name: "I10", status: "seat-empty seat-used seat-normal" },
-      { name: "I11", status: "seat-empty seat-used seat-normal" },
-      { name: "I12", status: "seat-empty seat-used seat-normal" },
-      { name: "I13", status: "seat-empty seat-used seat-normal" },
-      { name: "I14", status: "seat-empty seat-used seat-normal" },
-      { name: "I15", status: "seat-empty seat-used seat-normal" },
-      { name: "I16", status: "seat-empty seat-used seat-normal" },
-      { name: "I17", status: "seat-empty seat-used seat-normal" },
-      { name: "I18", status: "seat-empty seat-used seat-normal" },
-      { name: "I", status: "seat-for-way seat-normal" },
+      { id:"41", name: "I", status: "seat-for-way seat-normal" },
+      { id:"42", name: "I1", status: "seat-empty seat-used seat-normal" },
+      { id:"43", name: "I2", status: "seat-empty seat-used seat-normal" },
+      { id:"44", name: "I3", status: "seat-empty seat-used seat-normal" },
+      { id:"45", name: "I4", status: "seat-empty seat-used seat-normal" },
+      { id:"46", name: "I5", status: "seat-empty seat-used seat-normal" },
+      { id:"47", name: "I6", status: "seat-empty seat-used seat-normal" },
+      { id:"48", name: "I7", status: "seat-empty seat-used seat-normal" },
+      { id:"49", name: "I8", status: "seat-empty seat-used seat-normal" },
+      { id:"50",name: "I9", status: "seat-empty seat-used seat-normal" },
+      { id:"51",name: "I10", status: "seat-empty seat-used seat-normal" },
+      { id:"52",name: "I11", status: "seat-empty seat-used seat-normal" },
+      { id:"53",name: "I12", status: "seat-empty seat-used seat-normal" },
+      { id:"54",name: "I13", status: "seat-empty seat-used seat-normal" },
+      { id:"55",name: "I14", status: "seat-empty seat-used seat-normal" },
+      { id:"56",name: "I15", status: "seat-empty seat-used seat-normal" },
+      { id:"57",name: "I16", status: "seat-empty seat-used seat-normal" },
+      { id:"58",name: "I17", status: "seat-empty seat-used seat-normal" },
+      { id:"59",name: "I18", status: "seat-empty seat-used seat-normal" },
+      { id:"60",name: "I", status: "seat-for-way seat-normal" },
     ],
     [
-      { name: "H", status: "seat-for-way seat-normal" },
-      { name: "H1", status: "seat-empty seat-used seat-normal" },
-      { name: "H2", status: "seat-empty seat-used seat-normal" },
-      { name: "H3", status: "seat-empty seat-used seat-normal" },
-      { name: "H4", status: "seat-empty seat-used seat-normal" },
-      { name: "H5", status: "seat-empty seat-used seat-normal" },
-      { name: "H6", status: "seat-empty seat-used seat-normal" },
-      { name: "H7", status: "seat-empty seat-used seat-normal" },
-      { name: "H8", status: "seat-empty seat-used seat-normal" },
-      { name: "H9", status: "seat-empty seat-used seat-normal" },
-      { name: "H10", status: "seat-empty seat-used seat-normal" },
-      { name: "H11", status: "seat-empty seat-used seat-normal" },
-      { name: "H12", status: "seat-empty seat-used seat-normal" },
-      { name: "H13", status: "seat-empty seat-used seat-normal" },
-      { name: "H14", status: "seat-empty seat-used seat-normal" },
-      { name: "H15", status: "seat-empty seat-used seat-normal" },
-      { name: "H16", status: "seat-empty seat-used seat-normal" },
-      { name: "H17", status: "seat-empty seat-used seat-normal" },
-      { name: "H18", status: "seat-empty seat-used seat-normal" },
-      { name: "H", status: "seat-for-way seat-normal" },
+      { id:"61", name: "H", status: "seat-for-way seat-normal" },
+      { id:"62", name: "H1", status: "seat-empty seat-used seat-normal" },
+      { id:"63", name: "H2", status: "seat-empty seat-used seat-normal" },
+      { id:"64", name: "H3", status: "seat-empty seat-used seat-normal" },
+      { id:"65", name: "H4", status: "seat-empty seat-used seat-normal" },
+      { id:"66", name: "H5", status: "seat-empty seat-used seat-normal" },
+      { id:"67", name: "H6", status: "seat-empty seat-used seat-normal" },
+      { id:"68", name: "H7", status: "seat-empty seat-used seat-normal" },
+      { id:"69", name: "H8", status: "seat-empty seat-used seat-normal" },
+      { id:"70",name: "H9", status: "seat-empty seat-used seat-normal" },
+      { id:"71",name: "H10", status: "seat-empty seat-used seat-normal" },
+      { id:"72",name: "H11", status: "seat-empty seat-used seat-normal" },
+      { id:"73",name: "H12", status: "seat-empty seat-used seat-normal" },
+      { id:"74",name: "H13", status: "seat-empty seat-used seat-normal" },
+      { id:"75",name: "H14", status: "seat-empty seat-used seat-normal" },
+      { id:"76",name: "H15", status: "seat-empty seat-used seat-normal" },
+      { id:"77",name: "H16", status: "seat-empty seat-used seat-normal" },
+      { id:"78",name: "H17", status: "seat-empty seat-used seat-normal" },
+      { id:"79",name: "H18", status: "seat-empty seat-used seat-normal" },
+      { id:"80",name: "H", status: "seat-for-way seat-normal" },
     ],
     [
-      { name: "G", status: "seat-for-way seat-normal" },
-      { name: "G1", status: "seat-empty seat-used seat-normal" },
-      { name: "G2", status: "seat-empty seat-used seat-normal" },
-      { name: "G3", status: "seat-empty seat-used seat-normal" },
-      { name: "G4", status: "seat-empty seat-used seat-normal" },
-      { name: "G5", status: "seat-empty seat-used seat-normal" },
-      { name: "G6", status: "seat-empty seat-used seat-normal" },
-      { name: "G7", status: "seat-empty seat-used seat-normal" },
-      { name: "G8", status: "seat-empty seat-used seat-normal" },
-      { name: "G9", status: "seat-empty seat-used seat-normal" },
-      { name: "G10", status: "seat-empty seat-used seat-normal" },
-      { name: "G11", status: "seat-empty seat-used seat-normal" },
-      { name: "G12", status: "seat-empty seat-used seat-normal" },
-      { name: "G13", status: "seat-empty seat-used seat-normal" },
-      { name: "G14", status: "seat-empty seat-used seat-normal" },
-      { name: "G15", status: "seat-empty seat-used seat-normal" },
-      { name: "G16", status: "seat-empty seat-used seat-normal" },
-      { name: "G17", status: "seat-empty seat-used seat-normal" },
-      { name: "G18", status: "seat-empty seat-used seat-normal" },
-      { name: "G", status: "seat-for-way seat-normal" },
+      { id:"81", name: "G", status: "seat-for-way seat-normal" },
+      { id:"82", name: "G1", status: "seat-empty seat-used seat-normal" },
+      { id:"83", name: "G2", status: "seat-empty seat-used seat-normal" },
+      { id:"84", name: "G3", status: "seat-empty seat-used seat-normal" },
+      { id:"85", name: "G4", status: "seat-empty seat-used seat-normal" },
+      { id:"86", name: "G5", status: "seat-empty seat-used seat-normal" },
+      { id:"87", name: "G6", status: "seat-empty seat-used seat-normal" },
+      { id:"88", name: "G7", status: "seat-empty seat-used seat-normal" },
+      { id:"89", name: "G8", status: "seat-empty seat-used seat-normal" },
+      { id:"90",name: "G9", status: "seat-empty seat-used seat-normal" },
+      { id:"91",name: "G10", status: "seat-empty seat-used seat-normal" },
+      { id:"92",name: "G11", status: "seat-empty seat-used seat-normal" },
+      { id:"93",name: "G12", status: "seat-empty seat-used seat-normal" },
+      { id:"94",name: "G13", status: "seat-empty seat-used seat-normal" },
+      { id:"95",name: "G14", status: "seat-empty seat-used seat-normal" },
+      { id:"96",name: "G15", status: "seat-empty seat-used seat-normal" },
+      { id:"97",name: "G16", status: "seat-empty seat-used seat-normal" },
+      { id:"98",name: "G17", status: "seat-empty seat-used seat-normal" },
+      { id:"99",name: "G18", status: "seat-empty seat-used seat-normal" },
+      { id:"100",name: "G", status: "seat-for-way seat-normal" },
     ],
     [
-      { name: "E", status: "seat-for-way seat-vip" },
-      { name: "F1", status: "seat-empty seat-used seat-vip" },
-      { name: "F2", status: "seat-empty seat-used seat-vip" },
-      { name: "F3", status: "seat-empty seat-used seat-vip" },
-      { name: "F4", status: "seat-empty seat-used seat-vip" },
-      { name: "F5", status: "seat-empty seat-used seat-vip" },
-      { name: "F6", status: "seat-empty seat-used seat-vip" },
-      { name: "F7", status: "seat-empty seat-used seat-vip" },
-      { name: "F8", status: "seat-empty seat-used seat-vip" },
-      { name: "F9", status: "seat-empty seat-used seat-vip" },
-      { name: "F10", status: "seat-empty seat-used seat-vip" },
-      { name: "F11", status: "seat-empty seat-used seat-vip" },
-      { name: "F12", status: "seat-empty seat-used seat-vip" },
-      { name: "F13", status: "seat-empty seat-used seat-vip" },
-      { name: "F14", status: "seat-empty seat-used seat-vip" },
-      { name: "F15", status: "seat-empty seat-used seat-vip" },
-      { name: "F16", status: "seat-empty seat-used seat-vip" },
-      { name: "F17", status: "seat-empty seat-used seat-vip" },
-      { name: "F18", status: "seat-empty seat-used seat-vip" },
-      { name: "F", status: "seat-for-way seat-vip" },
+      { id:"101",name: "E", status: "seat-for-way seat-vip" },
+      { id:"102",name: "F1", status: "seat-empty seat-used seat-vip" },
+      { id:"103",name: "F2", status: "seat-empty seat-used seat-vip" },
+      { id:"104",name: "F3", status: "seat-empty seat-used seat-vip" },
+      { id:"105",name: "F4", status: "seat-empty seat-used seat-vip" },
+      { id:"106",name: "F5", status: "seat-empty seat-used seat-vip" },
+      { id:"107",name: "F6", status: "seat-empty seat-used seat-vip" },
+      { id:"108",name: "F7", status: "seat-empty seat-used seat-vip" },
+      { id:"109",name: "F8", status: "seat-empty seat-used seat-vip" },
+      { id:"110",name: "F9", status: "seat-empty seat-used seat-vip" },
+      { id:"111",name: "F10", status: "seat-empty seat-used seat-vip" },
+      { id:"112",name: "F11", status: "seat-empty seat-used seat-vip" },
+      { id:"113",name: "F12", status: "seat-empty seat-used seat-vip" },
+      { id:"114",name: "F13", status: "seat-empty seat-used seat-vip" },
+      { id:"115",name: "F14", status: "seat-empty seat-used seat-vip" },
+      { id:"116",name: "F15", status: "seat-empty seat-used seat-vip" },
+      { id:"117",name: "F16", status: "seat-empty seat-used seat-vip" },
+      { id:"118",name: "F17", status: "seat-empty seat-used seat-vip" },
+      { id:"119",name: "F18", status: "seat-empty seat-used seat-vip" },
+      { id:"120",name: "F", status: "seat-for-way seat-vip" },
     ],
     [
-      { name: "E", status: "seat-for-way seat-vip" },
-      { name: "E", status: "seat-for-way seat-vip" },
-      { name: "E1", status: "seat-empty seat-used seat-vip" },
-      { name: "E2", status: "seat-empty seat-used seat-vip" },
-      { name: "E3", status: "seat-empty seat-used seat-vip" },
-      { name: "E4", status: "seat-empty seat-used seat-vip" },
-      { name: "E5", status: "seat-empty seat-used seat-vip" },
-      { name: "E6", status: "seat-empty seat-used seat-vip" },
-      { name: "E7", status: "seat-empty seat-used seat-vip" },
-      { name: "E8", status: "seat-used seat-sold seat-vip" },
-      { name: "E9", status: "seat-used seat-sold seat-vip" },
-      { name: "E10", status: "seat-used seat-sold seat-vip" },
-      { name: "E11", status: "seat-empty seat-used seat-vip" },
-      { name: "E12", status: "seat-empty seat-used seat-vip" },
-      { name: "E13", status: "seat-empty seat-used seat-vip" },
-      { name: "E14", status: "seat-empty seat-used seat-vip" },
-      { name: "E15", status: "seat-empty seat-used seat-vip" },
-      { name: "E16", status: "seat-empty seat-used seat-vip" },
-      { name: "E17", status: "seat-empty seat-used seat-vip" },
-      { name: "E", status: "seat-for-way seat-vip" },
+      { id:"121",name: "E", status: "seat-for-way seat-vip" },
+      { id:"122",name: "E", status: "seat-for-way seat-vip" },
+      { id:"123",name: "E1", status: "seat-empty seat-used seat-vip" },
+      { id:"124",name: "E2", status: "seat-empty seat-used seat-vip" },
+      { id:"125",name: "E3", status: "seat-empty seat-used seat-vip" },
+      { id:"126",name: "E4", status: "seat-empty seat-used seat-vip" },
+      { id:"127",name: "E5", status: "seat-empty seat-used seat-vip" },
+      { id:"128",name: "E6", status: "seat-empty seat-used seat-vip" },
+      { id:"129",name: "E7", status: "seat-empty seat-used seat-vip" },
+      { id:"130",name: "E8", status: "seat-used seat-sold seat-vip" },
+      { id:"131",name: "E9", status: "seat-used seat-sold seat-vip" },
+      { id:"132",name: "E10", status: "seat-used seat-sold seat-vip" },
+      { id:"133",name: "E11", status: "seat-empty seat-used seat-vip" },
+      { id:"134",name: "E12", status: "seat-empty seat-used seat-vip" },
+      { id:"135",name: "E13", status: "seat-empty seat-used seat-vip" },
+      { id:"136",name: "E14", status: "seat-empty seat-used seat-vip" },
+      { id:"137",name: "E15", status: "seat-empty seat-used seat-vip" },
+      { id:"138",name: "E16", status: "seat-empty seat-used seat-vip" },
+      { id:"139",name: "E17", status: "seat-empty seat-used seat-vip" },
+      { id:"140",name: "E", status: "seat-for-way seat-vip" },
     ],
     [
-      { name: "D", status: "seat-for-way seat-vip" },
-      { name: "D", status: "seat-for-way seat-vip" },
-      { name: "D", status: "seat-for-way seat-vip" },
-      { name: "D1", status: "seat-empty seat-used seat-vip" },
-      { name: "D2", status: "seat-empty seat-used seat-vip" },
-      { name: "D3", status: "seat-empty seat-used seat-vip" },
-      { name: "D4", status: "seat-empty seat-used seat-vip" },
-      { name: "D5", status: "seat-empty seat-used seat-vip" },
-      { name: "D6", status: "seat-empty seat-used seat-vip" },
-      { name: "D7", status: "seat-empty seat-used seat-vip" },
-      { name: "D8", status: "seat-empty seat-used seat-vip" },
-      { name: "D9", status: "seat-empty seat-used seat-vip" },
-      { name: "D10", status: "seat-empty seat-used seat-vip" },
-      { name: "D11", status: "seat-empty seat-used seat-vip" },
-      { name: "D12", status: "seat-empty seat-used seat-vip" },
-      { name: "D13", status: "seat-empty seat-used seat-vip" },
-      { name: "D14", status: "seat-empty seat-used seat-vip" },
-      { name: "D15", status: "seat-empty seat-used seat-vip" },
-      { name: "D16", status: "seat-empty seat-used seat-vip" },
-      { name: "D", status: "seat-for-way seat-vip" },
+      { id:"141",name: "D", status: "seat-for-way seat-vip" },
+      { id:"142",name: "D", status: "seat-for-way seat-vip" },
+      { id:"143",name: "D", status: "seat-for-way seat-vip" },
+      { id:"144",name: "D1", status: "seat-empty seat-used seat-vip" },
+      { id:"145",name: "D2", status: "seat-empty seat-used seat-vip" },
+      { id:"146",name: "D3", status: "seat-empty seat-used seat-vip" },
+      { id:"147",name: "D4", status: "seat-empty seat-used seat-vip" },
+      { id:"148",name: "D5", status: "seat-empty seat-used seat-vip" },
+      { id:"149",name: "D6", status: "seat-empty seat-used seat-vip" },
+      { id:"150",name: "D7", status: "seat-empty seat-used seat-vip" },
+      { id:"151",name: "D8", status: "seat-empty seat-used seat-vip" },
+      { id:"152",name: "D9", status: "seat-empty seat-used seat-vip" },
+      { id:"153",name: "D10", status: "seat-empty seat-used seat-vip" },
+      { id:"154",name: "D11", status: "seat-empty seat-used seat-vip" },
+      { id:"155",name: "D12", status: "seat-empty seat-used seat-vip" },
+      { id:"156",name: "D13", status: "seat-empty seat-used seat-vip" },
+      { id:"157",name: "D14", status: "seat-empty seat-used seat-vip" },
+      { id:"158",name: "D15", status: "seat-empty seat-used seat-vip" },
+      { id:"159",name: "D16", status: "seat-empty seat-used seat-vip" },
+      { id:"160",name: "D", status: "seat-for-way seat-vip" },
     ],
     [
-      { name: "C", status: "seat-for-way seat-vip" },
-      { name: "C", status: "seat-for-way seat-vip" },
-      { name: "C", status: "seat-for-way seat-vip" },
-      { name: "C1", status: "seat-empty seat-used seat-vip" },
-      { name: "C2", status: "seat-empty seat-used seat-vip" },
-      { name: "C3", status: "seat-empty seat-used seat-vip" },
-      { name: "C4", status: "seat-empty seat-used seat-vip" },
-      { name: "C5", status: "seat-empty seat-used seat-vip" },
-      { name: "C6", status: "seat-used seat-sold seat-vip" },
-      { name: "C7", status: "seat-used seat-sold seat-vip" },
-      { name: "C8", status: "seat-empty seat-used seat-vip" },
-      { name: "C9", status: "seat-empty seat-used seat-vip" },
-      { name: "C10", status: "seat-empty seat-used seat-vip" },
-      { name: "C11", status: "seat-empty seat-used seat-vip" },
-      { name: "C12", status: "seat-empty seat-used seat-vip" },
-      { name: "C13", status: "seat-empty seat-used seat-vip" },
-      { name: "C14", status: "seat-empty seat-used seat-vip" },
-      { name: "C15", status: "seat-empty seat-used seat-vip" },
-      { name: "C", status: "seat-for-way seat-vip" },
-      { name: "C", status: "seat-for-way seat-vip" },
+      { id:"161",name: "C", status: "seat-for-way seat-vip" },
+      { id:"162",name: "C", status: "seat-for-way seat-vip" },
+      { id:"163",name: "C", status: "seat-for-way seat-vip" },
+      { id:"164",name: "C1", status: "seat-empty seat-used seat-vip" },
+      { id:"165",name: "C2", status: "seat-empty seat-used seat-vip" },
+      { id:"166",name: "C3", status: "seat-empty seat-used seat-vip" },
+      { id:"167",name: "C4", status: "seat-empty seat-used seat-vip" },
+      { id:"168",name: "C5", status: "seat-empty seat-used seat-vip" },
+      { id:"169",name: "C6", status: "seat-used seat-sold seat-vip" },
+      { id:"170",name: "C7", status: "seat-used seat-sold seat-vip" },
+      { id:"171",name: "C8", status: "seat-empty seat-used seat-vip" },
+      { id:"172",name: "C9", status: "seat-empty seat-used seat-vip" },
+      { id:"173",name: "C10", status: "seat-empty seat-used seat-vip" },
+      { id:"174",name: "C11", status: "seat-empty seat-used seat-vip" },
+      { id:"175",name: "C12", status: "seat-empty seat-used seat-vip" },
+      { id:"176",name: "C13", status: "seat-empty seat-used seat-vip" },
+      { id:"177",name: "C14", status: "seat-empty seat-used seat-vip" },
+      { id:"178",name: "C15", status: "seat-empty seat-used seat-vip" },
+      { id:"179",name: "C", status: "seat-for-way seat-vip" },
+      { id:"180",name: "C", status: "seat-for-way seat-vip" },
     ],
     [
-      { name: "B", status: "seat-for-way seat-vip" },
-      { name: "B", status: "seat-for-way seat-vip" },
-      { name: "B", status: "seat-for-way seat-vip" },
-      { name: "B1", status: "seat-empty seat-used seat-vip" },
-      { name: "B2", status: "seat-empty seat-used seat-vip" },
-      { name: "B3", status: "seat-empty seat-used seat-vip" },
-      { name: "B4", status: "seat-empty seat-used seat-vip" },
-      { name: "B5", status: "seat-empty seat-used seat-vip" },
-      { name: "B6", status: "seat-empty seat-used seat-vip" },
-      { name: "B7", status: "seat-empty seat-used seat-vip" },
-      { name: "B8", status: "seat-empty seat-used seat-vip" },
-      { name: "B9", status: "seat-empty seat-used seat-vip" },
-      { name: "B10", status: "seat-empty seat-used seat-vip" },
-      { name: "B11", status: "seat-empty seat-used seat-vip" },
-      { name: "B12", status: "seat-empty seat-used seat-vip" },
-      { name: "B13", status: "seat-empty seat-used seat-vip" },
-      { name: "B14", status: "seat-empty seat-used seat-vip" },
-      { name: "B15", status: "seat-empty seat-used seat-vip" },
-      { name: "B", status: "seat-for-way seat-vip" },
-      { name: "B", status: "seat-for-way seat-vip" },
+      { id:"181",name: "B", status: "seat-for-way seat-vip" },
+      { id:"182",name: "B", status: "seat-for-way seat-vip" },
+      { id:"183",name: "B", status: "seat-for-way seat-vip" },
+      { id:"184",name: "B1", status: "seat-empty seat-used seat-vip" },
+      { id:"185",name: "B2", status: "seat-empty seat-used seat-vip" },
+      { id:"186",name: "B3", status: "seat-empty seat-used seat-vip" },
+      { id:"187",name: "B4", status: "seat-empty seat-used seat-vip" },
+      { id:"188",name: "B5", status: "seat-empty seat-used seat-vip" },
+      { id:"189",name: "B6", status: "seat-empty seat-used seat-vip" },
+      { id:"190",name: "B7", status: "seat-empty seat-used seat-vip" },
+      { id:"191",name: "B8", status: "seat-empty seat-used seat-vip" },
+      { id:"192",name: "B9", status: "seat-empty seat-used seat-vip" },
+      { id:"193",name: "B10", status: "seat-empty seat-used seat-vip" },
+      { id:"194",name: "B11", status: "seat-empty seat-used seat-vip" },
+      { id:"195",name: "B12", status: "seat-empty seat-used seat-vip" },
+      { id:"196",name: "B13", status: "seat-empty seat-used seat-vip" },
+      { id:"197",name: "B14", status: "seat-empty seat-used seat-vip" },
+      { id:"198",name: "B15", status: "seat-empty seat-used seat-vip" },
+      { id:"199",name: "B", status: "seat-for-way seat-vip" },
+      { id:"200",name: "B", status: "seat-for-way seat-vip" },
     ],
     [
-      { name: "A", status: "seat-for-way seat-double" },
-      { name: "A1", status: "seat-empty  seat-used seat-vip" },
-      { name: "A2", status: "seat-empty  seat-used seat-vip" },
-      { name: "A", status: "seat-for-way seat-vip" },
-      { name: "A3", status: "seat-empty  seat-used seat-vip" },
-      { name: "A4", status: "seat-empty  seat-used seat-vip" },
-      { name: "A5", status: "seat-empty seat-used seat-vip" },
-      { name: "A6", status: "seat-empty seat-used seat-vip" },
-      { name: "A7", status: "seat-used  seat-sold seat-vip" },
-      { name: "A8", status: "seat-empty seat-used seat-vip" },
-      { name: "A9", status: "seat-empty seat-used seat-vip" },
-      { name: "A10", status: "seat-empty seat-used seat-vip" },
-      { name: "A11", status: "seat-empty seat-used seat-vip" },
-      { name: "A12", status: "seat-empty seat-used seat-vip" },
-      { name: "A13", status: "seat-empty seat-used seat-vip" },
-      { name: "A14", status: "seat-empty seat-used seat-vip" },
-      { name: "A15", status: "seat-empty seat-used seat-vip" },
-      { name: "A16", status: "seat-empty seat-used seat-vip" },
-      { name: "A17", status: "seat-empty seat-used seat-vip" },
-      { name: "A", status: "seat-for-way seat-vip" },
+      { id:"201",name: "A", status: "seat-for-way seat-double" },
+      { id:"202",name: "A1", status: "seat-empty  seat-used seat-vip" },
+      { id:"203",name: "A2", status: "seat-empty  seat-used seat-vip" },
+      { id:"204",name: "A", status: "seat-for-way seat-vip" },
+      { id:"205",name: "A3", status: "seat-empty  seat-used seat-vip" },
+      { id:"206",name: "A4", status: "seat-empty  seat-used seat-vip" },
+      { id:"207",name: "A5", status: "seat-empty seat-used seat-vip" },
+      { id:"208",name: "A6", status: "seat-empty seat-used seat-vip" },
+      { id:"209",name: "A7", status: "seat-used  seat-sold seat-vip" },
+      { id:"210",name: "A8", status: "seat-empty seat-used seat-vip" },
+      { id:"211",name: "A9", status: "seat-empty seat-used seat-vip" },
+      { id:"212",name: "A10", status: "seat-empty seat-used seat-vip" },
+      { id:"213",name: "A11", status: "seat-empty seat-used seat-vip" },
+      { id:"214",name: "A12", status: "seat-empty seat-used seat-vip" },
+      { id:"215",name: "A13", status: "seat-empty seat-used seat-vip" },
+      { id:"216",name: "A14", status: "seat-empty seat-used seat-vip" },
+      { id:"217",name: "A15", status: "seat-empty seat-used seat-vip" },
+      { id:"218",name: "A16", status: "seat-empty seat-used seat-vip" },
+      { id:"219",name: "A17", status: "seat-empty seat-used seat-vip" },
+      { id:"220",name: "A", status: "seat-for-way seat-vip" },
     ],
   ];
   const [backgroundColor, setBackgroundColor] = useState("rgb(254, 185, 192)");
   const [seatLayout, setSeatLayout] = useState(seatLayoutdata);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [limitedScrollPosition, setLimitedScrollPosition] = useState(0);
-
+  const [totalPrice, setTotalPrice] = useState(0);
   useEffect(() => {
     let timeoutId;
 
@@ -311,35 +323,73 @@ const Room = () => {
       clearTimeout(timeoutId);
     };
   }, []);
-  const handleSeatClick = (rowIndex, seatIndex) => {
-    const updatedLayout = [...seatLayout];
-    const seat = updatedLayout[rowIndex][seatIndex];
 
-    if (
-      seat.status.includes("seat-empty") &&
-      !seat.status.includes("seat-sold")
-    ) {
-      if (seat.status.includes("seat-normal")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-used seat-select seat-normal";
-      } else if (seat.status.includes("seat-vip")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-used seat-select seat-vip";
+const handleSeatClick = (rowIndex, seatIndex) => {
+  const updatedLayout = [...seatLayout];
+  const seat = updatedLayout[rowIndex][seatIndex];
+  let maxseat = 0;
+  updatedLayout.forEach(row => {
+    row.forEach(seat => {
+      if (seat.status.includes("seat-select")) {
+        maxseat++;
       }
-    } else if (
-      seat.status.includes("seat-select") &&
-      !seat.status.includes("seat-sold")
-    ) {
-      if (seat.status.includes("seat-normal")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-empty seat-used seat-normal";
-      } else if (seat.status.includes("seat-vip")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-empty seat-used seat-vip";
+    });
+  });
+
+  if (
+    seat.status.includes("seat-empty") &&
+    !seat.status.includes("seat-sold")
+  ) {
+    if (seat.status.includes("seat-select")) {
+      updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
+      maxseat--;
+      const selectedSeats = updatedLayout
+        .flatMap(row =>
+          row.filter(seat => seat.status.includes("seat-select")).map(seat => seat.name)
+        );
+      setListNameSeat(selectedSeats.join(', '));
+    } else {
+      if (maxseat < 8) {
+        if (seat.status.includes("seat-normal")) {
+          updatedLayout[rowIndex][seatIndex].status =
+            "seat-used seat-select seat-normal";
+          maxseat++;
+          dispatch(updateAmountNOR(1));
+          setTotalPrice(prevTotalPrice => prevTotalPrice + 45000);
+        } else if (seat.status.includes("seat-vip")) {
+          updatedLayout[rowIndex][seatIndex].status =
+            "seat-used seat-select seat-vip";
+          maxseat++;
+          dispatch(updateAmountVIP(1));
+          setTotalPrice(prevTotalPrice => prevTotalPrice + 50000);
+        }
+      } else {
+        alert("Không được chọn quá 8 ghế");
       }
     }
-    setSeatLayout(updatedLayout);
-  };
+  } else if (
+    seat.status.includes("seat-select") &&
+    !seat.status.includes("seat-sold")
+  ) {
+    if (seat.status.includes("seat-normal")) {
+      updatedLayout[rowIndex][seatIndex].status =
+        "seat-empty seat-used seat-normal";
+      maxseat--;
+      dispatch(updateAmountNOR(-1));
+      setTotalPrice(prevTotalPrice => prevTotalPrice - 45000);
+    } else if (seat.status.includes("seat-vip")) {
+      updatedLayout[rowIndex][seatIndex].status =
+        "seat-empty seat-used seat-vip";
+      maxseat--;
+      dispatch(updateAmountVIP(-1));
+      setTotalPrice(prevTotalPrice => prevTotalPrice - 50000);
+    }
+  }
+  setSeatLayout(updatedLayout);
+  const selectedSeats = updatedLayout.flatMap(row => row.filter(seat => seat.status.includes("seat-select")).map(seat => seat.name));
+  setListNameSeat(selectedSeats.join(', '));
+};
+
   useEffect(() => {
     const interval = setInterval(() => {
       setBackgroundColor(
@@ -351,7 +401,28 @@ const Room = () => {
 
     return () => clearInterval(interval);
   }, [backgroundColor]);
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prevTime => {
+        const [minutes, seconds] = prevTime.split(':').map(num => parseInt(num));
+        if (minutes === 0 && seconds === 0) {
+          clearInterval(timerRef.current);
+          window.location.href = '/'; 
+          return '0:00';
+        } else {
+          const totalSeconds = minutes * 60 + seconds - 1;
+          const newMinutes = Math.floor(totalSeconds / 60);
+          const newSeconds = totalSeconds % 60;
+          return `${newMinutes}:${newSeconds < 10 ? '0' + newSeconds : newSeconds}`;
+        }
+      });
+    }, 1000);
 
+    return () => clearInterval(timerRef.current);
+  }, []);
+  const formatPrice=(price) =>{
+    return price.toLocaleString('vi-VN', { currency: 'VND' });
+  }
   return (
     <>
       <div className="mx-[auto] px-[15px] xl:w-[1150px] lg:w-[950px] md:w-[768px]">
@@ -455,7 +526,7 @@ const Room = () => {
                       <span class="seat-type-name">Ghế thường</span>
                     </div>
                     <div class="xl:w-[100%] xl:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left">
-                      <span class="seat-empty-quantity seat-normal-quantity"></span>
+                      <span class="seat-empty-quantity seat-normal-quantity">{amountNOR !== 0 ? amountNOR + 'x45.000 vnđ' : null}</span>
                     </div>
                   </div>
                 </div>
@@ -471,7 +542,7 @@ const Room = () => {
                       <span class="seat-type-name">Ghế VIP</span>
                     </div>
                     <div class="xl:w-[100%] xl:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left">
-                      <span class="seat-vip-quantity"></span>
+                      <span class="seat-vip-quantity">{amountVIP !== 0 ? amountVIP + 'x50.000 vnđ' : null}</span>
                     </div>
                   </div>
                 </div>
@@ -496,7 +567,9 @@ const Room = () => {
                     <div class="total-money-label  coloros text-[18px] text-left text-[#494C62] xl:w-[100%] xl:float-left  md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
                       Tổng tiền
                     </div>
-                    <div class="total-money-value xl:w-[100%] xl:float-left  md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]"></div>
+                    <div class="total-money-value xl:w-[100%] xl:float-left  md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
+                    {totalPrice !== 0 ? formatPrice(totalPrice)+' vnđ' : null }
+                    </div>
                   </div>
                 </div>
                 <div class="seat-type xl:border-l-2  xl:border-[#d8d8d8] xl:border-t-0 xl:h-[90px] md:border-t-1 md:border-[#d8d8d8] md:border-l-0  md:border-t-1 sm:border-[#d8d8d8] sm:border-l-0  sm:border-t-1 xl:w-[25%] xl:float-left lg:w-[25%] lg:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left md:pt-[15px] sm:pt-[15px] xl:pt-0 relative min-h-[1px] px-[15px]">
@@ -505,7 +578,7 @@ const Room = () => {
                       Thời gian còn lại
                     </div>
                     <div class="time-to-left-value coloros text-[38px] text-[#1e1f28] text-right xl:w-[100%] xl:float-left  md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                      9:32
+                      {timeLeft}
                     </div>
                   </div>
                 </div>
@@ -970,7 +1043,7 @@ const Room = () => {
 
                 <div class="seat-type time-left lg:w-[18.75%] lg:float-left padding-sm-top-15 padding-xs-top-15 padding-lg-top-0">
                   <div class="time-to-left-label">Thời gian còn lại</div>
-                  <div class="time-to-left-value">9:32</div>
+                  <div class="time-to-left-value">{timeLeft}</div>
                 </div>
               </div>
             </div> */}
@@ -1079,7 +1152,7 @@ const Room = () => {
                           <i class="fa fa-cubes"></i>&nbsp;Ghế ngồi
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="seat-name-selected font-bold"></span>
+                          <span class="seat-name-selected font-bold">{listnameseat}</span>
                         </div>
                       </div>
                     </li>
@@ -1296,6 +1369,21 @@ const Room = () => {
           .coloros {
             font-family: Oswald !important;
             line-height: 1.5em;
+          }
+          .seat-empty-quantity, .seat-vip-quantity, .seat-double-quantity {
+            font-family: Oswald;
+            font-size: 16px;
+            text-align: right;
+            color: #1e1f28;
+            margin-top: 30px;
+            float: right;
+          }
+          .total-money-value {
+            font-family: Oswald;
+            font-size: 20px;
+            text-align: right;
+            color: #03599d;
+            margin-top: 40px;
           }
           .font-family-san {
             font-family: "Source Sans 3", sans-serif !important;

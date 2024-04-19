@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes,Navigate } from "react-router-dom";
 import Main from "../main/Main";
 import NotFoundPage from "../main/NotFoundPage";
 import Content from "../content/Content";
@@ -27,6 +27,7 @@ const Routers = () => {
             <Route path="/franchise" element={<Franchise/>}/>
             <Route path="/loginandSignin" element={<Mainlgrft/>}/>
             <Route path="/room/:id/:name/:seat/:day" element={<Room/>}/>
+            <Route path="/*" element={<Navigate to="/" replace />} />
         </Routes>
     )
 }
