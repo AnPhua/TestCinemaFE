@@ -10,6 +10,7 @@ import Franchise from "../franchise/Franchise";
 import Mainlgrft from "../login/Mainlgrgt";
 import DetailsFilm from "../films/DetailsFilm";
 import Room from "../roomSeat/Room";
+import RoomPay from "../roomSeat/Roompay";
 
 const Routers = () => {
     return (
@@ -26,7 +27,10 @@ const Routers = () => {
             <Route path="/allmovie" element={<Content />}/>
             <Route path="/franchise" element={<Franchise/>}/>
             <Route path="/loginandSignin" element={<Mainlgrft/>}/>
-            <Route path="/room/:id/:name/:seat/:day" element={<Room/>}/>
+            <Route path="/room/:id/:name/:seat/:day">
+                <Route index="true" element={<Room/>}/>
+                <Route path=":listseat" element={<RoomPay/>}/>
+            </Route>
             <Route path="/*" element={<Navigate to="/" replace />} />
         </Routes>
     )
