@@ -1,28 +1,49 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  isLogged: false,
-  currentUser: null,
+  //isLogged: false,
+  login: {
+    isLogged: false,
+    currentUser: null,
+    isFetching: false,
+    error: false,
+  },
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    signin: (state, action) => {
-      state.isLogged = true;
-      state.currentUser = action.payload;
-      console.log(action.payload);
-      if (action.payload) {
-        localStorage.setItem("user", JSON.stringify(state.currentUser));
-      }
-    },
+    // signin: (state, action) => {
+    //   state.isLogged = true;
+    //   state.currentUser = action.payload;
+    //   console.log(action.payload);
+    //   if (action.payload) {
+    //     localStorage.setItem("user", JSON.stringify(state.currentUser));
+    //   }
+    // },
 
     signout: (state) => {
-      state.isLogged = false;
-      state.currentUser = null;
-      localStorage.removeItem("user");
+      state.login.isLogged = false;
+      state.login.currentUser = null;
+      state.login.error = true;
+    },
+    loginStart: (state) => {
+      state.login.isFetching = true;
+      state.login.isLogged = false;
+    },
+    loginSuccess: (state, action) => {
+      state.login.isLogged = true;
+      state.login.isFetching = false;
+      state.login.currentUser = action.payload;
+      state.login.error = false;
+    },
+    loginFailed: (state) => {
+      state.login.isLogged = false;
+      state.login.isFetching = false;
+      state.login.error = true;
     },
   },
 });
-export const { signin, signout } = authSlice.actions;
-export default authSlice;
+export const { signout, loginStart, loginSuccess, loginFailed } =
+  authSlice.actions;
+export default authSlice.reducer;

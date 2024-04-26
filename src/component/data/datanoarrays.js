@@ -18,7 +18,6 @@ export default [
     language: "Tiếng Hàn",
     launchDateofDetails: "09/04/2024",
   },
-
   {
     id: 5,
     name: 'B4S - Trước Giờ "Yêu" ',
@@ -210,7 +209,7 @@ export default [
   {
     id: 10,
     name: "Kung Fu Panda 4",
-    category: "Hoạt hình,Hài hước",
+    category: "Hoạt hình,Hài Hước",
     time: 94,
     launchDate: null,
     isHot: false,

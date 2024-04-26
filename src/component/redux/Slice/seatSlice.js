@@ -33,7 +33,6 @@ const seatSlice = createSlice({
         return item;
       });
     },
-
     resetState: (state) => {
       state.amountNOR = 0;
       state.amountVIP = 0;

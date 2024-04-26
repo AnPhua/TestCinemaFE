@@ -7,7 +7,7 @@ import seatSlice from "../Slice/seatSlice";
 const store = configureStore({
   reducer: {
     cart: cartSlice.reducer,
-    auth: authSlice.reducer,
+    auth: authSlice,
     seat: seatSlice,
     checkOut: checkOutSlice.reducer,
   },

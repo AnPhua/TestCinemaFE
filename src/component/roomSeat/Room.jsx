@@ -15,7 +15,6 @@ import seatbuyvip from "../../assets/images/seat/seat-buy-vip.png";
 import seatunselectdouble from "../../assets/images/seat/seat-unselect-double.png";
 import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
-import datafilms from "../data/datanoarrays";
 import { useDispatch, useSelector } from "react-redux";
 import seatLayoutdata from "../data/datainforforseats";
 import {
@@ -23,9 +22,11 @@ import {
   updateAmountVIP,
   resetState,
 } from "../redux/Slice/seatSlice";
+import { GetMovieById } from "../../services/controller/StaffController";
 const Room = () => {
   const dispatch = useDispatch();
   const [listnameseat, setListNameSeat] = useState("");
+  const [allmovie, setallmovie] = useState([]);
   const amountVIP = useSelector((state) => state.seat.amountVIP);
   const amountNOR = useSelector((state) => state.seat.amountNOR);
   const selectcinema = useContext(PassingData);
@@ -33,15 +34,28 @@ const Room = () => {
   const decodedDay = decodeURIComponent(day);
   const [timeLeft, setTimeLeft] = useState("10:00");
   const timerRef = useRef(null);
-  const data = datafilms.find((value) => value.id === parseInt(id));
+  useEffect(() => {
+    const fetchMovieById = async () => {
+      try {
+        const response = await GetMovieById(id);
+        if (response && response.data) {
+          setallmovie(response.data);
+        }
+      } catch (error) {
+        console.error("Lỗi trong quá trình lấy dữ liệu:", error);
+      }
+    };
+
+    fetchMovieById();
+  }, [id]);
   let ageLimitMessage = "";
-  if (data.ageLimit === "c-18.png") {
+  if (allmovie.rateName === "T18") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 18 tuổi.";
-  } else if (data.ageLimit === "c-16.png") {
+  } else if (allmovie.rateName === "T16") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 16 tuổi.";
-  } else if (data.ageLimit === "c-13.png") {
+  } else if (allmovie.rateName === "T13") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 13 tuổi.";
   } else {
@@ -376,12 +390,36 @@ const Room = () => {
                     <img
                       className="w-[100%] block max-w-[100%] h-auto"
                       alt=""
-                      src={require(`../../assets/images/poster/${data.image}`)}
+                      src={allmovie.image}
                     />
-                    {data.ageLimit && (
+                    {allmovie.rateName === "T18" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
-                          src={require(`../../assets/images/${data.ageLimit}`)}
+                          src={require(`../../assets/images/T18.png`)}
+                          class="block max-w-[100%] h-auto"
+                        />
+                      </span>
+                    )}
+                    {allmovie.rateName === "T16" && (
+                      <span className="absolute top-[10px] left-[20px]">
+                        <img
+                          src={require(`../../assets/images/T16.png`)}
+                          class="block max-w-[100%] h-auto"
+                        />
+                      </span>
+                    )}
+                    {allmovie.rateName === "T13" && (
+                      <span className="absolute top-[10px] left-[20px]">
+                        <img
+                          src={require(`../../assets/images/T13.png`)}
+                          class="block max-w-[100%] h-auto"
+                        />
+                      </span>
+                    )}
+                    {allmovie.rateName === "P" && (
+                      <span className="absolute top-[10px] left-[20px]">
+                        <img
+                          src={require(`../../assets/images/P.png`)}
                           class="block max-w-[100%] h-auto"
                         />
                       </span>
@@ -400,7 +438,7 @@ const Room = () => {
                           <i class="fa fa-tags"></i>&nbsp;Thể loại
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{data.category}</span>
+                          <span class="font-bold">{allmovie.movieTypeName}</span>
                         </div>
                       </div>
                     </li>
@@ -410,7 +448,7 @@ const Room = () => {
                           <i class="fa fa-clock-o"></i>&nbsp;Thời lượng
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{data.time} phút</span>
+                          <span class="font-bold">{allmovie.movieDuration} phút</span>
                         </div>
                       </div>
                     </li>

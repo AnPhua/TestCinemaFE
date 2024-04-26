@@ -1,18 +1,38 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import detailday from "../data/dayseat";
-import datafilms from "../data/datanoarrays";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import { GetMovieById } from "../../services/controller/StaffController";
 const DetailsFilm = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [allmovie, setallmovie] = useState([]);
   const { id } = useParams();
-  const data = datafilms.find((value) => value.id === parseInt(id));
+  useEffect(() => {
+    const fetchMovieById = async () => {
+      try {
+        const response = await GetMovieById(id);
+        if (response && response.data) {
+          setallmovie(response.data);
+        }
+      } catch (error) {
+        console.error("Lỗi trong quá trình lấy dữ liệu:", error);
+      }
+    };
+
+    fetchMovieById();
+  }, [id]);
   const handleOnClick = (i, e) => {
     e.preventDefault();
     setActiveIndex(i);
   };
+  const premiereDate = new Date(allmovie.premiereDate);
+
+  const day = premiereDate.getDate().toString().padStart(2, "0");
+  const month = (premiereDate.getMonth() + 1).toString().padStart(2, "0");
+  const year = premiereDate.getFullYear();
+
+  const formattedPremiereDate = `${day}/${month}/${year}`;
   const daysofweek = [
     { days: "07", dtday: "/04 - CN" },
     { days: "08", dtday: "/04 - T2" },
@@ -30,7 +50,7 @@ const DetailsFilm = () => {
         <h3 className="my-[20px] mx-0 text-[23px] leading-[1.5em] fonta">
           Trang chủ &gt;{" "}
           <span className="!text-[#03599d] text-[23px] leading-[1.5em] fonta">
-            {data?.name}
+            {allmovie.name}
           </span>
         </h3>
         <div className="mx-[-15px]">
@@ -39,22 +59,53 @@ const DetailsFilm = () => {
               <img
                 className="block max-w-[100%] h-[auto] rounded-[20px] w-[100%] align-middle border-0"
                 alt=""
-                src={require(`../../assets/images/poster/${data.image}`)}
+                src={allmovie.image}
               />
-              {data.ageLimit && (
+              {allmovie.rateName === "T18" && (
                 <span className="absolute top-[10px] left-[10px] ">
-                  <img src={require(`../../assets/images/${data.ageLimit}`)} className="block max-w-[100%] h-[auto]" alt="" />
+                  <img
+                    src={require(`../../assets/images/T18.png`)}
+                    className="block max-w-[100%] h-[auto]"
+                    alt=""
+                  />
+                </span>
+              )}
+              {allmovie.rateName === "T16" && (
+                <span className="absolute top-[10px] left-[10px] ">
+                  <img
+                    src={require(`../../assets/images/T16.png`)}
+                    className="block max-w-[100%] h-[auto]"
+                    alt=""
+                  />
+                </span>
+              )}
+              {allmovie.rateName === "T13" && (
+                <span className="absolute top-[10px] left-[10px] ">
+                  <img
+                    src={require(`../../assets/images/T13.png`)}
+                    className="block max-w-[100%] h-[auto]"
+                    alt=""
+                  />
+                </span>
+              )}
+              {allmovie.rateName === "P" && (
+                <span className="absolute top-[10px] left-[10px] ">
+                  <img
+                    src={require(`../../assets/images/P.png`)}
+                    className="block max-w-[100%] h-[auto]"
+                    alt=""
+                  />
                 </span>
               )}
             </div>
           </div>
           <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[100%] sm:float-left relative min-h-[1px] px-[15px] sm:pt-[15px]">
             <h1 className="m-0 mb-[15px] text-[33px] fonta !font-[500]">
-              {data?.name}
+              {allmovie.name}
             </h1>
 
             <p className="mb-[15px] text-base fontsan text-justify text-[#333333] tracking-tight text-opacity-70">
-              {data?.describe}
+              {allmovie.description}
             </p>
 
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -62,7 +113,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Đạo diễn: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.director}
+                {allmovie.director}
               </div>
             </div>
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -70,7 +121,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Diễn viên: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.caster}
+                {allmovie.caster}
               </div>
             </div>
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -78,7 +129,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Thể loại: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.category}
+                {allmovie.movieTypeName}
               </div>
             </div>
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -86,7 +137,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Thời lượng: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.time} phút
+                {allmovie.movieDuration} phút
               </div>
             </div>
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -94,7 +145,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Ngôn ngữ: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.language}
+                {allmovie.language}
               </div>
             </div>
             <div className="mx-[-15px] text-lg fontsan sm:text-[14px]">
@@ -102,7 +153,7 @@ const DetailsFilm = () => {
                 <span className="font-bold uppercase">Ngày khởi chiếu: </span>
               </div>
               <div className="xl:w-[75%] xl:float-left lg:w-[75%] lg:float-left md:w-[75%] md:float-left sm:w-[62.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                {data?.launchDateofDetails}
+                {formattedPremiereDate}
               </div>
             </div>
           </div>
@@ -214,9 +265,9 @@ const DetailsFilm = () => {
             <div className="lg:w-[75%] lg:float-left lg:ml-[12.5%] !mb-[35px] relative min-h-[1px] px-[15px] border-white">
               <iframe
                 className="w-[100%] h-[60vh] text-center align-middle justify-center"
-                src={`https://www.youtube.com/embed/${data?.youtube}&amp;showinfo=0&amp;autoplay=1`}
+                src={`https://www.youtube.com/embed/${allmovie.trailer}&amp;showinfo=0&amp;autoplay=1`}
                 allowfullscreen=""
-              ></iframe> 
+              ></iframe>
             </div>
             <div className="lg:w-[100%] lg:float-left relative min-h-[1px] px-[15px] margin-bottom-35">
               <div

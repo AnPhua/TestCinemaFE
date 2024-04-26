@@ -6,22 +6,26 @@ import YouTube from "react-youtube";
 import detailday from "../data/dayseat";
 import { Link } from "react-router-dom";
 import { PassingData } from "../../App";
-
+import c18 from "../../assets/images/T18.png";
+import c16 from "../../assets/images/T16.png";
+import c13 from "../../assets/images/T13.png";
+import cp from "../../assets/images/P.png";
+import { useSelector } from "react-redux";
 const ContentFilms = ({
   id,
   name,
-  category,
-  time,
+  movieTypeName,
+  movieDuration,
   launchDate,
   isHot,
   isSellTicket,
   image,
-  ageLimit,
-  youtube,
+  rateName,
+  trailer,
 }) => {
   const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
- 
+  const isLogged = useSelector((state) => state.auth.login.isLogged);
   const daysofweek = [
     { days: "07", dtday: "/04 - CN", details: "07/04/2024" },
     { days: "08", dtday: "/04 - T2", details: "08/04/2024" },
@@ -54,8 +58,8 @@ const ContentFilms = ({
     setopenTicket(false);
   };
 
-  const viewConfirmTicket = (time) => {
-    setSelectedSeat(time);
+  const viewConfirmTicket = (movieDuration) => {
+    setSelectedSeat(movieDuration);
     setopenConfirmTicket(true);
   };
   const closeModalConfirmTicket = () => {
@@ -84,17 +88,48 @@ const ContentFilms = ({
                 <img
                   className="block max-w-[100%] h-[auto] rounded-[20px] align-middle"
                   alt=""
-                  src={require(`../../assets/images/poster/${image}`)}
+                  src={image}
                 />
-                {ageLimit && (
-                  <span className="absolute  top-[10px]  left-[10px]">
+                {rateName === "T18" && (
+                  <span className="absolute top-[10px] left-[10px]">
                     <img
                       alt=""
-                      src={require(`../../assets/images/${ageLimit}`)}
+                      src={c18}
                       className="block max-w-[100%] h-[auto] align-middle"
                     />
                   </span>
                 )}
+
+                {rateName === "T16" && (
+                  <span className="absolute top-[10px] left-[10px]">
+                    <img
+                      alt=""
+                      src={c16}
+                      className="block max-w-[100%] h-[auto] align-middle"
+                    />
+                  </span>
+                )}
+
+                {rateName === "T13" && (
+                  <span className="absolute top-[10px] left-[10px]">
+                    <img
+                      alt=""
+                      src={c13}
+                      className="block max-w-[100%] h-[auto] align-middle"
+                    />
+                  </span>
+                )}
+
+                {rateName === "P" && (
+                  <span className="absolute top-[10px] left-[10px]">
+                    <img
+                      alt=""
+                      src={cp}
+                      className="block max-w-[100%] h-[auto] align-middle"
+                    />
+                  </span>
+                )}
+
                 <div className="rounded-[20px]">
                   <a
                     href="#product-pop-up"
@@ -136,10 +171,11 @@ const ContentFilms = ({
               </Link>
               <ul className="list-none pl-0 fontsan md:text-[15px] sm:text-[14px]">
                 <li className="max-h-[50px]">
-                  <span className="font-bold ">Thể loại:</span> {category}
+                  <span className="font-bold ">Thể loại:</span> {movieTypeName}
                 </li>
                 <li className="my-1">
-                  <span className="font-bold ">Thời lượng:</span> {time} phút
+                  <span className="font-bold ">Thời lượng:</span>{" "}
+                  {movieDuration} phút
                 </li>
                 {launchDate && (
                   <li>
@@ -187,7 +223,7 @@ const ContentFilms = ({
             </h3>
           </div>
           <div className="relative p-[15px] pb-[20px] text-center">
-            <YouTube videoId={youtube} opts={opts} ref={youtubeRef} />
+            <YouTube videoId={trailer} opts={opts} ref={youtubeRef} />
           </div>
         </div>
       </Modal>
@@ -353,7 +389,9 @@ const ContentFilms = ({
                     <td class="text-center text-[23px] font-[600]">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="ngaychieu">
-                          <span class="font-[500]">{selectedDay || daysofweek[0].details}</span>
+                          <span class="font-[500]">
+                            {selectedDay || daysofweek[0].details}
+                          </span>
                         </span>
                       </h3>
                     </td>
@@ -370,20 +408,41 @@ const ContentFilms = ({
             </div>
             <div className="modal-footer">
               <div className="text-center pb-[30px] ml-[275px]">
-              <Link to={`/room/${id}/${name}/${selectedSeat}/${encodeURIComponent(selectedDay || daysofweek[0].details)}`}>
-                <a
-                  href=""
-                  className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
-                >
-                  <span>
-                    <i
-                      className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
-                      aria-hidden="true"
-                    ></i>
-                  </span>
-                  <span className="text-[14px]">ĐỒNG Ý</span>
-                </a>
-                </Link>
+                {isLogged ? (
+                  <Link
+                    to={`/room/${id}/${name}/${selectedSeat}/${encodeURIComponent(
+                      selectedDay || daysofweek[0].details
+                    )}`}
+                  >
+                    <a
+                      href=""
+                      className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
+                    >
+                      <span>
+                        <i
+                          className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
+                          aria-hidden="true"
+                        ></i>
+                      </span>
+                      <span className="text-[14px]">ĐỒNG Ý</span>
+                    </a>
+                  </Link>
+                ) : (
+                  <Link to="/loginandSignin">
+                    <a
+                      href=""
+                      className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
+                    >
+                      <span>
+                        <i
+                          className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
+                          aria-hidden="true"
+                        ></i>
+                      </span>
+                      <span className="text-[14px]">ĐỒNG Ý</span>
+                    </a>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

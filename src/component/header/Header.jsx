@@ -1,20 +1,38 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import uk from "../../assets/images/united-kingdom.png";
 import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
 import citystage from "../data/dataCinemaStage";
 import { Modal } from "antd";
+import { useSelector } from "react-redux";
 import dataCinemaStage from "../data/dataCinemaStage";
+import { useDispatch } from "react-redux";
+import { signout } from "../redux/Slice/authSlice";
+import {jwtDecode} from "jwt-decode";
 
 const Header = ({ onSelectCinema }) => {
+  const isLogged = useSelector((state) => state.auth.login.isLogged);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectCinema, setSelectCinema] = useState("");
   const [cinemaBranches, setCinemaBranches] = useState([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [nameuser, setNameuser] = useState("");
   const [open, setOpen] = useState(true);
-
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.login.currentUser);
+  useEffect(() => {
+    if (currentUser && currentUser.accessToken) {
+      const decodedToken = jwtDecode(currentUser.accessToken);
+      setNameuser(decodedToken.Name);
+    }
+  }, [currentUser]);
+  const handleLogout = () => {
+    window.location.reload();
+    dispatch(signout());
+    
+  };
   const handleSelectCinema = (cinemaName) => {
     localStorage.setItem("selectCinema", cinemaName);
     window.location.reload();
@@ -141,18 +159,42 @@ const Header = ({ onSelectCinema }) => {
         </div>
       </Modal>
       <div
-        style={{ lineHeight: "15px", fontSize: "13px" }}
-        className=" bg-black text-white  md:px-[380px]"
+        className=" bg-black text-white  md:px-[380px] leading-[15px] text-[13px]"
       >
         <div className="sub-header-content flex items-center justify-end md:mx-1 lg:mx-2 xl:mx-5">
-          <Link to="/loginandSignin">
-            <span className="download mx-1 cursor-pointer hover:underline">
-              Đăng nhập
-            </span>
-            <span className="customer-care mx-1 cursor-pointer  border-l border-white pl-2 hover:underline">
-              Đăng ký
-            </span>
-          </Link>
+          {isLogged ? (
+            <>
+              <ul class="nav navbar-nav float-right pr-[10px] cursor-pointer">
+                <li class="dropdown dropdown-user">
+                  <a className="p-[2px] bg-[transparent]">
+                    <span class="username username-hide-on-mobile text-[13px]">
+                    Xin chào: {nameuser ? nameuser : "Ai đó"} 
+                    </span>
+                  </a>
+                </li>
+                <li class="dropdown dropdown-quick-sidebar-toggler  relative inline-block w-[1.25em] text-center pl-1">
+                  <a
+                    onClick={handleLogout}
+                    className="p-[3px] bg-[transparent]"
+                  >
+                    <i class="fa fa-sign-out"></i>
+                  </a>
+                </li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <Link to="/loginandSignin">
+                <span className="download mx-1 cursor-pointer hover:underline">
+                  Đăng nhập
+                </span>
+                <span className="customer-care mx-1 cursor-pointer border-l border-white pl-2 hover:underline">
+                  Đăng ký
+                </span>
+              </Link>
+            </>
+          )}
+
           <span className="cursor-pointer">
             <img className="w-[24px] h-[24px] p-0 ml-1" src={uk} alt="" />
           </span>
@@ -287,6 +329,42 @@ const Header = ({ onSelectCinema }) => {
           @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Source+Sans+3&display=swap");
           .beta {
             font-family: "Source Sans 3", sans-serif;
+          }
+          .padding-right-10 {
+            padding-right: 10px !important;
+          }
+          }
+          .pull-right {
+              float: right !important;
+          }
+          @media (min-width: 768px) {
+              .navbar-nav {
+                  margin: 0;
+              }
+          }
+          @media (min-width: 768px) {
+            .navbar-nav > li {
+                float: left;
+            }
+          }
+          .nav > li {
+              position: relative;
+              display: block;
+          }
+          .navbar-nav > li > a {
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+          }
+          .navbar-nav > li > a {
+              padding-top: 10px;
+              padding-bottom: 10px;
+              line-height: 20px;
+          }
+          .nav {
+            padding-left: 0;
+            list-style: none;
+        }
+          .pre-header a {
+              color: #fff;
           }
           .menubig {
             font-family: "Oswald", sans-serif;
