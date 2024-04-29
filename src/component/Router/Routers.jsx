@@ -11,6 +11,8 @@ import Mainlgrft from "../login/Mainlgrgt";
 import DetailsFilm from "../films/DetailsFilm";
 import Room from "../roomSeat/Room";
 import RoomPay from "../roomSeat/Roompay";
+import Registercpn from "../login/Registercpn";
+import ConfirmEmail from "../login/ConfirmEmail";
 
 const Routers = () => {
     return (
@@ -27,10 +29,12 @@ const Routers = () => {
             <Route path="/allmovie" element={<Content />}/>
             <Route path="/franchise" element={<Franchise/>}/>
             <Route path="/loginandSignin" element={<Mainlgrft/>}/>
+            <Route path="/registernewmb" element = {<Registercpn/>}/>
             <Route path="/room/:id/:name/:seat/:day">
                 <Route index="true" element={<Room/>}/>
                 <Route path=":listseat" element={<RoomPay/>}/>
             </Route>
+            <Route path="/confirmemail" element = {<ConfirmEmail/>}/>
             <Route path="/*" element={<Navigate to="/" replace />} />
         </Routes>
     )

@@ -1,12 +1,15 @@
+/* eslint-disable no-template-curly-in-string */
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import google from "../../assets/svg/google.svg";
 import fb from "../../assets/svg/facebook.svg";
+import Modal from "antd/es/modal/Modal";
+import { Form ,Input,Button} from "antd";
 import { useEffect, useState } from "react";
-import { loginUser } from "../../services/controller/AuthController";
+import { loginUser,changeYourPassword } from "../../services/controller/AuthController";
 import { useDispatch ,useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode} from "jwt-decode";
 
 const Mainlgrft = () => {
   const isLogged = useSelector((state) => state.auth.login.isLogged);
@@ -14,9 +17,31 @@ const Mainlgrft = () => {
   const [password, setPassWord] = useState("");
   const [nameuser, setNameuser] = useState("");
   const [email ,setEmail] = useState("");
+  const [openchangepass,setOpenChangePass] = useState(false);
+  const [oldPassword,setOldPassword] = useState("");
+  const [newPassword,setNewPassword] = useState("");
+  const [newcfPassword,setNewCFPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
+  
+  const changpass = () =>{
+    changeYourPassword(oldPassword,newPassword,newcfPassword, dispatch, navigate,currentUser.accessToken);
+  }
+  const validateMessages = {
+    required: "${label} Không Được Để Trống!",
+    types: {
+      email: "${label} Không Đúng Định Dạng Email!",
+    },
+  };
+  const layout = {
+    labelCol: {
+      span: 8,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
   useEffect(() => {
     if (currentUser && currentUser.accessToken) {
       const decodedToken = jwtDecode(currentUser.accessToken);
@@ -26,12 +51,18 @@ const Mainlgrft = () => {
   }, [currentUser]);
   const handleLogin = (e) => {
     e.preventDefault();
-    const newUser = {
+    const login = {
       username: username,
       password: password,
     };
-    loginUser(newUser, dispatch, navigate);
+    loginUser(login, dispatch, navigate);
   };
+  const handleX = () => {
+    setOpenChangePass(false);
+  }
+  const Openthemodal = () =>{
+    setOpenChangePass(true);
+  }
 
   return (
     <>
@@ -97,8 +128,8 @@ const Mainlgrft = () => {
                       <div class="lg:w-[100%] lg:float-left relative min-h-[1px] px-[15px]">
                         <div class="form-group font-family-san text-[16px] text-[#337AB7] hover:underline">
                           <a
-                            href="#doimatkhau-pop-up"
-                            class="fancybox-fast-view"
+                            onClick={Openthemodal}
+                            className="cursor-pointer"
                           >
                             Đổi mật khẩu?
                           </a>
@@ -234,7 +265,67 @@ const Mainlgrft = () => {
           </div>
         )}
       </div>
-
+      <Modal
+        destroyOnClose={true}
+        title={null}
+        open={openchangepass}
+        onCancel={handleX}
+        footer={null}
+        className="!w-[700px] max-w-[100%] text-left align-middle overflow-auto mt-[50px]"
+      >
+        <h3  className=" md:text-[15px] sm:text-[12px] fontos !text-[23px]  text-[#FF4D4F]  p-[10px] !w-[25%] rounded-[2px] text-left">ĐỔI MẬT KHẨU</h3>
+        <Form
+              {...layout}
+              name="nest-messages"
+              onFinish={changpass}
+              style={{
+                maxWidth: 600,
+              }}
+              validateMessages={validateMessages}
+            >
+              <Form.Item
+                label="Mật Khẩu Cũ"
+                name="OldPassword"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input.Password onChange={(e)=>setOldPassword(e.target.value)}/>
+              </Form.Item>
+              <Form.Item
+                label="Mật Khẩu Mới"
+                name="NewPassword"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input.Password onChange={(e)=>setNewPassword(e.target.value)}/>
+              </Form.Item>
+              <Form.Item
+                label="Xác Nhận Lại Mật Khẩu Mới"
+                name="NewCFPassword"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input.Password onChange={(e)=>setNewCFPassword(e.target.value)}/>
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  offset: 8,
+                  span: 16,
+                }}
+              >
+                <Button danger type="primary" htmlType="submit">Xác Nhận Đổi Mật Khẩu</Button>
+              </Form.Item>
+            </Form>
+      </Modal>
       <style jsx>
         {`
           @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
@@ -272,7 +363,7 @@ const Mainlgrft = () => {
             border: 1px solid #e5e5e5;
             box-shadow: none;
             transition: border-color ease-in-out 0.15s,
-              box-shadow ease-in-out 0.15s;
+            box-shadow ease-in-out 0.15s;
             display: block;
             width: 100%;
             height: 34px;

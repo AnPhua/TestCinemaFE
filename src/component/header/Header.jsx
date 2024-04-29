@@ -168,7 +168,7 @@ const Header = ({ onSelectCinema }) => {
                 <li class="dropdown dropdown-user">
                   <a className="p-[2px] bg-[transparent]">
                     <span class="username username-hide-on-mobile text-[13px]">
-                    Xin chào: {nameuser ? nameuser : "Ai đó"} 
+                    Xin Chào: {nameuser ? nameuser : "HiddenName"} 
                     </span>
                   </a>
                 </li>
@@ -188,6 +188,9 @@ const Header = ({ onSelectCinema }) => {
                 <span className="download mx-1 cursor-pointer hover:underline">
                   Đăng nhập
                 </span>
+                </Link>  
+                
+              <Link to="/registernewmb">
                 <span className="customer-care mx-1 cursor-pointer border-l border-white pl-2 hover:underline">
                   Đăng ký
                 </span>

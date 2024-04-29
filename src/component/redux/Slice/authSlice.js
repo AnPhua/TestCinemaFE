@@ -7,21 +7,27 @@ const initialState = {
     isFetching: false,
     error: false,
   },
+  register: {
+    isFetching: false,
+    error: false,
+    success: false,
+  },
+  confirmCode: {
+    isFetching: false,
+    error: false,
+    success: false,
+  },
+  changePassword: {
+    isFetching: false,
+    error: false,
+    success: false,
+  },
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // signin: (state, action) => {
-    //   state.isLogged = true;
-    //   state.currentUser = action.payload;
-    //   console.log(action.payload);
-    //   if (action.payload) {
-    //     localStorage.setItem("user", JSON.stringify(state.currentUser));
-    //   }
-    // },
-
     signout: (state) => {
       state.login.isLogged = false;
       state.login.currentUser = null;
@@ -42,8 +48,60 @@ const authSlice = createSlice({
       state.login.isFetching = false;
       state.login.error = true;
     },
+    registerStart: (state) => {
+      state.register.isFetching = true;
+    },
+    registerSuccess: (state) => {
+      state.register.isFetching = false;
+      state.register.error = false;
+      state.register.success = true;
+    },
+    registeFailed: (state) => {
+      state.register.isFetching = false;
+      state.register.error = true;
+      state.register.success = false;
+    },
+    confirmStart: (state) => {
+      state.confirmCode.isFetching = true;
+    },
+    confirmSuccess: (state) => {
+      state.confirmCode.isFetching = false;
+      state.confirmCode.error = false;
+      state.confirmCode.success = true;
+    },
+    confirmFailed: (state) => {
+      state.confirmCode.isFetching = false;
+      state.confirmCode.error = true;
+      state.confirmCode.success = false;
+    },
+    changepassStart: (state) => {
+      state.confirmCode.isFetching = true;
+    },
+    changepassSuccess: (state) => {
+      state.confirmCode.isFetching = false;
+      state.confirmCode.error = false;
+      state.confirmCode.success = true;
+    },
+    changepassFailed: (state) => {
+      state.confirmCode.isFetching = false;
+      state.confirmCode.error = true;
+      state.confirmCode.success = false;
+    },
   },
 });
-export const { signout, loginStart, loginSuccess, loginFailed } =
-  authSlice.actions;
+export const {
+  signout,
+  loginStart,
+  loginSuccess,
+  loginFailed,
+  registerStart,
+  registerSuccess,
+  registeFailed,
+  confirmStart,
+  confirmSuccess,
+  confirmFailed,
+  changepassStart,
+  changepassSuccess,
+  changepassFailed,
+} = authSlice.actions;
 export default authSlice.reducer;
