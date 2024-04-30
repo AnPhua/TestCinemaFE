@@ -108,7 +108,7 @@ const Registercpn = () => {
                       if (!value || getFieldValue('password') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('Mật Khẩu Xác Nhận Không Khớp!'));
+                      return Promise.reject(new Error('Xác Nhận Mật Khẩu Không Đúng!'));
                     },
                   }),
                 ]}

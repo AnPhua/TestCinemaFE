@@ -6,7 +6,7 @@ import fb from "../../assets/svg/facebook.svg";
 import Modal from "antd/es/modal/Modal";
 import { Form ,Input,Button} from "antd";
 import { useEffect, useState } from "react";
-import { loginUser,changeYourPassword } from "../../services/controller/AuthController";
+import { loginUser,changeYourPassword ,sendEmail} from "../../services/controller/AuthController";
 import { useDispatch ,useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode} from "jwt-decode";
@@ -17,10 +17,14 @@ const Mainlgrft = () => {
   const [password, setPassWord] = useState("");
   const [nameuser, setNameuser] = useState("");
   const [email ,setEmail] = useState("");
+  const [phoneNumber,setPhonenumber] = useState("");
+  const [role,setRole]=useState("");
   const [openchangepass,setOpenChangePass] = useState(false);
   const [oldPassword,setOldPassword] = useState("");
   const [newPassword,setNewPassword] = useState("");
   const [newcfPassword,setNewCFPassword] = useState("");
+  const [opengetemailback,setopengetemailback] = useState(false);
+  const [getEmailBack,setgetEmailBack] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
@@ -28,10 +32,16 @@ const Mainlgrft = () => {
   const changpass = () =>{
     changeYourPassword(oldPassword,newPassword,newcfPassword, dispatch, navigate,currentUser.accessToken);
   }
+  const sendemail = ()=>{
+    const mails = {
+      email:getEmailBack,
+    }
+    sendEmail(mails,dispatch,navigate);
+  }
   const validateMessages = {
-    required: "${label} Không Được Để Trống!",
+    required: "Trường này không được bỏ trống !",
     types: {
-      email: "${label} Không Đúng Định Dạng Email!",
+      email: "${label} Không Đúng Định Dạng",
     },
   };
   const layout = {
@@ -47,6 +57,8 @@ const Mainlgrft = () => {
       const decodedToken = jwtDecode(currentUser.accessToken);
       setNameuser(decodedToken.Name);
       setEmail(decodedToken.Email);
+      setPhonenumber(decodedToken.PhoneNumber);
+      setRole(decodedToken.Roles);
     }
   }, [currentUser]);
   const handleLogin = (e) => {
@@ -62,6 +74,12 @@ const Mainlgrft = () => {
   }
   const Openthemodal = () =>{
     setOpenChangePass(true);
+  }
+  const OpenGetEmail = () =>{
+    setopengetemailback(true);
+  }
+  const CloseGetEmail = () =>{
+    setopengetemailback(false);
   }
 
   return (
@@ -107,7 +125,7 @@ const Mainlgrft = () => {
                         />
                       </div>
                       <div class="lg:w-[50%] lg:float-left !mb-[10px] relative min-h-[1px] px-[15px]">
-                        <label class="control-label font-16">
+                        <label class="control-label ">
                           <span className="text-[red]">*</span>&nbsp;Email
                         </label>
                         <div class="input-icon">
@@ -119,6 +137,33 @@ const Mainlgrft = () => {
                             value={email || ''}
                             class="form-control"
                             placeholder="Email"
+                          />
+                        </div>
+                      </div>
+                      <div class="lg:w-[50%] lg:float-left !mb-[10px] relative min-h-[1px] px-[15px] ">
+                        <label class="control-label !text-[14px]">
+                          <span className="text-[red]">*</span>&nbsp;Số Điện Thoại
+                        </label>
+                        <input
+                          type="text"
+                          id="txtName"
+                          value={phoneNumber || ''}
+                          class="form-control"
+                          placeholder="Số Điện Thoại"
+                        />
+                      </div>
+                      <div class="lg:w-[50%] lg:float-left !mb-[10px] relative min-h-[1px] px-[15px]">
+                        <label class="control-label font-16">
+                          <span className="text-[red]">*</span>&nbsp;Chức Vụ
+                        </label>
+                        <div class="input-icon">
+                          <i class="fa fa-envelope"></i>
+                          <input
+                            type="text"
+                            id="txtEmail"
+                            value={role || ''}
+                            class="form-control"
+                            placeholder="Chức Vụ"
                           />
                         </div>
                       </div>
@@ -245,7 +290,7 @@ const Mainlgrft = () => {
                           </div>
                         </div>
                         <a
-                          href="#"
+                          onClick={OpenGetEmail}
                           className="text-sm my-text hover:underline  !text-[#2563EB] !font-[600]"
                         >
                           Quên mật khẩu?
@@ -268,6 +313,41 @@ const Mainlgrft = () => {
       <Modal
         destroyOnClose={true}
         title={null}
+        open={opengetemailback}
+        onCancel={CloseGetEmail}
+        footer={null}
+        className="!w-[400px] max-w-[100%] align-middle overflow-auto mt-[150px]"
+      >
+        <h3  className=" md:text-[15px] sm:text-[12px] fontos !text-[23px]  text-[#FF4D4F]  p-[10px] !w-[70%] rounded-[2px] text-center">LẤY LẠI MẬT KHẨU</h3>
+            <Form
+              {...layout}
+              name="Send-Email"
+              onFinish={sendemail}
+              style={{
+                maxWidth: 300,
+              }}
+              validateMessages={validateMessages}
+            >
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[{ required: true, type: "email" }]}
+              >
+                <Input onChange={(e)=>setgetEmailBack(e.target.value)} />
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  offset: 8,
+                  span: 16,
+                }}
+              >
+                <Button danger type="primary" htmlType="submit">Lấy Lại Mật Khẩu</Button>
+              </Form.Item>
+            </Form>
+      </Modal>
+      <Modal
+        destroyOnClose={true}
+        title={null}
         open={openchangepass}
         onCancel={handleX}
         footer={null}
@@ -276,7 +356,7 @@ const Mainlgrft = () => {
         <h3  className=" md:text-[15px] sm:text-[12px] fontos !text-[23px]  text-[#FF4D4F]  p-[10px] !w-[25%] rounded-[2px] text-left">ĐỔI MẬT KHẨU</h3>
         <Form
               {...layout}
-              name="nest-messages"
+              name="Change-Password"
               onFinish={changpass}
               style={{
                 maxWidth: 600,
@@ -292,7 +372,7 @@ const Mainlgrft = () => {
                   },
                 ]}
               >
-                <Input.Password onChange={(e)=>setOldPassword(e.target.value)}/>
+                <Input.Password onChange={(event) => setOldPassword(event.target.value)} />
               </Form.Item>
               <Form.Item
                 label="Mật Khẩu Mới"
@@ -303,18 +383,27 @@ const Mainlgrft = () => {
                   },
                 ]}
               >
-                <Input.Password onChange={(e)=>setNewPassword(e.target.value)}/>
+                <Input.Password onChange={(event) => setNewPassword(event.target.value)} />
               </Form.Item>
               <Form.Item
                 label="Xác Nhận Lại Mật Khẩu Mới"
                 name="NewCFPassword"
+                dependencies={['NewPassword']}
                 rules={[
                   {
                     required: true,
                   },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('NewPassword') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('Xác Nhận Mật Khẩu Không Đúng!'));
+                    },
+                  }),
                 ]}
               >
-                <Input.Password onChange={(e)=>setNewCFPassword(e.target.value)}/>
+                <Input.Password onChange={(event) => setNewCFPassword(event.target.value)} />
               </Form.Item>
               <Form.Item
                 wrapperCol={{

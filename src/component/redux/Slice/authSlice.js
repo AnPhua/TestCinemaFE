@@ -22,6 +22,11 @@ const initialState = {
     error: false,
     success: false,
   },
+  sendEmail: {
+    isFetching: false,
+    error: false,
+    success: false,
+  },
 };
 
 const authSlice = createSlice({
@@ -87,6 +92,19 @@ const authSlice = createSlice({
       state.confirmCode.error = true;
       state.confirmCode.success = false;
     },
+    sendEmailStart: (state) => {
+      state.sendEmail.isFetching = true;
+    },
+    sendEmailSuccess: (state) => {
+      state.sendEmail.isFetching = false;
+      state.sendEmail.error = false;
+      state.sendEmail.success = true;
+    },
+    sendEmailFailed: (state) => {
+      state.sendEmail.isFetching = false;
+      state.sendEmail.error = true;
+      state.sendEmail.success = false;
+    },
   },
 });
 export const {
@@ -103,5 +121,8 @@ export const {
   changepassStart,
   changepassSuccess,
   changepassFailed,
+  sendEmailStart,
+  sendEmailSuccess,
+  sendEmailFailed,
 } = authSlice.actions;
 export default authSlice.reducer;
