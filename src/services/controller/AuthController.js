@@ -20,12 +20,16 @@ import queryString from "query-string";
 const loginUser = async (login, dispatch, navigate) => {
   dispatch(loginStart());
   try {
-    const res = await axios.post("api/auth/login", login);
+    const res = await axios.post("api/auth/loginmember", login);
     if (res.status === 200) {
       if (res.data.status === 401) {
         // hoặc lỗi 400
         alert(
           "Tài Khoản của bạn chưa được kích hoạt! Hãy kiểm tra email để kích hoạt."
+        );
+      } else if (res.data.status === 403) {
+        alert(
+          "Tài khoản của bạn chưa được kích hoạt! Vui lòng kiểm tra email để kích hoạt."
         );
       } else {
         dispatch(loginSuccess(res.data));
