@@ -7,6 +7,7 @@ const seatSlice = createSlice({
     items: comboItems,
     amountVIP: 0,
     amountNOR: 0,
+    amountDOU: 0,
   },
   reducers: {
     updateAmountNOR: (state, action) => {
@@ -14,6 +15,9 @@ const seatSlice = createSlice({
     },
     updateAmountVIP: (state, action) => {
       state.amountVIP = Math.max(0, state.amountVIP + action.payload);
+    },
+    updateAmountDOU: (state, action) => {
+      state.amountDOU = Math.max(0, state.amountDOU + action.payload);
     },
     increase: (state, action) => {
       state.items = state.items.map((item) => {
@@ -43,6 +47,7 @@ const seatSlice = createSlice({
 export const {
   updateAmountNOR,
   updateAmountVIP,
+  updateAmountDOU,
   increase,
   decrease,
   resetState,

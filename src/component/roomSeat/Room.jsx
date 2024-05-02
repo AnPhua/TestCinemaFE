@@ -13,6 +13,8 @@ import seatunselectvip from "../../assets/images/seat/seat-unselect-vip.png";
 import seatselectvip from "../../assets/images/seat/seat-select-vip.png";
 import seatbuyvip from "../../assets/images/seat/seat-buy-vip.png";
 import seatunselectdouble from "../../assets/images/seat/seat-unselect-double.png";
+import seatselectdouble from "../../assets/images/seat/seat-select-double.png";
+import seatbuydouble from "../../assets/images/seat/seat-buy-double.png";
 import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +22,7 @@ import seatLayoutdata from "../data/datainforforseats";
 import {
   updateAmountNOR,
   updateAmountVIP,
+  updateAmountDOU,
   resetState,
 } from "../redux/Slice/seatSlice";
 import { GetMovieById } from "../../services/controller/StaffController";
@@ -29,6 +32,7 @@ const Room = () => {
   const [allmovie, setallmovie] = useState([]);
   const amountVIP = useSelector((state) => state.seat.amountVIP);
   const amountNOR = useSelector((state) => state.seat.amountNOR);
+  const amountDOU = useSelector((state) => state.seat.amountDOU);
   const selectcinema = useContext(PassingData);
   const { id, name, seat, day } = useParams();
   const decodedDay = decodeURIComponent(day);
@@ -82,7 +86,7 @@ const Room = () => {
       timeoutId = setTimeout(() => {
         const currentScrollPosition =
           window.pageYOffset || document.documentElement.scrollTop;
-          setLimitedScrollPosition(currentScrollPosition);
+        setLimitedScrollPosition(currentScrollPosition);
         if (currentScrollPosition <= 200) {
           setLimitedScrollPosition(currentScrollPosition);
         } else {
@@ -105,7 +109,14 @@ const Room = () => {
     updatedLayout.forEach((row) => {
       row.forEach((seat) => {
         if (seat.status.includes("seat-select")) {
-          maxseat++;
+          if (
+            seat.status.includes("seat-normal") ||
+            seat.status.includes("seat-vip")
+          ) {
+            maxseat++;
+          } else if (seat.status.includes("seat-double")) {
+            maxseat += 2;
+          }
         }
       });
     });
@@ -115,28 +126,48 @@ const Room = () => {
       !seat.status.includes("seat-sold")
     ) {
       if (seat.status.includes("seat-select")) {
-        updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
-        maxseat--;
-        const selectedSeats = updatedLayout.flatMap((row) =>
-          row
-            .filter((seat) => seat.status.includes("seat-select"))
-            .map((seat) => seat.name)
-        );
-        setListNameSeat(selectedSeats.join(", "));
+        if (
+          seat.status.includes("seat-normal") ||
+          seat.status.includes("seat-vip")
+        ) {
+          updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
+          maxseat--;
+          const selectedSeats = updatedLayout.flatMap((row) =>
+            row
+              .filter((seat) => seat.status.includes("seat-select"))
+              .map((seat) => seat.name)
+          );
+          setListNameSeat(selectedSeats.join(", "));
+        } else if (seat.status.includes("seat-double")) {
+          updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
+          maxseat -= 2;
+          const selectedSeats = updatedLayout.flatMap((row) =>
+            row
+              .filter((seat) => seat.status.includes("seat-select"))
+              .map((seat) => seat.name)
+          );
+          setListNameSeat(selectedSeats.join(", "));
+        }
       } else {
         if (maxseat < 8) {
           if (seat.status.includes("seat-normal")) {
             updatedLayout[rowIndex][seatIndex].status =
-              "seat-used seat-select seat-normal";
+              "seat-cell seat-used seat-select seat-normal";
             maxseat++;
             dispatch(updateAmountNOR(1));
             setTotalPrice((prevTotalPrice) => prevTotalPrice + 45000);
           } else if (seat.status.includes("seat-vip")) {
             updatedLayout[rowIndex][seatIndex].status =
-              "seat-used seat-select seat-vip";
+              "seat-cell seat-used seat-select seat-vip";
             maxseat++;
             dispatch(updateAmountVIP(1));
             setTotalPrice((prevTotalPrice) => prevTotalPrice + 50000);
+          } else if (seat.status.includes("seat-double")) {
+            updatedLayout[rowIndex][seatIndex].status =
+              "seat-cell-db seat-used seat-select seat-double";
+            maxseat += 2;
+            dispatch(updateAmountDOU(1));
+            setTotalPrice((prevTotalPrice) => prevTotalPrice + 120000);
           }
         } else {
           alert("Không được chọn quá 8 ghế");
@@ -148,18 +179,22 @@ const Room = () => {
     ) {
       if (seat.status.includes("seat-normal")) {
         updatedLayout[rowIndex][seatIndex].status =
-          "seat-empty seat-used seat-normal";
+          "seat-cell seat-empty seat-used seat-normal";
         maxseat--;
         dispatch(updateAmountNOR(-1));
-        setTotalPrice((prevTotalPrice) =>
-        Math.max(prevTotalPrice - 45000, 0)); 
+        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 45000, 0));
       } else if (seat.status.includes("seat-vip")) {
         updatedLayout[rowIndex][seatIndex].status =
-          "seat-empty seat-used seat-vip";
+          "seat-cell seat-empty seat-used seat-vip";
         maxseat--;
         dispatch(updateAmountVIP(-1));
-        setTotalPrice((prevTotalPrice) =>
-        Math.max(prevTotalPrice - 50000, 0)); 
+        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 50000, 0));
+      } else if (seat.status.includes("seat-double")) {
+        updatedLayout[rowIndex][seatIndex].status =
+          "seat-cell-db seat-empty seat-used seat-double";
+        maxseat -= 2;
+        dispatch(updateAmountDOU(-1));
+        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 120000, 0));
       }
     }
     setSeatLayout(updatedLayout);
@@ -279,7 +314,7 @@ const Room = () => {
                             <div className="text-center" key={rowIndex}>
                               {row.map((seat, seatIndex) => (
                                 <div
-                                  className={`seat-cell ${seat.status}`}
+                                  className={`${seat.status}`}
                                   key={seatIndex}
                                   onClick={() =>
                                     handleSeatClick(rowIndex, seatIndex)
@@ -311,7 +346,9 @@ const Room = () => {
                     </div>
                     <div class="xl:w-[100%] xl:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left">
                       <span class="seat-empty-quantity seat-normal-quantity">
-                      {Math.max(amountNOR, 0) !== 0 ? Math.max(amountNOR, 0) + "x45.000 vnđ" : null}
+                        {Math.max(amountNOR, 0) !== 0
+                          ? Math.max(amountNOR, 0) + "x45.000 vnđ"
+                          : null}
                       </span>
                     </div>
                   </div>
@@ -329,7 +366,9 @@ const Room = () => {
                     </div>
                     <div class="xl:w-[100%] xl:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left">
                       <span class="seat-vip-quantity">
-                      {Math.max(amountVIP, 0) !== 0 ? Math.max(amountVIP, 0) + "x50.000 vnđ" : null}
+                        {Math.max(amountVIP, 0) !== 0
+                          ? Math.max(amountVIP, 0) + "x50.000 vnđ"
+                          : null}
                       </span>
                     </div>
                   </div>
@@ -346,7 +385,11 @@ const Room = () => {
                       <span class="seat-type-name">Ghế đôi</span>
                     </div>
                     <div class="xl:w-[100%] xl:float-left  md:w-[100%] md:float-left sm:w-[100%] sm:float-left">
-                      <span class="seat-double-quantity"></span>
+                      <span class="seat-double-quantity">
+                        {Math.max(amountDOU, 0) !== 0
+                          ? Math.max(amountDOU, 0) + "x120.000 vnđ"
+                          : null}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -438,7 +481,9 @@ const Room = () => {
                           <i class="fa fa-tags"></i>&nbsp;Thể loại
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{allmovie.movieTypeName}</span>
+                          <span class="font-bold">
+                            {allmovie.movieTypeName}
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -448,7 +493,9 @@ const Room = () => {
                           <i class="fa fa-clock-o"></i>&nbsp;Thời lượng
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{allmovie.movieDuration} phút</span>
+                          <span class="font-bold">
+                            {allmovie.movieDuration} phút
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -649,6 +696,14 @@ const Room = () => {
             line-height: 40px;
             font-size: 11px;
           }
+          #screen_form .seat-cell-db {
+            width: 70px;
+            height: 100%;
+            display: inline-block;
+            text-align: center;
+            line-height: 50px;
+            font-size: 11px;
+          }
           .seat-for-way {
             text-indent: -99999px;
           }
@@ -687,6 +742,18 @@ const Room = () => {
           }
           .seat-used.seat-sold.seat-normal {
             background-image: url(${seatbuynormal});
+          }
+          .seat-used.seat-empty.seat-double {
+            background-image: url(${seatunselectdouble});
+            background-size: 68px 35px !important;
+          }
+          .seat-used.seat-select.seat-double {
+            background-image: url(${seatselectdouble});
+            background-size: 68px 35px !important;
+          }
+          .seat-used.seat-sold.seat-double {
+            background-image: url(${seatbuydouble});
+            background-size: 68px 35px !important;
           }
           img {
             vertical-align: middle;

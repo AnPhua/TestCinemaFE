@@ -49,8 +49,10 @@ const RoomPay = () => {
   }, [id]);
   let countVIP = 0;
   let countNormal = 0;
+  let countDouble = 0;
   let totalPriceVIP = 0;
   let totalPriceNormal = 0;
+  let totalPriceDouble = 0;
   let totalforallseats = 0;
   let discountmoney = 0;
   let ageLimitMessage = "";
@@ -149,11 +151,15 @@ const RoomPay = () => {
             countNormal++;
             totalPriceNormal += 45000;
           }
+          else if (seat.status.includes("seat-double")) {
+            countDouble++;
+            totalPriceDouble += 120000;
+          }
         }
       });
     });
   });
-  totalforallseats = totalPriceVIP + totalPriceNormal;
+  totalforallseats = totalPriceVIP + totalPriceNormal + totalPriceDouble;
   return (
     <>
       <div className="mx-[auto] px-[15px] xl:w-[1150px] lg:w-[950px] md:w-[768px]">
@@ -253,6 +259,23 @@ const RoomPay = () => {
                         </div>
                         <div className="lg:w-[18.75%] lg:float-left relative min-h-[1px] px-[15px] item-seat-money">
                           = {formatPrice(totalPriceNormal)} vnđ
+                        </div>
+                      </div>
+                      <div className="clearfix"></div>
+                      <hr className="my-[25px]" />
+                    </div>
+                  )}
+                  {countDouble !== 0 && (
+                    <div>
+                      <div className="row flex mt-[25px]">
+                        <div className="lg:w-[50%] lg:float-left relative min-h-[1px] px-[15px] item-seat-type">
+                          GHẾ ĐÔI
+                        </div>
+                        <div className="lg:w-[31.25%] lg:float-left relative min-h-[1px] px-[15px] item-seat-quantity">
+                          {countDouble} x 120.000
+                        </div>
+                        <div className="lg:w-[18.75%] lg:float-left relative min-h-[1px] px-[15px] item-seat-money">
+                          = {formatPrice(totalPriceDouble)} vnđ
                         </div>
                       </div>
                       <div className="clearfix"></div>
