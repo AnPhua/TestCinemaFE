@@ -20,11 +20,14 @@ const GetAllMovie = () => {
 const GetMovieById = (movieId) => {
   return axios.get(`api/staff/GetMovieById?movieId=${movieId}`);
 };
-
+const GetAllFood = () => {
+  return axios.get("api/admin/GetAllFoods?PageNumber=1&PageSize=10");
+};
 export {
   GetMovieUnreference,
   GetMovieShowing,
   GetSneakShow,
   GetAllMovie,
   GetMovieById,
+  GetAllFood,
 };

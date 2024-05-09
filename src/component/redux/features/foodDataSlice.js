@@ -1,9 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
-import comboItems from "../../data/datacombo";
-const seatSlice = createSlice({
-  name: "cart",
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "../../../services/Customize-axios";
+
+export const getAllFoodRedux = createAsyncThunk("getAllFoodredux", async () => {
+  try {
+    const response = await axios.get(
+      "api/admin/GetAllFoods?PageNumber=1&PageSize=10"
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+});
+
+export const foodDetails = createSlice({
+  name: "foodDetails",
   initialState: {
-    items: comboItems,
+    foods: [],
+    loading: false,
+    error: null,
     amountVIP: 0,
     amountNOR: 0,
     amountDOU: 0,
@@ -19,7 +33,7 @@ const seatSlice = createSlice({
       state.amountDOU = Math.max(0, state.amountDOU + action.payload);
     },
     increase: (state, action) => {
-      state.items = state.items.map((item) => {
+      state.foods = state.foods.map((item) => {
         if (item.id === action.payload) {
           const newQuantity = item.quantity + 1;
           return { ...item, quantity: newQuantity };
@@ -28,7 +42,7 @@ const seatSlice = createSlice({
       });
     },
     decrease: (state, action) => {
-      state.items = state.items.map((item) => {
+      state.foods = state.foods.map((item) => {
         if (item.id === action.payload) {
           const newQuantity = Math.max(0, item.quantity - 1);
           return { ...item, quantity: newQuantity };
@@ -41,8 +55,23 @@ const seatSlice = createSlice({
       state.amountVIP = 0;
     },
   },
-});
 
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllFoodRedux.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllFoodRedux.fulfilled, (state, action) => {
+        state.loading = false;
+        state.foods = action.payload;
+      })
+      .addCase(getAllFoodRedux.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  },
+});
 export const {
   updateAmountNOR,
   updateAmountVIP,
@@ -50,5 +79,5 @@ export const {
   increase,
   decrease,
   resetState,
-} = seatSlice.actions;
-export default seatSlice.reducer;
+} = foodDetails.actions;
+export default foodDetails.reducer;

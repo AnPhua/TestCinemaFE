@@ -13,20 +13,20 @@ import plus from "../../assets/images/plus.png";
 import minus from "../../assets/images/minus.png";
 import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetState } from "../redux/Slice/seatSlice";
 import seats from "../data/datainforforseats";
 import icinforpayment from "../../assets/images/ic-inforpayment.png";
 import iccombo from "../../assets/images/ic-combo.png";
 import icpayment from "../../assets/images/ic-payment.png";
 import vnpay from "../../assets/images/vnpay.png";
-import { decrease, increase } from "../redux/Slice/seatSlice";
 import { GetMovieById } from "../../services/controller/StaffController";
+import { getAllFoodRedux } from "../redux/features/foodDataSlice";
 const RoomPay = () => {
   const dispatch = useDispatch();
   const [allmovie, setallmovie] = useState([]);
-  
-  const comboItems = useSelector((state) => state.seat.items);
+  const [quantities, setQuantities] = useState({});
+  const comboItems = useSelector((state) => state.food.foods);
   const selectcinema = useContext(PassingData);
   const { id, name, seat, day, listseat } = useParams();
   const decodedDay = decodeURIComponent(day);
@@ -47,6 +47,9 @@ const RoomPay = () => {
 
     fetchMovieById();
   }, [id]);
+  useEffect(() => {
+    dispatch(getAllFoodRedux());
+  }, [dispatch]);
   let countVIP = 0;
   let countNormal = 0;
   let countDouble = 0;
@@ -69,6 +72,21 @@ const RoomPay = () => {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này dành cho khán giả ở mọi độ tuổi.";
   }
+  const handleDecrement = (id) => {
+    setQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      updatedQuantities[id] = Math.max(0, (prevQuantities[id] || 0) - 1);
+      return updatedQuantities;
+    });
+  };
+
+  const handleIncrement = (id) => {
+    setQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      updatedQuantities[id] = (prevQuantities[id] || 0) + 1;
+      return updatedQuantities;
+    });
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -150,8 +168,7 @@ const RoomPay = () => {
           } else if (seat.status.includes("seat-normal")) {
             countNormal++;
             totalPriceNormal += 45000;
-          }
-          else if (seat.status.includes("seat-double")) {
+          } else if (seat.status.includes("seat-double")) {
             countDouble++;
             totalPriceDouble += 120000;
           }
@@ -317,40 +334,37 @@ const RoomPay = () => {
                         <td>
                           <img
                             className="!w-[130px] !h-[130px]"
-                            src={require(`../../assets/images/food/${combo.image}`)}
-                            alt={require(`../../assets/images/food/${combo.image}`)}
-                            altsrc={require(`../../assets/images/food/${combo.image}`)}
+                            src={combo.image}
+                            alt={combo.image}
+                            altsrc={combo.image}
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "default-image-url";
-                            }} 
+                            }}
                           />
                         </td>
-                        <td className="combo-title">{combo.title}</td>
+                        <td className="combo-title">{combo.nameOfFood}</td>
                         <td className="combo-item-des td-bg-1">
-                          <ul>
-                            {combo.description.map((desc, index) => (
-                              <li key={index}>{desc}</li>
-                            ))}
-                          </ul>
+                          <ul>{combo.description}</ul>
                         </td>
                         <td className="combo-action td-bg-1">
                           <span
                             className="btn-minus w-[22px] h-[22px] mr-[5px] hover:cursor-pointer"
-                            onClick={() => dispatch(decrease(combo.id))}
+                            onClick={() => handleDecrement(combo.id)}
                           ></span>
                           <span
                             className="btn-plus w-[22px] h-[22px]  mr-[5px] hover:cursor-pointer"
-                            onClick={() => dispatch(increase(combo.id))}
+                            onClick={() => handleIncrement(combo.id)}
                           ></span>
                           <span className="combo-quantity float-right mr-[15px] coloros">
-                            {combo.quantity}
+                          {quantities[combo.id] || 0}
                           </span>
                         </td>
                       </tr>
                     ))}
                     {comboItems.forEach((combo) => {
-                      totalforallseats += combo.price * combo.quantity;
+                      const quantity = quantities[combo.id] || 0;
+                      totalforallseats += combo.price * quantity;
                     })}
                   </tbody>
                 </table>
@@ -674,7 +688,7 @@ const RoomPay = () => {
                       alt=""
                       src={allmovie.image}
                     />
-                     {allmovie.rateName === "T18" && (
+                    {allmovie.rateName === "T18" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T18.png`)}
@@ -720,7 +734,9 @@ const RoomPay = () => {
                           <i class="fa fa-tags"></i>&nbsp;Thể loại
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{allmovie.movieTypeName}</span>
+                          <span class="font-bold">
+                            {allmovie.movieTypeName}
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -730,7 +746,9 @@ const RoomPay = () => {
                           <i class="fa fa-clock-o"></i>&nbsp;Thời lượng
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{allmovie.movieDuration} phút</span>
+                          <span class="font-bold">
+                            {allmovie.movieDuration} phút
+                          </span>
                         </div>
                       </div>
                     </li>
