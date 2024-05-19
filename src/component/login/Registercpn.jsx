@@ -1,11 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-template-curly-in-string */
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom"; 
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import {registernewUser} from "../../services/controller/AuthController";
+import { signout } from "../redux/Slice/authSlice";
 const layout = {
   labelCol: {
     span: 8,
@@ -24,7 +26,7 @@ const validateMessages = {
 
 
 const Registercpn = () => {
-  const isLogged = useSelector((state) => state.auth.login.isLogged);
+  const accessTokens = localStorage.getItem('accesstokens');
   const [username, setUserName] = useState("");
   const [email ,setEmail] = useState("");
   const [nameuser, setNameuser] = useState("");
@@ -46,10 +48,15 @@ const Registercpn = () => {
     }
     else{alert("Mật Khẩu Không Trùng Khớp,Xin Thực Hiện Lại!"); window.location.reload();}
   };
+  // useEffect(() => {
+  //   if (!accessTokens) {
+  //     navigate('/loginandSignin');
+  //   }
+  // }, [accessTokens, navigate]);
   return (
     <>
       <div className="px-[15px] py-[30px] mx-[375px]">
-        {isLogged ? (
+        {accessTokens ? (
           <>
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Bạn không đủ điều kiện thực hiện chức năng này, nhấn vào đây để quay về trang chủ

@@ -280,27 +280,27 @@ const Room = () => {
                     </span>
                   </div>
                   <div class="flex xl:w-[18.75%] xl:float-left lg:w-[18.75%] lg:float-left md:w-[18.75%] md:float-left sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                    <img width="35" height="35" src={seatsetnormal} />
+                    {/* <img width="35" height="35" src={seatsetnormal} />
                     <span className="coloros text-[13px] pt-[5px] pl-[3px]">
                       Ghế đang chọn
-                    </span>
+                    </span> */}
                   </div>
                   <div class="flex xl:w-[25%] xl:float-left lg:w-[25%] lg:float-left md:w-[25%] md:float-left sm:float-left relative min-h-[1px] px-[15px]">
                     <img width="35" height="35" src={seatselectnormal} />
                     <span className="coloros text-[13px] pt-[5px] pl-[3px]">
-                      Ghế đang được giữ
+                      Ghế đang chọn
                     </span>
                   </div>
                   <div class="flex xl:w-[18.75%] xl:float-left lg:w-[18.75%] lg:float-left md:w-[18.75%] md:float-left sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                    <img width="35" height="35" src={seatprocessnormal} />
+                    {/* <img width="35" height="35" src={seatprocessnormal} />
                     <span className="coloros text-[13px] pt-[5px] pl-[3px]">
                       Ghế đã bán
-                    </span>
+                    </span> */}
                   </div>
                   <div class="flex xl:w-[18.75%] xl:float-left lg:w-[18.75%] lg:float-left md:w-[18.75%] md:float-left sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
                     <img width="35" height="35" src={seatbuynormal} />
                     <span className="coloros text-[13px] pt-[5px] pl-[3px]">
-                      Ghế đặt trước
+                      Ghế đã bán
                     </span>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-template-curly-in-string */
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -12,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode} from "jwt-decode";
 
 const Mainlgrft = () => {
-  const isLogged = useSelector((state) => state.auth.login.isLogged);
   const [username, setUserName] = useState("");
   const [password, setPassWord] = useState("");
   const [nameuser, setNameuser] = useState("");
@@ -28,7 +28,13 @@ const Mainlgrft = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
-  
+  const accessTokens = currentUser ? currentUser.accessToken : null;
+
+  if (accessTokens) {
+    localStorage.setItem('accesstokens', accessTokens);
+  } else {
+    localStorage.removeItem('accesstokens');
+  }
   const changpass = () =>{
     changeYourPassword(oldPassword,newPassword,newcfPassword, dispatch, navigate,currentUser.accessToken);
   }
@@ -38,6 +44,11 @@ const Mainlgrft = () => {
     }
     sendEmail(mails,dispatch,navigate);
   }
+  useEffect(() => {
+    if (!accessTokens) {
+      navigate('/loginandSignin');
+    }
+  }, [accessTokens, navigate]);
   const validateMessages = {
     required: "Trường này không được bỏ trống !",
     types: {
@@ -85,7 +96,7 @@ const Mainlgrft = () => {
   return (
     <>
       <div>
-        {isLogged ? (
+        {accessTokens ? (
           <div className="xl:w-[1150px] lg:w-[950px] md:w-[730px] mx-auto px-[15px]">
             <div className="mx-[-15px]">
               <div

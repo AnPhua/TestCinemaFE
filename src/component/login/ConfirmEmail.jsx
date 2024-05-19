@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom"; 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { confirmCode } from "../../services/controller/AuthController";
+import { signout } from "../redux/Slice/authSlice";
 const layout = {
   labelCol: {
     span: 8,
@@ -17,17 +19,22 @@ const layout = {
 
 const ConfirmEmail = () => {
   const [confirmCodefrommail ,setconfirmCodefrommail] = useState("");
-  const isLogged = useSelector((state) => state.auth.login.isLogged);
+  const accessTokens = localStorage.getItem('accesstokens');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handlecode = () => {
     const code = {confirmCode : confirmCodefrommail};
     confirmCode(code, dispatch, navigate);
 };
+useEffect(() => {
+  if (!accessTokens) {
+    navigate('/loginandSignin');
+  }
+}, [accessTokens, navigate]);
   return (
     <>
       <div className="px-[15px] py-[30px] mx-[375px]">
-        {isLogged ? (
+        {accessTokens ? (
           <>
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Bạn không đủ điều kiện thực hiện chức năng này, nhấn vào đây để quay về trang chủ

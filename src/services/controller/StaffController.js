@@ -1,27 +1,32 @@
 import axios from "../Customize-axios";
 const GetMovieUnreference = () => {
   return axios.get(
-    "api/staff/GetMovieUnreference?PremiereDate=2024/04/09&pageSize=10&pageNumber=1"
+    "api/staff/GetMovieUnreference?PremiereDate=2024/04/10&pageSize=20&pageNumber=1"
   );
 };
 const GetMovieShowing = () => {
   return axios.get(
-    "api/staff/GetMovieShowing?PremiereDate=2024%2F04%2F09&pageSize=10&pageNumber=1"
+    "api/staff/GetMovieShowing?PremiereDate=2024%2F04%2F10&pageSize=20&pageNumber=1"
   );
 };
 const GetSneakShow = () => {
   return axios.get(
-    "api/staff/GetAllMovie?MovieTypeId=6&pageSize=10&pageNumber=1"
+    "api/staff/GetAllMovie?MovieTypeId=6&pageSize=20&pageNumber=1"
   );
 };
 const GetAllMovie = () => {
-  return axios.get("api/staff/GetAllMovie?pageSize=13&pageNumber=1");
+  return axios.get("api/staff/GetAllMovie?pageSize=20&pageNumber=1");
 };
 const GetMovieById = (movieId) => {
   return axios.get(`api/staff/GetMovieById?movieId=${movieId}`);
 };
 const GetAllFood = () => {
   return axios.get("api/admin/GetAllFoods?PageNumber=1&PageSize=10");
+};
+const GetSchedulesByMovie = async (movieId) => {
+  return await axios.get(
+    `api/staff/GetSchedulesListHour/${movieId}?pageSize=50&pageNumber=1`
+  );
 };
 export {
   GetMovieUnreference,
@@ -30,4 +35,5 @@ export {
   GetAllMovie,
   GetMovieById,
   GetAllFood,
+  GetSchedulesByMovie,
 };

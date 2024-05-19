@@ -11,9 +11,8 @@ import dataCinemaStage from "../data/dataCinemaStage";
 import { useDispatch } from "react-redux";
 import { signout } from "../redux/Slice/authSlice";
 import {jwtDecode} from "jwt-decode";
-
+import { useNavigate } from "react-router-dom";
 const Header = ({ onSelectCinema }) => {
-  const isLogged = useSelector((state) => state.auth.login.isLogged);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectCinema, setSelectCinema] = useState("");
   const [cinemaBranches, setCinemaBranches] = useState([]);
@@ -21,7 +20,9 @@ const Header = ({ onSelectCinema }) => {
   const [nameuser, setNameuser] = useState("");
   const [open, setOpen] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
+  const accessTokens = localStorage.getItem('accesstokens');
   useEffect(() => {
     if (currentUser && currentUser.accessToken) {
       const decodedToken = jwtDecode(currentUser.accessToken);
@@ -29,9 +30,10 @@ const Header = ({ onSelectCinema }) => {
     }
   }, [currentUser]);
   const handleLogout = () => {
-    window.location.reload();
+    localStorage.removeItem('accesstokens');
+    alert('Đăng Xuất Thành Công!');
     dispatch(signout());
-    
+    navigate('/loginandSignin')
   };
   const handleSelectCinema = (cinemaName) => {
     localStorage.setItem("selectCinema", cinemaName);
@@ -74,7 +76,13 @@ const Header = ({ onSelectCinema }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
+  useEffect(() => {
+    if (!accessTokens) {
+      dispatch(signout());
+      localStorage.removeItem('accesstokens');
+      navigate('/loginandSignin');
+    }
+  }, [accessTokens, navigate]);
   useEffect(() => {
     if (selectedCity?.branch != null) {
       setOpen(false);
@@ -162,7 +170,7 @@ const Header = ({ onSelectCinema }) => {
         className=" bg-black text-white  md:px-[380px] leading-[15px] text-[13px]"
       >
         <div className="sub-header-content flex items-center justify-end md:mx-1 lg:mx-2 xl:mx-5">
-          {isLogged ? (
+          {accessTokens ? (
             <>
               <ul class="nav navbar-nav float-right pr-[10px] cursor-pointer">
                 <li class="dropdown dropdown-user">

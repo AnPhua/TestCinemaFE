@@ -1,16 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import hot from "../../assets/images/hot.png";
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext,useEffect } from "react";
 import Modal from "antd/es/modal/Modal";
 import YouTube from "react-youtube";
-import detailday from "../data/dayseat";
 import { Link } from "react-router-dom";
 import { PassingData } from "../../App";
 import c18 from "../../assets/images/T18.png";
 import c16 from "../../assets/images/T16.png";
 import c13 from "../../assets/images/T13.png";
 import cp from "../../assets/images/P.png";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { GetSchedulesByMovie } from "../../services/controller/StaffController";
 const ContentFilms = ({
   id,
   name,
@@ -25,34 +26,29 @@ const ContentFilms = ({
 }) => {
   const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
-  const isLogged = useSelector((state) => state.auth.login.isLogged);
-  const daysofweek = [
-    { days: "07", dtday: "/04 - CN", details: "07/04/2024" },
-    { days: "08", dtday: "/04 - T2", details: "08/04/2024" },
-    { days: "09", dtday: "/04 - T3", details: "09/04/2024" },
-    { days: "10", dtday: "/04 - T4", details: "10/04/2024" },
-    { days: "11", dtday: "/04 - T5", details: "11/04/2024" },
-  ];
-  const selectedObject = detailday[activeIndex];
+  const accessTokens = localStorage.getItem('accesstokens');
+  const [dayofWeek, setDayofWeek] = useState([]);
+ ;
   const [openYoutube, setopenYoutube] = useState(false);
   const [openTicket, setopenTicket] = useState(false);
   const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedSeat, setSelectedSeat] = useState("");
-
+  const navigate = useNavigate();
   const youtubeRef = useRef(null);
 
   const handleOnClick = (i, e) => {
     e.preventDefault();
     setActiveIndex(i);
-    const selectedDayDetails = daysofweek[i].details;
+    const selectedDayDetails = dayofWeek[i].dayDetails;
     setSelectedDay(selectedDayDetails);
   };
   const viewTrailer = () => {
     setopenYoutube(true);
   };
-  const viewTicket = () => {
+  const viewTicket = async () => {
     setopenTicket(true);
+    await handleGetSchedulebyId();
   };
   const closeModalTicket = () => {
     setopenTicket(false);
@@ -71,6 +67,40 @@ const ContentFilms = ({
       youtubeRef.current.internalPlayer.pauseVideo();
     }
   };
+  const addLeadingZero = (number) => {
+    return number < 10 ? `0${number}` : number.toString();
+  };
+  const handleGetSchedulebyId = async()=>{
+    try {
+      const response = await GetSchedulesByMovie(id);
+      const data = response.data;
+
+      const convertedData = data.map(item => ({
+        movieId: item.movieId,
+        roomName: item.roomName,
+        day: addLeadingZero(item.day),
+        month: addLeadingZero(item.month),
+        year: item.year,
+        dayDetails: `${addLeadingZero(item.day)}/${addLeadingZero(item.month)}/${item.year}`,
+        date: item.date,
+        listTimeinSchedules: item.listTimeinSchedules.map(schedule => ({
+          timeDt: schedule.timeDt,
+          emptySeat: schedule.emptySeat,
+          id: schedule.id
+        }))
+      }));
+
+      setDayofWeek(convertedData);
+    } catch (error) {
+      console.error('Lỗi Trong Quá Trình Lấy Dữ liệu', error);
+    }
+  }
+  useEffect(() => {
+    if (!accessTokens) {
+      navigate('/loginandSignin');
+    }
+  }, [accessTokens, navigate]);
+  const selectedObject = dayofWeek[activeIndex]  || []
   const opts = {
     height: "377",
     width: "100%",
@@ -248,13 +278,13 @@ const ContentFilms = ({
             />
 
             <h1 class="text-center inline-block w-[100%] mt-0 !text-[33px]">
-              Rạp <span id="tenrap-showtimes">{selectcinema}</span>
+              Rạp <span id="tenrap-showtimes">{selectcinema || 'Beta Giải Phóng'}</span>
             </h1>
 
             <div class="tab-style-1 !mb-[35px] fontos" id="content-showtimes">
               <div className="">
                 <ul className="tf navtab  text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
-                  {daysofweek.map((item, index) => (
+                  {dayofWeek && dayofWeek.map((item, index) => (
                     <li
                       key={index}
                       onClick={(e) => handleOnClick(index, e)}
@@ -280,9 +310,9 @@ const ContentFilms = ({
                           className="md:!text-[38px] sm:!text-[30px]"
                           value={selectedDay}
                         >
-                          {item.days}
+                          {item.day}
                         </span>
-                        {item.dtday}
+                        /{item.month} - {item.date}
                       </a>
                     </li>
                   ))}
@@ -299,20 +329,22 @@ const ContentFilms = ({
                     </div>
 
                     <div className="flex">
-                      {selectedObject.map((seat) => (
+                    {dayofWeek.length > 0 &&
+                      dayofWeek[activeIndex]?.listTimeinSchedules &&
+                      dayofWeek[activeIndex].listTimeinSchedules.map((seat) => (
                         <div
                           key={seat.id}
                           className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
                         >
                           <a
                             className="btnticket default w-[100%]"
-                            onClick={() => viewConfirmTicket(seat.time)}
+                            onClick={() => viewConfirmTicket(seat.timeDt)}
                             value={selectedSeat}
                           >
-                            {seat.time}
+                            {seat.timeDt}
                           </a>
                           <div className="text-[11px] !pt-[5px] opacity-75">
-                            {seat.seat} ghế trống
+                            {seat.emptySeat} ghế trống
                           </div>
                         </div>
                       ))}
@@ -390,7 +422,7 @@ const ContentFilms = ({
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="ngaychieu">
                           <span class="font-[500]">
-                            {selectedDay || daysofweek[0].details}
+                            {selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails)} 
                           </span>
                         </span>
                       </h3>
@@ -408,10 +440,10 @@ const ContentFilms = ({
             </div>
             <div className="modal-footer">
               <div className="text-center pb-[30px] ml-[275px]">
-                {isLogged ? (
+                {accessTokens ? (
                   <Link
                     to={`/room/${id}/${name}/${selectedSeat}/${encodeURIComponent(
-                      selectedDay || daysofweek[0].details
+                      selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails)
                     )}`}
                   >
                     <a
