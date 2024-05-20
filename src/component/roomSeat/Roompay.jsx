@@ -22,17 +22,22 @@ import icpayment from "../../assets/images/ic-payment.png";
 import vnpay from "../../assets/images/vnpay.png";
 import { GetMovieById } from "../../services/controller/StaffController";
 import { getAllFoodRedux } from "../redux/features/foodDataSlice";
+import { jwtDecode} from "jwt-decode";
 const RoomPay = () => {
   const dispatch = useDispatch();
   const [allmovie, setallmovie] = useState([]);
   const [quantities, setQuantities] = useState({});
   const comboItems = useSelector((state) => state.food.foods);
   const selectcinema = useContext(PassingData);
-  const { id, name, seat, day, listseat } = useParams();
+  const { id, name,scheduleId, seat, day, listseat } = useParams();
   const decodedDay = decodeURIComponent(day);
   const listnameseat = decodeURIComponent(listseat);
   const [timeLeft, setTimeLeft] = useState("10:00");
   const timerRef = useRef(null);
+  const currentUser = useSelector((state) => state.auth.login.currentUser);
+  const [nameuser, setNameuser] = useState("");
+  const [email ,setEmail] = useState("");
+  const [phoneNumber,setPhonenumber] = useState("");
   useEffect(() => {
     const fetchMovieById = async () => {
       try {
@@ -48,6 +53,14 @@ const RoomPay = () => {
     fetchMovieById();
   }, [id]);
   useEffect(() => {
+    if (currentUser && currentUser.accessToken) {
+      const decodedToken = jwtDecode(currentUser.accessToken);
+      setNameuser(decodedToken.Name);
+      setEmail(decodedToken.Email);
+      setPhonenumber(decodedToken.PhoneNumber);
+    }
+  }, [currentUser]);
+  useEffect(() => {
     dispatch(getAllFoodRedux());
   }, [dispatch]);
   let countVIP = 0;
@@ -59,13 +72,13 @@ const RoomPay = () => {
   let totalforallseats = 0;
   let discountmoney = 0;
   let ageLimitMessage = "";
-  if (allmovie.rateName === "T18") {
+  if (allmovie.rateCode === "T18") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 18 tuổi.";
-  } else if (allmovie.rateName === "T16") {
+  } else if (allmovie.rateCode === "T16") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 16 tuổi.";
-  } else if (allmovie.rateName === "T13") {
+  } else if (allmovie.rateCode === "T13") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 13 tuổi.";
   } else {
@@ -222,7 +235,7 @@ const RoomPay = () => {
                       </span>
                       <br />
                       <span className="user-info-item-value">
-                        Nguyen An Phu{" "}
+                        {nameuser}{" "}
                       </span>
                     </div>
                     <div className="lg:w-[31.25%] lg:float-left relative min-h-[1px] px-[15px] user-info-item text-[16px]">
@@ -230,7 +243,7 @@ const RoomPay = () => {
                         Số điện thoại:{" "}
                       </span>
                       <br />
-                      <span className="user-info-item-value">0968085482 </span>
+                      <span className="user-info-item-value">{phoneNumber} </span>
                     </div>
                     <div className="lg:w-[31.25%] lg:float-left relative min-h-[1px] px-[15px] user-info-item text-[16px]">
                       <span className="font-bold user-info-item-label">
@@ -238,7 +251,7 @@ const RoomPay = () => {
                       </span>
                       <br />
                       <span className="user-info-item-value">
-                        anphu0220@gmail.com{" "}
+                        {email}{" "}
                       </span>
                     </div>
                   </div>
@@ -688,7 +701,7 @@ const RoomPay = () => {
                       alt=""
                       src={allmovie.image}
                     />
-                    {allmovie.rateName === "T18" && (
+                    {allmovie.rateCode === "T18" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T18.png`)}
@@ -696,7 +709,7 @@ const RoomPay = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "T16" && (
+                    {allmovie.rateCode === "T16" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T16.png`)}
@@ -704,7 +717,7 @@ const RoomPay = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "T13" && (
+                    {allmovie.rateCode === "T13" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T13.png`)}
@@ -712,7 +725,7 @@ const RoomPay = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "P" && (
+                    {allmovie.rateCode === "P" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/P.png`)}
@@ -812,7 +825,7 @@ const RoomPay = () => {
                   </ul>
                   <div class="text-center pb-[30px]">
                     <Link
-                      to={`/room/${id}/${name}/${seat}/${encodeURIComponent(
+                      to={`/room/${id}/${name}/${scheduleId}/${seat}/${encodeURIComponent(
                         day
                       )}`}
                     >

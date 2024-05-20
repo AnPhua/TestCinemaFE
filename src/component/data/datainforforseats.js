@@ -32,12 +32,12 @@ export default [
     {
       id: "23",
       name: "J2",
-      status: "seat-cell seat-empty seat-used seat-normal",
+      status: "seat-cell seat-used seat-sold seat-normal",
     },
     {
       id: "24",
       name: "J3",
-      status: "seat-cell seat-empty seat-used seat-normal",
+      status: "seat-cell seat-used seat-sold seat-normal",
     },
     {
       id: "25",
@@ -929,7 +929,7 @@ export default [
     {
       id: "229",
       name: "Z5",
-      status: "seat-cell-db seat-empty seat-used seat-double",
+      status: "seat-cell-db seat-used seat-sold seat-double",
     },
     { id: "230", name: "Z", status: "seat-cell-db seat-for-way seat-double" },
   ],

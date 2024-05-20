@@ -13,11 +13,20 @@ import Room from "../roomSeat/Room";
 import RoomPay from "../roomSeat/Roompay";
 import Registercpn from "../login/Registercpn";
 import ConfirmEmail from "../login/ConfirmEmail";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const Routers = () => {
+    const accessTokens = localStorage.getItem('accesstokens');
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!accessTokens) {
+          navigate('/loginandSignin');
+        }
+      }, [accessTokens, navigate]);
     return (
         <Routes>
-            <Route path="/" element={<Main />}/>
+            {accessTokens ? (<Route path="/" element={<Main />}/>):(<Route path="/loginandSignin" element={<Mainlgrft/>}/>)}
+            
             <Route path="*" element={<NotFoundPage/>}/>
             <Route path="/fee" element={<Fare/>}/>
             <Route path="/newoffers">
@@ -30,7 +39,7 @@ const Routers = () => {
             <Route path="/franchise" element={<Franchise/>}/>
             <Route path="/loginandSignin" element={<Mainlgrft/>}/>
             <Route path="/registernewmb" element = {<Registercpn/>}/>
-            <Route path="/room/:id/:name/:seat/:day">
+            <Route path="/room/:id/:name/:scheduleId/:seat/:day">
                 <Route index="true" element={<Room/>}/>
                 <Route path=":listseat" element={<RoomPay/>}/>
             </Route>

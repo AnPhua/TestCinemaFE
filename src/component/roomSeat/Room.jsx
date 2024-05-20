@@ -4,9 +4,9 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect, useContext, useRef } from "react";
 import seatunselectnormal from "../../assets/images/seat/seat-unselect-normal.png";
-import seatsetnormal from "../../assets/images/seat/seat-set-normal.png";
+//import seatsetnormal from "../../assets/images/seat/seat-set-normal.png";
 import seatselectnormal from "../../assets/images/seat/seat-select-normal.png";
-import seatprocessnormal from "../../assets/images/seat/seat-process-normal.png";
+//import seatprocessnormal from "../../assets/images/seat/seat-process-normal.png";
 import seatbuynormal from "../../assets/images/seat/seat-buy-normal.png";
 import icscreen from "../../assets/images/seat/ic-screen.png";
 import seatunselectvip from "../../assets/images/seat/seat-unselect-vip.png";
@@ -17,26 +17,28 @@ import seatselectdouble from "../../assets/images/seat/seat-select-double.png";
 import seatbuydouble from "../../assets/images/seat/seat-buy-double.png";
 import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
-import { useDispatch, useSelector } from "react-redux";
-import seatLayoutdata from "../data/datainforforseats";
+import { useDispatch } from "react-redux";
 import {
-  updateAmountNOR,
-  updateAmountVIP,
-  updateAmountDOU,
   resetState,
 } from "../redux/Slice/seatSlice";
-import { GetMovieById } from "../../services/controller/StaffController";
+import {
+  GetMovieById,
+  GetSchedulesById,
+} from "../../services/controller/StaffController";
 const Room = () => {
   const dispatch = useDispatch();
   const [listnameseat, setListNameSeat] = useState("");
   const [allmovie, setallmovie] = useState([]);
-  const amountVIP = useSelector((state) => state.seat.amountVIP);
-  const amountNOR = useSelector((state) => state.seat.amountNOR);
-  const amountDOU = useSelector((state) => state.seat.amountDOU);
+  // const amountVIP = useSelector((state) => state.seat.amountVIP);
+  // const amountNOR = useSelector((state) => state.seat.amountNOR);
+  // const amountDOU = useSelector((state) => state.seat.amountDOU);
+  
   const selectcinema = useContext(PassingData);
-  const { id, name, seat, day } = useParams();
+  const { id, name, scheduleId, seat, day } = useParams();
   const decodedDay = decodeURIComponent(day);
   const [timeLeft, setTimeLeft] = useState("10:00");
+  const [listSeat, setListSeat] = useState([]);
+  const [roomName, setRoomName] = useState("");
   const timerRef = useRef(null);
   useEffect(() => {
     const fetchMovieById = async () => {
@@ -51,15 +53,16 @@ const Room = () => {
     };
 
     fetchMovieById();
+    handleLoadSeats();
   }, [id]);
   let ageLimitMessage = "";
-  if (allmovie.rateName === "T18") {
+  if (allmovie.rateCode === "T18") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 18 tuổi.";
-  } else if (allmovie.rateName === "T16") {
+  } else if (allmovie.rateCode === "T16") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 16 tuổi.";
-  } else if (allmovie.rateName === "T13") {
+  } else if (allmovie.rateCode === "T13") {
     ageLimitMessage =
       "Theo quy định của cục điện ảnh, phim này không dành cho khán giả dưới 13 tuổi.";
   } else {
@@ -75,9 +78,11 @@ const Room = () => {
   }, [dispatch]);
 
   const [backgroundColor, setBackgroundColor] = useState("rgb(254, 185, 192)");
-  const [seatLayout, setSeatLayout] = useState(seatLayoutdata);
   const [limitedScrollPosition, setLimitedScrollPosition] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [amountVIP, setAmountVIP] = useState(0);
+  const [amountNOR, setAmountNOR] = useState(0);  
+  const [amountDOU, setAmountDOU] = useState(0);
   useEffect(() => {
     let timeoutId;
 
@@ -87,10 +92,10 @@ const Room = () => {
         const currentScrollPosition =
           window.pageYOffset || document.documentElement.scrollTop;
         setLimitedScrollPosition(currentScrollPosition);
-        if (currentScrollPosition <= 200) {
+        if (currentScrollPosition <= 50) {
           setLimitedScrollPosition(currentScrollPosition);
         } else {
-          setLimitedScrollPosition(200);
+          setLimitedScrollPosition(50);
         }
       }, 0.0009);
     }
@@ -101,110 +106,246 @@ const Room = () => {
       clearTimeout(timeoutId);
     };
   }, []);
-
-  const handleSeatClick = (rowIndex, seatIndex) => {
-    const updatedLayout = [...seatLayout];
-    const seat = updatedLayout[rowIndex][seatIndex];
-    let maxseat = 0;
-    updatedLayout.forEach((row) => {
-      row.forEach((seat) => {
-        if (seat.status.includes("seat-select")) {
-          if (
-            seat.status.includes("seat-normal") ||
-            seat.status.includes("seat-vip")
-          ) {
-            maxseat++;
-          } else if (seat.status.includes("seat-double")) {
-            maxseat += 2;
-          }
-        }
-      });
-    });
-
-    if (
-      seat.status.includes("seat-empty") &&
-      !seat.status.includes("seat-sold")
-    ) {
-      if (seat.status.includes("seat-select")) {
-        if (
-          seat.status.includes("seat-normal") ||
-          seat.status.includes("seat-vip")
-        ) {
-          updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
-          maxseat--;
-          const selectedSeats = updatedLayout.flatMap((row) =>
-            row
-              .filter((seat) => seat.status.includes("seat-select"))
-              .map((seat) => seat.name)
-          );
-          setListNameSeat(selectedSeats.join(", "));
-        } else if (seat.status.includes("seat-double")) {
-          updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
-          maxseat -= 2;
-          const selectedSeats = updatedLayout.flatMap((row) =>
-            row
-              .filter((seat) => seat.status.includes("seat-select"))
-              .map((seat) => seat.name)
-          );
-          setListNameSeat(selectedSeats.join(", "));
-        }
+  const handleLoadSeats = async () => {
+    try {
+      const response = await GetSchedulesById(scheduleId);
+      if (
+        response &&
+        response.data &&
+        response.data.dataResponsesTicketforsche
+      ) {
+        setRoomName(response.data.roomName);
+        setListSeat(response.data.dataResponsesTicketforsche);
       } else {
-        if (maxseat < 8) {
-          if (seat.status.includes("seat-normal")) {
-            updatedLayout[rowIndex][seatIndex].status =
-              "seat-cell seat-used seat-select seat-normal";
-            maxseat++;
-            dispatch(updateAmountNOR(1));
-            setTotalPrice((prevTotalPrice) => prevTotalPrice + 45000);
-          } else if (seat.status.includes("seat-vip")) {
-            updatedLayout[rowIndex][seatIndex].status =
-              "seat-cell seat-used seat-select seat-vip";
-            maxseat++;
-            dispatch(updateAmountVIP(1));
-            setTotalPrice((prevTotalPrice) => prevTotalPrice + 50000);
-          } else if (seat.status.includes("seat-double")) {
-            updatedLayout[rowIndex][seatIndex].status =
-              "seat-cell-db seat-used seat-select seat-double";
-            maxseat += 2;
-            dispatch(updateAmountDOU(1));
-            setTotalPrice((prevTotalPrice) => prevTotalPrice + 120000);
-          }
-        } else {
-          alert("Không được chọn quá 8 ghế");
+        setListSeat([]);
+      }
+    } catch (error) {
+      console.error("Lỗi Trong Quá Trình Lấy Dữ liệu", error);
+    }
+  };
+
+  // const handleSeatClick = (rowIndex, seatIndex) => {
+  //   const updatedLayout = [...seatLayout];
+  //   const seat = updatedLayout[rowIndex][seatIndex];
+  //   let maxseat = 0;
+  //   updatedLayout.forEach((row) => {
+  //     row.forEach((seat) => {
+  //       if (seat.status.includes("seat-select")) {
+  //         if (
+  //           seat.status.includes("seat-normal") ||
+  //           seat.status.includes("seat-vip")
+  //         ) {
+  //           maxseat++;
+  //         } else if (seat.status.includes("seat-double")) {
+  //           maxseat += 2;
+  //         }
+  //       }
+  //     });
+  //   });
+
+  //   if (
+  //     seat.status.includes("seat-empty") &&
+  //     !seat.status.includes("seat-sold")
+  //   ) {
+  //     if (seat.status.includes("seat-select")) {
+  //       if (
+  //         seat.status.includes("seat-normal") ||
+  //         seat.status.includes("seat-vip")
+  //       ) {
+  //         updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
+  //         maxseat--;
+  //         const selectedSeats = updatedLayout.flatMap((row) =>
+  //           row
+  //             .filter((seat) => seat.status.includes("seat-select"))
+  //             .map((seat) => seat.name)
+  //         );
+  //         setListNameSeat(selectedSeats.join(", "));
+  //       } else if (seat.status.includes("seat-double")) {
+  //         updatedLayout[rowIndex][seatIndex].status = "seat-empty seat-used";
+  //         maxseat -= 2;
+  //         const selectedSeats = updatedLayout.flatMap((row) =>
+  //           row
+  //             .filter((seat) => seat.status.includes("seat-select"))
+  //             .map((seat) => seat.name)
+  //         );
+  //         setListNameSeat(selectedSeats.join(", "));
+  //       }
+  //     } else {
+  //       if (maxseat < 8) {
+  //         if (seat.status.includes("seat-normal")) {
+  //           updatedLayout[rowIndex][seatIndex].status =
+  //             "seat-cell seat-used seat-select seat-normal";
+  //           maxseat++;
+  //           dispatch(updateAmountNOR(1));
+  //           setTotalPrice((prevTotalPrice) => prevTotalPrice + 45000);
+  //         } else if (seat.status.includes("seat-vip")) {
+  //           updatedLayout[rowIndex][seatIndex].status =
+  //             "seat-cell seat-used seat-select seat-vip";
+  //           maxseat++;
+  //           dispatch(updateAmountVIP(1));
+  //           setTotalPrice((prevTotalPrice) => prevTotalPrice + 50000);
+  //         } else if (seat.status.includes("seat-double")) {
+  //           updatedLayout[rowIndex][seatIndex].status =
+  //             "seat-cell-db seat-used seat-select seat-double";
+  //           maxseat += 2;
+  //           dispatch(updateAmountDOU(1));
+  //           setTotalPrice((prevTotalPrice) => prevTotalPrice + 120000);
+  //         }
+  //       } else {
+  //         alert("Không được chọn quá 8 ghế");
+  //       }
+  //     }
+  //   } else if (
+  //     seat.status.includes("seat-select") &&
+  //     !seat.status.includes("seat-sold")
+  //   ) {
+  //     if (seat.status.includes("seat-normal")) {
+  //       updatedLayout[rowIndex][seatIndex].status =
+  //         "seat-cell seat-empty seat-used seat-normal";
+  //       maxseat--;
+  //       dispatch(updateAmountNOR(-1));
+  //       setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 45000, 0));
+  //     } else if (seat.status.includes("seat-vip")) {
+  //       updatedLayout[rowIndex][seatIndex].status =
+  //         "seat-cell seat-empty seat-used seat-vip";
+  //       maxseat--;
+  //       dispatch(updateAmountVIP(-1));
+  //       setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 50000, 0));
+  //     } else if (seat.status.includes("seat-double")) {
+  //       updatedLayout[rowIndex][seatIndex].status =
+  //         "seat-cell-db seat-empty seat-used seat-double";
+  //       maxseat -= 2;
+  //       dispatch(updateAmountDOU(-1));
+  //       setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 120000, 0));
+  //     }
+  //   }
+  //   setSeatLayout(updatedLayout);
+  //   const selectedSeats = updatedLayout.flatMap((row) =>
+  //     row
+  //       .filter((seat) => seat.status.includes("seat-select"))
+  //       .map((seat) => seat.name)
+  //   );
+  //   setListNameSeat(selectedSeats.join(", "));
+  // };
+
+  //   const handleSeatClick = (seatId) => {
+  //     const updatedSeats = listSeat.map((seat) => {
+  //         if (seat.id === seatId) {
+  //             // Chỉ thay đổi typeTicket giữa 1 và 2
+  //             return {
+  //                 ...seat,
+  //                 typeTicket: seat.typeTicket === 1 ? 2 : seat.typeTicket === 2 ? 1 : seat.typeTicket,
+  //             };
+  //         }
+  //         return seat;
+  //     });
+
+  //     setListSeat(updatedSeats);
+  // };
+  const handleSeatClick = (seatId) => {
+    const seat = listSeat.find((s) => s.id === seatId);
+  
+    if (!seat) return;
+  
+    let maxSeat = 0;
+    listSeat.forEach((seat) => {
+      if (seat.typeTicket === 2) {
+        if (seat.seatTypeId === 1 || seat.seatTypeId === 2) {
+          maxSeat++;
+        } else if (seat.seatTypeId === 3) {
+          maxSeat += 2;
         }
       }
-    } else if (
-      seat.status.includes("seat-select") &&
-      !seat.status.includes("seat-sold")
-    ) {
-      if (seat.status.includes("seat-normal")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-cell seat-empty seat-used seat-normal";
-        maxseat--;
-        dispatch(updateAmountNOR(-1));
-        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 45000, 0));
-      } else if (seat.status.includes("seat-vip")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-cell seat-empty seat-used seat-vip";
-        maxseat--;
-        dispatch(updateAmountVIP(-1));
-        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 50000, 0));
-      } else if (seat.status.includes("seat-double")) {
-        updatedLayout[rowIndex][seatIndex].status =
-          "seat-cell-db seat-empty seat-used seat-double";
-        maxseat -= 2;
-        dispatch(updateAmountDOU(-1));
-        setTotalPrice((prevTotalPrice) => Math.max(prevTotalPrice - 120000, 0));
+    });
+  
+    const updatedSeats = listSeat.map((s) => {
+      if (s.id === seatId) {
+        if (s.typeTicket === 1 && maxSeat < 8) {
+          return {
+            ...s,
+            typeTicket: 2,
+          };
+        } else if (s.typeTicket === 2) {
+          return {
+            ...s,
+            typeTicket: 1,
+          };
+        }
       }
-    }
-    setSeatLayout(updatedLayout);
-    const selectedSeats = updatedLayout.flatMap((row) =>
-      row
-        .filter((seat) => seat.status.includes("seat-select"))
-        .map((seat) => seat.name)
-    );
+      return s;
+    });
+  
+    setListSeat(updatedSeats);
+  
+    let newAmountVIP = 0;
+    let newAmountNOR = 0;
+    let newAmountDOU = 0;
+    let newTotalPrice = 0;
+  
+    updatedSeats.forEach((seat) => {
+      if (seat.typeTicket === 2) {
+        if (seat.seatTypeId === 1) {
+          newAmountNOR++;
+          newTotalPrice += 45000;
+        } else if (seat.seatTypeId === 2) {
+          newAmountVIP++;
+          newTotalPrice += 50000;
+        } else if (seat.seatTypeId === 3) {
+          newAmountDOU++;
+          newTotalPrice += 120000;
+        }
+      }
+    });
+  
+    setAmountNOR(newAmountNOR);
+    setAmountVIP(newAmountVIP);
+    setAmountDOU(newAmountDOU);
+    setTotalPrice(newTotalPrice);
+  
+    let selectedSeats = updatedSeats
+      .filter((seat) => seat.typeTicket === 2)
+      .map((seat) => seat.seatName);
     setListNameSeat(selectedSeats.join(", "));
   };
+  const seatClasses = (seat) => {
+    let baseClass = "seat-cell";
+
+    switch (seat.seatTypeId) {
+      case 1:
+        if (seat.typeTicket === 1) {
+          baseClass += " seat-empty seat-used seat-normal";
+        } else if (seat.typeTicket === 2) {
+          baseClass += " seat-used seat-normal seat-select";
+        } else if (seat.typeTicket === 5) {
+          baseClass += " seat-used seat-sold seat-normal";
+        }
+        break;
+      case 2:
+        if (seat.typeTicket === 1) {
+          baseClass += " seat-empty seat-used seat-vip";
+        } else if (seat.typeTicket === 2) {
+          baseClass += " seat-used seat-vip seat-select";
+        } else if (seat.typeTicket === 5) {
+          baseClass += " seat-used seat-sold seat-vip";
+        }
+        break;
+      case 3:
+        if (seat.typeTicket === 1) {
+          baseClass += " seat-cell-db seat-empty seat-used seat-double";
+        } else if (seat.typeTicket === 2) {
+          baseClass += " seat-cell-db seat-used seat-double seat-select";
+        } else if (seat.typeTicket === 5) {
+          baseClass += " seat-cell-db seat-used seat-sold seat-double";
+        }
+        break;
+      default:
+        break;
+    }
+
+    return baseClass;
+  };
+
+  const lines = ["A", "B", "C", "D", "G", "H", "I", "J", "Z"];
   useEffect(() => {
     const interval = setInterval(() => {
       setBackgroundColor(
@@ -309,7 +450,7 @@ const Room = () => {
                     <div class="row">
                       <div class="seat-diagram !float-left">
                         <img class="block max-w-[100%] h-auto" src={icscreen} />
-                        <div className="check-show">
+                        {/* <div className="check-show">
                           {seatLayout.map((row, rowIndex) => (
                             <div className="text-center" key={rowIndex}>
                               {row.map((seat, seatIndex) => (
@@ -325,6 +466,31 @@ const Room = () => {
                               ))}
                             </div>
                           ))}
+                        </div> */}
+                        <div className="check-show">
+                          {Array.isArray(listSeat) &&
+                            lines.map((line) => {
+                              const seatsInLine = listSeat.filter(
+                                (seat) => seat.line === line
+                              );
+
+                              if (seatsInLine.length > 0) {
+                                return (
+                                  <div className="text-center" key={line}>
+                                    {seatsInLine.map((seat) => (
+                                      <div
+                                        className={seatClasses(seat)}
+                                        key={seat.id}
+                                        onClick={() => handleSeatClick(seat.id)}
+                                      >
+                                        {seat.seatName}
+                                      </div>
+                                    ))}
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })}
                         </div>
                       </div>
                     </div>
@@ -435,7 +601,7 @@ const Room = () => {
                       alt=""
                       src={allmovie.image}
                     />
-                    {allmovie.rateName === "T18" && (
+                    {allmovie.rateCode === "T18" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T18.png`)}
@@ -443,7 +609,7 @@ const Room = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "T16" && (
+                    {allmovie.rateCode === "T16" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T16.png`)}
@@ -451,7 +617,7 @@ const Room = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "T13" && (
+                    {allmovie.rateCode === "T13" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/T13.png`)}
@@ -459,7 +625,7 @@ const Room = () => {
                         />
                       </span>
                     )}
-                    {allmovie.rateName === "P" && (
+                    {allmovie.rateCode === "P" && (
                       <span className="absolute top-[10px] left-[20px]">
                         <img
                           src={require(`../../assets/images/P.png`)}
@@ -510,7 +676,9 @@ const Room = () => {
                           <i class="fa fa-institution"></i>&nbsp;Rạp chiếu
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{selectcinema}</span>
+                          <span class="font-bold">
+                            {selectcinema || "Beta Giải Phóng"}
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -540,7 +708,7 @@ const Room = () => {
                           <i class="fa fa-desktop"></i>&nbsp;Phòng chiếu
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">P1</span>
+                          <span class="font-bold">{roomName}</span>
                         </div>
                       </div>
                     </li>
@@ -562,7 +730,6 @@ const Room = () => {
                       <button
                         type="button"
                         className="btn btn-2 btn-mua-ve btn-thanh-toan font-normal coloros"
-                        onclick="ContinueToPaymentInfo()"
                       >
                         <span>
                           <i className="fa fa-ticket mr3"></i>
@@ -571,14 +738,13 @@ const Room = () => {
                       </button>
                     ) : (
                       <Link
-                        to={`/room/${id}/${name}/${seat}/${encodeURIComponent(
+                        to={`/room/${id}/${name}/${scheduleId}/${seat}/${encodeURIComponent(
                           day
                         )}/${encodeURIComponent(listnameseat)}`}
                       >
                         <button
                           type="button"
                           className="btn btn-2 btn-mua-ve btn-thanh-toan font-normal coloros"
-                          onclick="ContinueToPaymentInfo()"
                         >
                           <span>
                             <i className="fa fa-ticket mr3"></i>

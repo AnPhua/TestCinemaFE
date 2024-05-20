@@ -28,6 +28,10 @@ const GetSchedulesByMovie = async (movieId) => {
     `api/staff/GetSchedulesListHour/${movieId}?pageSize=50&pageNumber=1`
   );
 };
+const GetSchedulesById = async (scheduleId) => {
+  return await axios.get(`/api/admin/GetSchedulesById/${scheduleId}`);
+};
+
 export {
   GetMovieUnreference,
   GetMovieShowing,
@@ -36,4 +40,5 @@ export {
   GetMovieById,
   GetAllFood,
   GetSchedulesByMovie,
+  GetSchedulesById,
 };

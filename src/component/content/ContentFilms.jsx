@@ -22,18 +22,19 @@ const ContentFilms = ({
   isSellTicket,
   image,
   rateName,
+  rateCode,
   trailer,
 }) => {
   const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
   const accessTokens = localStorage.getItem('accesstokens');
   const [dayofWeek, setDayofWeek] = useState([]);
- ;
   const [openYoutube, setopenYoutube] = useState(false);
   const [openTicket, setopenTicket] = useState(false);
   const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedSeat, setSelectedSeat] = useState("");
+  const [selectScheduleId,setSelectScheduleId] = useState('');
   const navigate = useNavigate();
   const youtubeRef = useRef(null);
 
@@ -54,7 +55,8 @@ const ContentFilms = ({
     setopenTicket(false);
   };
 
-  const viewConfirmTicket = (movieDuration) => {
+  const viewConfirmTicket = (movieDuration,scheduleId) => {
+    setSelectScheduleId(scheduleId);
     setSelectedSeat(movieDuration);
     setopenConfirmTicket(true);
   };
@@ -100,7 +102,7 @@ const ContentFilms = ({
       navigate('/loginandSignin');
     }
   }, [accessTokens, navigate]);
-  const selectedObject = dayofWeek[activeIndex]  || []
+  //const selectedObject = dayofWeek[activeIndex]  || []
   const opts = {
     height: "377",
     width: "100%",
@@ -120,7 +122,7 @@ const ContentFilms = ({
                   alt=""
                   src={image}
                 />
-                {rateName === "T18" && (
+                {rateCode === "T18" && (
                   <span className="absolute top-[10px] left-[10px]">
                     <img
                       alt=""
@@ -130,7 +132,7 @@ const ContentFilms = ({
                   </span>
                 )}
 
-                {rateName === "T16" && (
+                {rateCode === "T16" && (
                   <span className="absolute top-[10px] left-[10px]">
                     <img
                       alt=""
@@ -140,7 +142,7 @@ const ContentFilms = ({
                   </span>
                 )}
 
-                {rateName === "T13" && (
+                {rateCode === "T13" && (
                   <span className="absolute top-[10px] left-[10px]">
                     <img
                       alt=""
@@ -150,7 +152,7 @@ const ContentFilms = ({
                   </span>
                 )}
 
-                {rateName === "P" && (
+                {rateCode === "P" && (
                   <span className="absolute top-[10px] left-[10px]">
                     <img
                       alt=""
@@ -338,7 +340,7 @@ const ContentFilms = ({
                         >
                           <a
                             className="btnticket default w-[100%]"
-                            onClick={() => viewConfirmTicket(seat.timeDt)}
+                            onClick={() => viewConfirmTicket(seat.timeDt,seat.id)}
                             value={selectedSeat}
                           >
                             {seat.timeDt}
@@ -414,7 +416,7 @@ const ContentFilms = ({
                     <td class="text-center text-[23px] font-[600] ">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="rap">
-                          <span class="font-[500]">{selectcinema}</span>
+                          <span class="font-[500]">{selectcinema || 'Beta Giải Phóng'}</span>
                         </span>
                       </h3>
                     </td>
@@ -442,9 +444,7 @@ const ContentFilms = ({
               <div className="text-center pb-[30px] ml-[275px]">
                 {accessTokens ? (
                   <Link
-                    to={`/room/${id}/${name}/${selectedSeat}/${encodeURIComponent(
-                      selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails)
-                    )}`}
+                    to={`/room/${id}/${name}/${selectScheduleId}/${selectedSeat}/${encodeURIComponent(selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails))}`}
                   >
                     <a
                       href=""

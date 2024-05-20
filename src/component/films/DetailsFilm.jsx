@@ -61,7 +61,7 @@ const DetailsFilm = () => {
                 alt=""
                 src={allmovie.image}
               />
-              {allmovie.rateName === "T18" && (
+              {allmovie.rateCode === "T18" && (
                 <span className="absolute top-[10px] left-[10px] ">
                   <img
                     src={require(`../../assets/images/T18.png`)}
@@ -70,7 +70,7 @@ const DetailsFilm = () => {
                   />
                 </span>
               )}
-              {allmovie.rateName === "T16" && (
+              {allmovie.rateCode === "T16" && (
                 <span className="absolute top-[10px] left-[10px] ">
                   <img
                     src={require(`../../assets/images/T16.png`)}
@@ -79,7 +79,7 @@ const DetailsFilm = () => {
                   />
                 </span>
               )}
-              {allmovie.rateName === "T13" && (
+              {allmovie.rateCode === "T13" && (
                 <span className="absolute top-[10px] left-[10px] ">
                   <img
                     src={require(`../../assets/images/T13.png`)}
@@ -88,7 +88,7 @@ const DetailsFilm = () => {
                   />
                 </span>
               )}
-              {allmovie.rateName === "P" && (
+              {allmovie.rateCode === "P" && (
                 <span className="absolute top-[10px] left-[10px] ">
                   <img
                     src={require(`../../assets/images/P.png`)}
