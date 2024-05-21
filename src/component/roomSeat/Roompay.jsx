@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/anchor-has-content */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useContext, useRef } from "react";
 import seatunselectnormal from "../../assets/images/seat/seat-unselect-normal.png";
 import seatselectnormal from "../../assets/images/seat/seat-select-normal.png";
@@ -15,29 +16,44 @@ import { useParams } from "react-router-dom";
 import { PassingData } from "../../App";
 import { useDispatch, useSelector } from "react-redux";
 import { resetState } from "../redux/Slice/seatSlice";
-import seats from "../data/datainforforseats";
 import icinforpayment from "../../assets/images/ic-inforpayment.png";
 import iccombo from "../../assets/images/ic-combo.png";
 import icpayment from "../../assets/images/ic-payment.png";
 import vnpay from "../../assets/images/vnpay.png";
-import { GetMovieById } from "../../services/controller/StaffController";
+import {
+  CreateBill,
+  CreatePaymentUrl,
+  GetMovieById,
+  GetSchedulesById,
+} from "../../services/controller/StaffController";
 import { getAllFoodRedux } from "../redux/features/foodDataSlice";
-import { jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { Button, Modal } from "antd";
 const RoomPay = () => {
+  const token = localStorage.getItem("accesstokens");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [allmovie, setallmovie] = useState([]);
   const [quantities, setQuantities] = useState({});
   const comboItems = useSelector((state) => state.food.foods);
+  const [openCreateBill, setOpenCreateBill] = useState(false);
   const selectcinema = useContext(PassingData);
-  const { id, name,scheduleId, seat, day, listseat } = useParams();
+  const { id, name, scheduleId, seat, day, listseat } = useParams();
   const decodedDay = decodeURIComponent(day);
   const listnameseat = decodeURIComponent(listseat);
   const [timeLeft, setTimeLeft] = useState("10:00");
   const timerRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.login.currentUser);
   const [nameuser, setNameuser] = useState("");
-  const [email ,setEmail] = useState("");
-  const [phoneNumber,setPhonenumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [idUser, setIdUser] = useState("");
+  const [phoneNumber, setPhonenumber] = useState("");
+  const [listSeat, setListSeat] = useState([]);
+  const [roomName, setRoomName] = useState("");
+  const [billTickets, setBillTickets] = useState([]);
+  const [selectedFoods, setSelectedFoods] = useState([]);
+  const [isCreatingBill, setIsCreatingBill] = useState(false);
+  
   useEffect(() => {
     const fetchMovieById = async () => {
       try {
@@ -58,6 +74,7 @@ const RoomPay = () => {
       setNameuser(decodedToken.Name);
       setEmail(decodedToken.Email);
       setPhonenumber(decodedToken.PhoneNumber);
+      setIdUser(decodedToken.UserId);
     }
   }, [currentUser]);
   useEffect(() => {
@@ -100,8 +117,15 @@ const RoomPay = () => {
       return updatedQuantities;
     });
   };
+  const closeModalBill = () => {
+    setOpenCreateBill(false);
+  };
+  const OpenConfirmBill = () => {
+    setOpenCreateBill(true);
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
+    handleLoadSeats();
   }, []);
   useEffect(() => {
     dispatch(resetState());
@@ -109,6 +133,23 @@ const RoomPay = () => {
 
   const [backgroundColor, setBackgroundColor] = useState("rgb(254, 185, 192)");
   const [limitedScrollPosition, setLimitedScrollPosition] = useState(0);
+  const handleLoadSeats = async () => {
+    try {
+      const response = await GetSchedulesById(scheduleId);
+      if (
+        response &&
+        response.data &&
+        response.data.dataResponsesTicketforsche
+      ) {
+        setRoomName(response.data.roomName);
+        setListSeat(response.data.dataResponsesTicketforsche);
+      } else {
+        setListSeat([]);
+      }
+    } catch (error) {
+      console.error("Lỗi Trong Quá Trình Lấy Dữ liệu", error);
+    }
+  };
   useEffect(() => {
     let timeoutId;
 
@@ -170,26 +211,97 @@ const RoomPay = () => {
   const formatPrice = (price) => {
     return price.toLocaleString("vi-VN", { currency: "VND" });
   };
+
   const selectedSeats = listnameseat.split(",").map((seat) => seat.trim());
   selectedSeats.forEach((selectedSeat) => {
-    seats.forEach((row) => {
-      row.forEach((seat) => {
-        if (seat.name === selectedSeat) {
-          if (seat.status.includes("seat-vip")) {
-            countVIP++;
-            totalPriceVIP += 50000;
-          } else if (seat.status.includes("seat-normal")) {
-            countNormal++;
-            totalPriceNormal += 45000;
-          } else if (seat.status.includes("seat-double")) {
-            countDouble++;
-            totalPriceDouble += 120000;
-          }
-        }
-      });
+    listSeat.forEach((seat) => {
+      if (seat.seatTypeId === 2 && selectedSeat === seat.seatName) {
+        countVIP++;
+        totalPriceVIP += 50000;
+      } else if (seat.seatTypeId === 1 && selectedSeat === seat.seatName) {
+        countNormal++;
+        totalPriceNormal += 45000;
+      } else if (seat.seatTypeId === 3 && selectedSeat === seat.seatName) {
+        countDouble++;
+        totalPriceDouble += 120000;
+      }
     });
   });
   totalforallseats = totalPriceVIP + totalPriceNormal + totalPriceDouble;
+  useEffect(() => {
+    const selectedSeats = listnameseat.split(",").map((seat) => seat.trim());
+
+    const billTicketsData = selectedSeats
+      .map((selectedSeat) => {
+        const seat = listSeat.find((s) => s.seatName === selectedSeat);
+        return seat ? { ticketId: seat.id } : null;
+      })
+      .filter(Boolean);
+
+    setBillTickets(billTicketsData);
+  }, [listnameseat, listSeat]);
+  useEffect(() => {
+    const tempSelectedFoods = [];
+    comboItems.forEach((combo) => {
+      const quantity = quantities[combo.id] || 0;
+      if (quantity > 0) {
+        tempSelectedFoods.push({ id: combo.id, quantity });
+      }
+    });
+    setSelectedFoods(tempSelectedFoods);
+  }, [quantities, comboItems]);
+
+  // const CreateAABill = async () => {
+  //   const requestData = {
+  //     customerId: idUser,
+  //     promotionId: 0,
+  //     billFoods: selectedFoods.map((food) => ({
+  //       foodId: food.id,
+  //       quantity: quantities[food.id] || 0,
+  //     })),
+  //     billTickets: billTickets,
+  //   };
+
+  //   try {
+  //     setIsCreatingBill(true);
+  //     const res = await CreateBill(requestData);
+  //     if (res && res.data) {
+  //       setIdBill(res.data.id);
+  //       console.log("ID",idBill);
+  //       await CreatePaymentUrl(idBill, setIsCreatingBill, token);
+  //       navigate("/");
+        
+  //     }
+  //   } catch (error) {
+  //     alert(error.message + "Lỗi khi tạo hóa đơn và link thanh toán");
+  //   }
+  // };
+  const CreateAABill = async () => {
+    const requestData = {
+      customerId: idUser,
+      promotionId: 0,
+      billFoods: selectedFoods.map((food) => ({
+        foodId: food.id,
+        quantity: quantities[food.id] || 0,
+      })),
+      billTickets: billTickets,
+    };
+  
+    try {
+      setIsCreatingBill(true);
+      const res = await CreateBill(requestData);
+      if (res && res.data) {
+        const idBill = res.data.id;  
+        const paymentUrl = await CreatePaymentUrl(idBill, token);
+        window.open(paymentUrl, '_blank'); 
+        navigate("/"); 
+      }
+    } catch (error) {
+      alert(error.message + " Lỗi khi tạo hóa đơn và link thanh toán");
+    } finally {
+      setIsCreatingBill(false);
+    }
+  };
   return (
     <>
       <div className="mx-[auto] px-[15px] xl:w-[1150px] lg:w-[950px] md:w-[768px]">
@@ -234,25 +346,23 @@ const RoomPay = () => {
                         Họ Tên:{" "}
                       </span>
                       <br />
-                      <span className="user-info-item-value">
-                        {nameuser}{" "}
-                      </span>
+                      <span className="user-info-item-value">{nameuser} </span>
                     </div>
                     <div className="lg:w-[31.25%] lg:float-left relative min-h-[1px] px-[15px] user-info-item text-[16px]">
                       <span className="font-bold user-info-item-label">
                         Số điện thoại:{" "}
                       </span>
                       <br />
-                      <span className="user-info-item-value">{phoneNumber} </span>
+                      <span className="user-info-item-value">
+                        {phoneNumber}{" "}
+                      </span>
                     </div>
                     <div className="lg:w-[31.25%] lg:float-left relative min-h-[1px] px-[15px] user-info-item text-[16px]">
                       <span className="font-bold user-info-item-label">
                         Email:{" "}
                       </span>
                       <br />
-                      <span className="user-info-item-value">
-                        {email}{" "}
-                      </span>
+                      <span className="user-info-item-value">{email} </span>
                     </div>
                   </div>
                 </div>
@@ -370,7 +480,7 @@ const RoomPay = () => {
                             onClick={() => handleIncrement(combo.id)}
                           ></span>
                           <span className="combo-quantity float-right mr-[15px] coloros">
-                          {quantities[combo.id] || 0}
+                            {quantities[combo.id] || 0}
                           </span>
                         </td>
                       </tr>
@@ -776,7 +886,9 @@ const RoomPay = () => {
                           <i class="fa fa-institution"></i>&nbsp;Rạp chiếu
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">{selectcinema}</span>
+                          <span class="font-bold">
+                            {selectcinema || "Beta Giải Phóng"}
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -806,7 +918,7 @@ const RoomPay = () => {
                           <i class="fa fa-desktop"></i>&nbsp;Phòng chiếu
                         </div>
                         <div class="xl:w-[50%] xl:float-left lg:w-[50%] lg:float-left md:w-[50%] md:float-left  sm:w-[50%] sm:float-left relative min-h-[1px] px-[15px]">
-                          <span class="font-bold">P1</span>
+                          <span class="font-bold">{roomName}</span>
                         </div>
                       </div>
                     </li>
@@ -842,7 +954,7 @@ const RoomPay = () => {
                     </Link>
                     <button
                       type="button"
-                      onclick="ContinuePayment()"
+                      onClick={OpenConfirmBill}
                       class="btn btn-2 btn-mua-ve dieu-khoan-pop-up font-normal coloros"
                     >
                       <span>
@@ -866,6 +978,31 @@ const RoomPay = () => {
           </div>
         </div>
       </div>
+      <Modal
+        destroyOnClose={true}
+        title={null}
+        open={openCreateBill}
+        onCancel={closeModalBill}
+        footer={null}
+        className="!w-[700px] max-w-[100%] text-left align-middle overflow-auto mt-[100px]"
+      >
+        <h3 className=" md:text-[15px] sm:text-[12px]  !text-[23px]  text-[#000000]  p-[10px] text-center">
+          Click Ô Ở Dưới Để Xác Nhận Thanh Toán
+        </h3>
+        {isCreatingBill ? (
+          <div style={{marginLeft:"190px"}}>
+          <Button danger type="primary" success loading>
+            Đang Tạo Đường Dẫn Thanh Toán....
+          </Button>
+          </div>
+        ) : (
+          <div style={{marginLeft:"230px"}}>
+            <Button danger type="primary" success onClick={CreateAABill}>
+              Xác Nhận Thanh Toán
+            </Button>
+          </div>
+        )}
+      </Modal>
       <style jsx>
         {`
           @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Source+Sans+3&display=swap");

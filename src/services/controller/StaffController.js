@@ -31,7 +31,32 @@ const GetSchedulesByMovie = async (movieId) => {
 const GetSchedulesById = async (scheduleId) => {
   return await axios.get(`/api/admin/GetSchedulesById/${scheduleId}`);
 };
-
+const CreateBill = async (addbill) => {
+  try {
+    const res = await axios.post(`api/Member/CreateBill`, addbill);
+    return res;
+  } catch (error) {
+    alert(error.message + " Lỗi");
+    throw error;
+  }
+};
+const CreatePaymentUrl = async (idbill, token) => {
+  try {
+    const res = await axios.post(
+      `Vnpay/CreatePaymentUrl/${idbill}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    alert(error.message + " Lỗi CreatePaymentUrl");
+    throw error;
+  }
+};
 export {
   GetMovieUnreference,
   GetMovieShowing,
@@ -41,4 +66,6 @@ export {
   GetAllFood,
   GetSchedulesByMovie,
   GetSchedulesById,
+  CreateBill,
+  CreatePaymentUrl,
 };

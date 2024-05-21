@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/anchor-has-content */
@@ -257,7 +258,7 @@ const Room = () => {
         }
       }
     });
-  
+    
     const updatedSeats = listSeat.map((s) => {
       if (s.id === seatId) {
         if (s.typeTicket === 1 && maxSeat < 8) {
@@ -276,7 +277,6 @@ const Room = () => {
     });
   
     setListSeat(updatedSeats);
-  
     let newAmountVIP = 0;
     let newAmountNOR = 0;
     let newAmountDOU = 0;
@@ -307,6 +307,7 @@ const Room = () => {
       .map((seat) => seat.seatName);
     setListNameSeat(selectedSeats.join(", "));
   };
+
   const seatClasses = (seat) => {
     let baseClass = "seat-cell";
 
@@ -410,7 +411,11 @@ const Room = () => {
                 {ageLimitMessage}
               </div>
             </div>
-
+            <div>
+            <div className="text-center text-[red] mb-[10px] !p-[10px] coloros !text-[15px] underline">
+              Mỗi Lần Chỉ Được Chọn Tối Đa 8 Ghế !
+            </div>
+          </div>
             <div class="choose-seat-row">
               <div id="screen_form">
                 <div class="w-[100%] float-left">

@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import store from "./component/redux/reduxStore/store";
-
+import "./localStorageCleanup";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
