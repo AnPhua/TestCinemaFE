@@ -64,14 +64,14 @@ const Mainlgrft = () => {
     },
   };
   useEffect(() => {
-    if (currentUser && currentUser.accessToken) {
-      const decodedToken = jwtDecode(currentUser.accessToken);
+    if (accessTokens) {
+      const decodedToken = jwtDecode(accessTokens);
       setNameuser(decodedToken.Name);
       setEmail(decodedToken.Email);
       setPhonenumber(decodedToken.PhoneNumber);
       setRole(decodedToken.Roles);
     }
-  }, [currentUser]);
+  }, []);
   const handleLogin = (e) => {
     e.preventDefault();
     const login = {

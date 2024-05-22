@@ -6,7 +6,7 @@ import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
 import citystage from "../data/dataCinemaStage";
 import { Modal } from "antd";
-import { useSelector } from "react-redux";
+//import { useSelector } from "react-redux";
 import dataCinemaStage from "../data/dataCinemaStage";
 import { useDispatch } from "react-redux";
 import { signout } from "../redux/Slice/authSlice";
@@ -21,14 +21,17 @@ const Header = ({ onSelectCinema }) => {
   const [open, setOpen] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.auth.login.currentUser);
+  //const currentUser = useSelector((state) => state.auth.login.currentUser);
   const accessTokens = localStorage.getItem('accesstokens');
   useEffect(() => {
-    if (currentUser && currentUser.accessToken) {
-      const decodedToken = jwtDecode(currentUser.accessToken);
+    
+    if (accessTokens) {
+      const decodedToken = jwtDecode(accessTokens);
       setNameuser(decodedToken.Name);
+      console.log("Name ",nameuser);
     }
-  }, [currentUser]);
+  }, []);
+  
   const handleLogout = () => {
     localStorage.removeItem('accesstokens');
     alert('Đăng Xuất Thành Công!');
@@ -76,13 +79,11 @@ const Header = ({ onSelectCinema }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  useEffect(() => {
-    if (!accessTokens) {
-      dispatch(signout());
-      localStorage.removeItem('accesstokens');
-      navigate('/loginandSignin');
-    }
-  }, [accessTokens, navigate]);
+  // useEffect(() => {
+  //   if (!accessTokens) {
+  //     navigate('/loginandSignin');
+  //   }
+  // }, [accessTokens, navigate]);
   useEffect(() => {
     if (selectedCity?.branch != null) {
       setOpen(false);

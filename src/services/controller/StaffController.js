@@ -14,6 +14,11 @@ const GetSneakShow = () => {
     "api/staff/GetAllMovie?MovieTypeId=6&pageSize=20&pageNumber=1"
   );
 };
+const GetMovieByTypeId = async (movieTypeId) => {
+  return await axios.get(
+    `api/staff/GetAllMovie?MovieTypeId=${movieTypeId}&pageSize=20&pageNumber=1`
+  );
+};
 const GetAllMovie = () => {
   return axios.get("api/staff/GetAllMovie?pageSize=20&pageNumber=1");
 };
@@ -68,4 +73,5 @@ export {
   GetSchedulesById,
   CreateBill,
   CreatePaymentUrl,
+  GetMovieByTypeId,
 };

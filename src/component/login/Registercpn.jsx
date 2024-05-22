@@ -56,7 +56,7 @@ const Registercpn = () => {
   return (
     <>
       <div className="px-[15px] py-[30px] mx-[375px]">
-        {accessTokens ? (
+        {/* {accessTokens ? (
           <>
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Bạn không đủ điều kiện thực hiện chức năng này, nhấn vào đây để quay về trang chủ
@@ -64,7 +64,7 @@ const Registercpn = () => {
             </h1>
           </>
         ) : (
-          <>
+          <> */}
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Đăng Ký Tài Khoản
             </h1>
@@ -145,8 +145,8 @@ const Registercpn = () => {
                 <Button danger type="primary" htmlType="submit">Đăng Ký</Button>
               </Form.Item>
             </Form>
-          </>
-        )}
+          {/* </>
+        )} */}
       </div>
       <style jsx>
         {`

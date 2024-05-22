@@ -43,7 +43,7 @@ const RoomPay = () => {
   const listnameseat = decodeURIComponent(listseat);
   const [timeLeft, setTimeLeft] = useState("10:00");
   const timerRef = useRef(null);
-  const currentUser = useSelector((state) => state.auth.login.currentUser);
+  //const currentUser = useSelector((state) => state.auth.login.currentUser);
   const [nameuser, setNameuser] = useState("");
   const [email, setEmail] = useState("");
   const [idUser, setIdUser] = useState("");
@@ -69,14 +69,14 @@ const RoomPay = () => {
     fetchMovieById();
   }, [id]);
   useEffect(() => {
-    if (currentUser && currentUser.accessToken) {
-      const decodedToken = jwtDecode(currentUser.accessToken);
+    if (token) {
+      const decodedToken = jwtDecode(token);
       setNameuser(decodedToken.Name);
       setEmail(decodedToken.Email);
       setPhonenumber(decodedToken.PhoneNumber);
       setIdUser(decodedToken.UserId);
     }
-  }, [currentUser]);
+  }, []);
   useEffect(() => {
     dispatch(getAllFoodRedux());
   }, [dispatch]);

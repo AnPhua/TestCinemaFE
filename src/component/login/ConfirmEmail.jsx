@@ -18,22 +18,22 @@ const layout = {
 
 const ConfirmEmail = () => {
   const [confirmCodefrommail ,setconfirmCodefrommail] = useState("");
-  const accessTokens = localStorage.getItem('accesstokens');
+  //const accessTokens = localStorage.getItem('accesstokens');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handlecode = () => {
     const code = {confirmCode : confirmCodefrommail};
     confirmCode(code, dispatch, navigate);
 };
-useEffect(() => {
-  if (!accessTokens) {
-    navigate('/loginandSignin');
-  }
-}, [accessTokens, navigate]);
+// useEffect(() => {
+//   if (!accessTokens) {
+//     navigate('/loginandSignin');
+//   }
+// }, [accessTokens, navigate]);
   return (
     <>
       <div className="px-[15px] py-[30px] mx-[375px]">
-        {accessTokens ? (
+      {/* {accessTokens ? (
           <>
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Bạn không đủ điều kiện thực hiện chức năng này, nhấn vào đây để quay về trang chủ
@@ -41,7 +41,7 @@ useEffect(() => {
             </h1>
           </>
         ) : (
-          <>
+          <> */}
             <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
               Xác Thực Tài Khoản
             </h1>
@@ -69,8 +69,8 @@ useEffect(() => {
                 <Button danger type="primary"  htmlType="submit">Xác Thực Email</Button>
               </Form.Item>
             </Form>
-          </>
-        )}
+          {/* </>
+        )} */}
       </div>
       <style jsx>
         {`

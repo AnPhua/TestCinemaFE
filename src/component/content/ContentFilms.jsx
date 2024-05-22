@@ -33,11 +33,14 @@ const ContentFilms = ({
   const [openTicket, setopenTicket] = useState(false);
   const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
   const [selectedDay, setSelectedDay] = useState("");
-  const [selectedSeat, setSelectedSeat] = useState("");
+  const [selectedMovieDuration, setMovieDuration] = useState("");
   const [selectScheduleId,setSelectScheduleId] = useState('');
   const navigate = useNavigate();
   const youtubeRef = useRef(null);
-
+  const handleViewDetails = () => {
+    navigate(`/detailsFilm/${id}`);
+    window.location.reload(); 
+  };
   const handleOnClick = (i, e) => {
     e.preventDefault();
     setActiveIndex(i);
@@ -57,7 +60,7 @@ const ContentFilms = ({
 
   const viewConfirmTicket = (movieDuration,scheduleId) => {
     setSelectScheduleId(scheduleId);
-    setSelectedSeat(movieDuration);
+    setMovieDuration(movieDuration);
     setopenConfirmTicket(true);
   };
   const closeModalConfirmTicket = () => {
@@ -180,7 +183,7 @@ const ContentFilms = ({
           </div>
           <div className="lg:w-[100%] md:w-[100%] sm:w-[100%]">
             <div className="h-[120px] min-h-[120px]">
-              <Link to={`/detailsFilm/${id}`}>
+              {/* <Link to={`/detailsFilm/${id}`}> */}
                 <h3
                   className="text-center 
                         sm:text-left  
@@ -197,10 +200,11 @@ const ContentFilms = ({
                         overflow-hidden
                         text-ellipsis
                         "
+                        onClick={handleViewDetails}
                 >
                   <a className="cursor-pointer tracking-tighter">{name}</a>
                 </h3>
-              </Link>
+              {/* </Link> */}
               <ul className="list-none pl-0 fontsan md:text-[15px] sm:text-[14px]">
                 <li className="max-h-[50px]">
                   <span className="font-bold ">Thể loại:</span> {movieTypeName}
@@ -341,7 +345,7 @@ const ContentFilms = ({
                           <a
                             className="btnticket default w-[100%]"
                             onClick={() => viewConfirmTicket(seat.timeDt,seat.id)}
-                            value={selectedSeat}
+                            value={selectedMovieDuration}
                           >
                             {seat.timeDt}
                           </a>
@@ -432,7 +436,7 @@ const ContentFilms = ({
                     <td class="text-center text-[23px] font-[600]">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="giochieu">
-                          <span class="font-[500]">{selectedSeat}</span>
+                          <span class="font-[500]">{selectedMovieDuration}</span>
                         </span>
                       </h3>
                     </td>
@@ -444,7 +448,7 @@ const ContentFilms = ({
               <div className="text-center pb-[30px] ml-[275px]">
                 {accessTokens ? (
                   <Link
-                    to={`/room/${id}/${name}/${selectScheduleId}/${selectedSeat}/${encodeURIComponent(selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails))}`}
+                    to={`/room/${id}/${name}/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails))}`}
                   >
                     <a
                       href=""

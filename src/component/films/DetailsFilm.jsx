@@ -1,30 +1,85 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/iframe-has-title */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import detailday from "../data/dayseat";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { GetMovieById } from "../../services/controller/StaffController";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
+import {
+  GetMovieById,
+  GetSchedulesByMovie,GetMovieByTypeId
+} from "../../services/controller/StaffController";
+import { Modal } from "antd";
+import { PassingData } from "../../App";
+import ContentFilms from "../content/ContentFilms";
 const DetailsFilm = () => {
+  const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
   const [allmovie, setallmovie] = useState([]);
+  const [selectedDay, setSelectedDay] = useState("");
   const { id } = useParams();
+  const accessTokens = localStorage.getItem("accesstokens");
+  const [dayofWeek, setDayofWeek] = useState([]);
+  const [selectedMovieDuration, setMovieDuration] = useState("");
+  const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
+  const [selectScheduleId, setSelectScheduleId] = useState("");
+  const [movieTypeId,setMovieTypeId] = useState([]);
   useEffect(() => {
     const fetchMovieById = async () => {
       try {
         const response = await GetMovieById(id);
         if (response && response.data) {
           setallmovie(response.data);
+          
         }
       } catch (error) {
         console.error("Lỗi trong quá trình lấy dữ liệu:", error);
       }
     };
-
+    
     fetchMovieById();
   }, [id]);
   const handleOnClick = (i, e) => {
     e.preventDefault();
     setActiveIndex(i);
+    const selectedDayDetails = dayofWeek[i].dayDetails;
+    setSelectedDay(selectedDayDetails);
+  };
+  const viewConfirmTicket = (movieDuration, scheduleId) => {
+    setSelectScheduleId(scheduleId);
+    setMovieDuration(movieDuration);
+    setopenConfirmTicket(true);
+  };
+  const closeModalConfirmTicket = () => {
+    setopenConfirmTicket(() => false);
+  };
+  const addLeadingZero = (number) => {
+    return number < 10 ? `0${number}` : number.toString();
+  };
+  const handleGetSchedulebyId = async () => {
+    try {
+      const response = await GetSchedulesByMovie(id);
+      const data = response.data;
+
+      const convertedData = data.map((item) => ({
+        movieId: item.movieId,
+        roomName: item.roomName,
+        day: addLeadingZero(item.day),
+        month: addLeadingZero(item.month),
+        year: item.year,
+        dayDetails: `${addLeadingZero(item.day)}/${addLeadingZero(
+          item.month
+        )}/${item.year}`,
+        date: item.date,
+        listTimeinSchedules: item.listTimeinSchedules.map((schedule) => ({
+          timeDt: schedule.timeDt,
+          emptySeat: schedule.emptySeat,
+          id: schedule.id,
+        })),
+      }));
+
+      setDayofWeek(convertedData);
+    } catch (error) {
+      console.error("Lỗi Trong Quá Trình Lấy Dữ liệu", error);
+    }
   };
   const premiereDate = new Date(allmovie.premiereDate);
 
@@ -33,16 +88,26 @@ const DetailsFilm = () => {
   const year = premiereDate.getFullYear();
 
   const formattedPremiereDate = `${day}/${month}/${year}`;
-  const daysofweek = [
-    { days: "07", dtday: "/04 - CN" },
-    { days: "08", dtday: "/04 - T2" },
-    { days: "09", dtday: "/04 - T3" },
-    { days: "10", dtday: "/04 - T4" },
-    { days: "11", dtday: "/04 - T5" },
-  ];
-  const selectedObject = detailday[activeIndex];
+  useEffect(() => {
+    if (allmovie.movieTypeId) {
+      const getMovieByTypeId = async () => {
+        try {
+          const res = await GetMovieByTypeId(allmovie.movieTypeId);
+          if (res && res.data) {
+            const filteredMovies = res.data.filter(movie => movie.id !== allmovie.id);
+            setMovieTypeId(filteredMovies);
+          }
+        } catch (error) {
+          console.error("Lỗi trong quá trình lấy dữ liệu thể loại phim:", error);
+        }
+      };
+
+      getMovieByTypeId();
+    }
+  }, [allmovie.movieTypeId]);
   useEffect(() => {
     window.scrollTo(0, 0);
+    handleGetSchedulebyId();
   }, []);
   return (
     <>
@@ -161,34 +226,38 @@ const DetailsFilm = () => {
         <div className="mx-[-15px]">
           <div className="lg:w-[100%] lg:float-left  relative min-h-[1px] px-[15px] tab-style-1 mb-[35px] fonta ">
             <ul className="tf navtab pb-[1px] text-[14px] border-b border-[#ddd] mb-[10px] mx-[1%] flex ">
-              {daysofweek.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={(e) => handleOnClick(index, e)}
-                  className={activeIndex === index ? "active" : " "}
-                  style={{
-                    borderBottom: "4px solid transparent",
-                    width: "14.285%",
-                    display: "block",
-                    position: "relative",
-                    textAlign: "center",
-                    margin: "0",
-                    padding: "0",
-                    marginBottom: "-1px",
-                  }}
-                >
-                  <a
-                    href="#"
-                    className=" py-0 !px-[10px] text-center text-[18px]   relative block"
-                    id={index}
+              {dayofWeek &&
+                dayofWeek.map((item, index) => (
+                  <li
+                    key={index}
+                    onClick={(e) => handleOnClick(index, e)}
+                    className={activeIndex === index ? "active" : " "}
+                    style={{
+                      borderBottom: "4px solid transparent",
+                      width: "14.285%",
+                      display: "block",
+                      position: "relative",
+                      textAlign: "center",
+                      margin: "0",
+                      padding: "0",
+                      marginBottom: "-1px",
+                    }}
                   >
-                    <span className="md:!text-[38px] sm:!text-[30px] ">
-                      {item.days}
-                    </span>
-                    {item.dtday}
-                  </a>
-                </li>
-              ))}
+                    <a
+                      href="#"
+                      className=" py-0 !px-[10px] text-center text-[18px]   relative block"
+                      id={index}
+                    >
+                      <span
+                        className="md:!text-[38px] sm:!text-[30px] "
+                        value={selectedDay}
+                      >
+                        {item.day}
+                      </span>
+                      /{item.month} - {item.date}
+                    </a>
+                  </li>
+                ))}
             </ul>
             <div className="py-[15px] px-0" id="tab-content">
               <div className="tab-pane fade in active" id="88">
@@ -200,17 +269,27 @@ const DetailsFilm = () => {
                   </div>
 
                   <div className="flex">
-                    {selectedObject.map((seat) => (
-                      <div
-                        key={seat.id}
-                        className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
-                      >
-                        <a className="btn default w-[100%]">{seat.time}</a>
-                        <div className="text-[11px] !pt-[5px] opacity-75">
-                          {seat.seat} ghế trống
+                    {dayofWeek.length > 0 &&
+                      dayofWeek[activeIndex]?.listTimeinSchedules &&
+                      dayofWeek[activeIndex].listTimeinSchedules.map((seat) => (
+                        <div
+                          key={seat.id}
+                          className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
+                        >
+                          <a
+                            className="btn default w-[100%]"
+                            onClick={() =>
+                              viewConfirmTicket(seat.timeDt, seat.id)
+                            }
+                            value={selectedMovieDuration}
+                          >
+                            {seat.timeDt}
+                          </a>
+                          <div className="text-[11px] !pt-[5px] opacity-75">
+                            {seat.emptySeat} ghế trống
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </div>
@@ -245,6 +324,29 @@ const DetailsFilm = () => {
                 ></iframe>
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="xl:min-w-[1150px] lg:min-w-[950px] md:min-w-[730px] mx-auto px-[15px] md:px-[388.50px] ">
+        <h3 className="my-[20px] mx-0 text-[23px] leading-[1.5em] fonta">
+          
+        </h3>
+        <div className="mx-[-15px]">
+          <div className="lg:w-[100%] lg:float-left  relative min-h-[1px] px-[15px] tab-style-1 mb-[35px] fonta ">
+            <h3 className="my-[20px] mx-0 text-[23px] leading-[1.5em] fonta">
+              Phim Có Cùng Thể Loại {" "}
+              <span className="text-[23px] leading-[1.5em] fonta">
+              </span>
+            </h3>
+            <div className="t-ct py-[15px] px-[0px]">
+            <div className="t-p fade">
+              <div className="md:mx-[-15px]">
+                {movieTypeId.map((film) => (
+                  <ContentFilms key={film.id} {...film} />
+                ))}
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </div>
@@ -300,6 +402,138 @@ const DetailsFilm = () => {
           </div>
         </div>
       </div>
+      <Modal
+        title={null}
+        open={openConfirmTicket}
+        onCancel={closeModalConfirmTicket}
+        footer={null}
+        className="!w-[850px] max-w-[100%] text-left align-middle overflow-auto h-[550px] fontos"
+      >
+        <div
+          id="datve-pop-up"
+          className="fancybox-content inline-block !w-[800px] max-h-[100%]"
+        >
+          <button
+            data-fancybox-close=""
+            class="fancybox-close-small"
+            title="Close"
+          >
+            <svg viewBox="0 0 32 32">
+              <path d="M10,10 L22,22 M22,10 L10,22"></path>
+            </svg>
+          </button>
+          <div className="p-0 overflow-x-hidden bg-[inherit] relative">
+            <div className="p-[15px] border-b border-[#e5e5e5] min-h-[16.42857143px]">
+              <h3 className="fontos leading-[1.5em] !text-[23px] font-[400] text-[inherit]">
+                BẠN ĐANG ĐẶT VÉ XEM PHIM
+              </h3>
+            </div>
+            <div class="relative p-[15px]">
+              <h1
+                class="!text-[#03599d] text-center !text-[33px] font-[400] mr-[15px] mt-[20px] mb-[10px] leading-[1.5em] border-b border-[#f4f4f4] pb-0"
+                id="tenphim-datve"
+              >
+                {allmovie.name}
+              </h1>
+              <table className="table w-[100%] max-w-[100%] mr-[20px] mb-[20px] border-collapse table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Rạp chiếu
+                      </h4>
+                    </th>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Ngày chiếu
+                      </h4>
+                    </th>
+                    <th className="text-center w-[30%]">
+                      <h4 className="my-[10px] font-[300] leading-[1.5em] !text-[17px]">
+                        Giờ chiếu
+                      </h4>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center text-[23px] font-[600] ">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="rap">
+                          <span class="font-[500]">
+                            {selectcinema || "Beta Giải Phóng"}
+                          </span>
+                        </span>
+                      </h3>
+                    </td>
+                    <td class="text-center text-[23px] font-[600]">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="ngaychieu">
+                          <span class="font-[500]">
+                            {selectedDay ||
+                              (dayofWeek.length > 0 && dayofWeek[0].dayDetails)}
+                          </span>
+                        </span>
+                      </h3>
+                    </td>
+                    <td class="text-center text-[23px] font-[600]">
+                      <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
+                        <span id="giochieu">
+                          <span class="font-[500]">
+                            {selectedMovieDuration}
+                          </span>
+                        </span>
+                      </h3>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="modal-footer">
+              <div className="text-center pb-[30px] ml-[340px]">
+                {accessTokens ? (
+                  <Link
+                    to={`/room/${id}/${
+                      allmovie.name
+                    }/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(
+                      selectedDay ||
+                        (dayofWeek.length > 0 && dayofWeek[0].dayDetails)
+                    )}`}
+                  >
+                    <a
+                      href=""
+                      className="fontoswa relative block btn1 btn1-2 btn1-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
+                    >
+                      <span>
+                        <i
+                          className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
+                          aria-hidden="true"
+                        ></i>
+                      </span>
+                      <span className="text-[14px]">ĐỒNG Ý</span>
+                    </a>
+                  </Link>
+                ) : (
+                  <Link to="/loginandSignin">
+                    <a
+                      href=""
+                      className="fontoswa relative block btn1 btn1-2 btn1-mua-ve2 fancybox-fast-view !py-[10px] px-[40px] min-h-[40px] max-w-[119.78px]"
+                    >
+                      <span>
+                        <i
+                          className="fa fa-ticket !text-[70px] absolute left-[-10px] opacity-[0.5] text-[#fff] leading-[14px]"
+                          aria-hidden="true"
+                        ></i>
+                      </span>
+                      <span className="text-[14px]">ĐỒNG Ý</span>
+                    </a>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
       <style jsx>
         {`
           @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400&display=swap");
@@ -307,8 +541,60 @@ const DetailsFilm = () => {
             font-family: "Oswald", sans-serif;
             font-weight: 400;
           }
+          .fontos {
+            font-family: Oswald !important;
+          }
+          .fontoswa {
+            font-family: Oswald;
+          }
           .fontsan {
             font-family: "Source Sans 3", sans-serif;
+          }
+          .btn1 {
+            text-align: center;
+            transition: 0.5s;
+            background-size: 200% auto;
+            text-transform: uppercase;
+            border-width: 0;
+            outline: none !important;
+            margin-bottom: 0;
+            font-weight: normal;
+            vertical-align: middle;
+            touch-action: manipulation;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            line-height: 1.42857143;
+            user-select: none;
+          }
+          .btn1-mua-ve2 {
+            font-size: large;
+            border-radius: 4px !important;
+          }
+          .btn1-2 {
+            background-image: linear-gradient(
+              to right,
+              #0a64a7 0%,
+              #258dcf 51%,
+              #3db1f3 100%
+            ) !important;
+            color: #fff;
+          }
+          .btn1:hover {
+            background-position: right center;
+            filter: none;
+            text-shadow: none;
+            box-shadow: none;
+            text-decoration: none;
+          }
+          .btn1-2,
+          .btn1-2:hover {
+            background-image: linear-gradient(
+              to right,
+              #0a64a7 0%,
+              #258dcf 51%,
+              #3db1f3 100%
+            ) !important;
+            color: #fff;
           }
           .tab-films > li.active {
             border-bottom: 4px solid transparent;
