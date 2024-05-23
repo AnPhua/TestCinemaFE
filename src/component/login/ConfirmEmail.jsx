@@ -3,8 +3,7 @@ import React from "react";
 import { Button, Form, Input } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom"; 
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import { confirmCode } from "../../services/controller/AuthController";
 const layout = {
   labelCol: {

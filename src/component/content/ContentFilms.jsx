@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import hot from "../../assets/images/hot.png";
@@ -17,11 +18,10 @@ const ContentFilms = ({
   name,
   movieTypeName,
   movieDuration,
-  launchDate,
+  premiereDate,
   isHot,
   isSellTicket,
   image,
-  rateName,
   rateCode,
   trailer,
 }) => {
@@ -40,6 +40,14 @@ const ContentFilms = ({
   const handleViewDetails = () => {
     navigate(`/detailsFilm/${id}`);
     window.location.reload(); 
+  };
+  const formatDate = (inputDate) => {
+    const [datePart, timePart] = inputDate.split("T");
+    const [year, month, day] = datePart.split("-");
+
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
   };
   const handleOnClick = (i, e) => {
     e.preventDefault();
@@ -213,12 +221,12 @@ const ContentFilms = ({
                   <span className="font-bold ">Thời lượng:</span>{" "}
                   {movieDuration} phút
                 </li>
-                {launchDate && (
+                {premiereDate && (
                   <li>
                     <span className="font-bold">Ngày khởi chiếu:</span>
                     <span className="fontoswa !text-[#03599d]">
                       {" "}
-                      {launchDate}
+                      {formatDate(premiereDate)}
                     </span>
                   </li>
                 )}

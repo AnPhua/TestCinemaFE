@@ -1,18 +1,26 @@
 import axios from "../Customize-axios";
 const GetMovieUnreference = () => {
+  const currentDate = new Date();
+  const formattedDate = currentDate
+    .toISOString()
+    .slice(0, 10)
+    .replace(/-/g, "/");
   return axios.get(
-    "api/staff/GetMovieUnreference?PremiereDate=2024/04/10&pageSize=20&pageNumber=1"
+    `api/staff/GetMovieUnreference?PremiereDate=${formattedDate}&pageSize=20&pageNumber=1`
   );
 };
 const GetMovieShowing = () => {
+  const currentDate = new Date();
+  const formattedDate = currentDate
+    .toISOString()
+    .slice(0, 10)
+    .replace(/-/g, "/");
   return axios.get(
-    "api/staff/GetMovieShowing?PremiereDate=2024%2F04%2F10&pageSize=20&pageNumber=1"
+    `api/staff/GetMovieShowing?PremiereDate=${formattedDate}&pageSize=20&pageNumber=1`
   );
 };
 const GetSneakShow = () => {
-  return axios.get(
-    "api/staff/GetAllMovie?MovieTypeId=6&pageSize=20&pageNumber=1"
-  );
+  return axios.get("api/staff/GetAllMovieSpecial?pageSize=20&pageNumber=1");
 };
 const GetMovieByTypeId = async (movieTypeId) => {
   return await axios.get(
@@ -24,6 +32,9 @@ const GetAllMovie = () => {
 };
 const GetMovieById = (movieId) => {
   return axios.get(`api/staff/GetMovieById?movieId=${movieId}`);
+};
+const GetMovieByIdSort = (movieId) => {
+  return axios.get(`api/staff/GetMovieByIdForSort?movieId=${movieId}`);
 };
 const GetAllFood = () => {
   return axios.get("api/admin/GetAllFoods?PageNumber=1&PageSize=10");
@@ -62,6 +73,16 @@ const CreatePaymentUrl = async (idbill, token) => {
     throw error;
   }
 };
+const GetSchedulesForAllDays = async () => {
+  return axios.get(
+    `/api/staff/GetSchedulesForAllDays?pageSize=20&pageNumber=1`
+  );
+};
+const GetScheduleDayListHours = async (day) => {
+  return axios.get(
+    `api/staff/GetSchedulesDayListHour?TheDay=${day}&pageSize=20&pageNumber=1`
+  );
+};
 export {
   GetMovieUnreference,
   GetMovieShowing,
@@ -74,4 +95,7 @@ export {
   CreateBill,
   CreatePaymentUrl,
   GetMovieByTypeId,
+  GetSchedulesForAllDays,
+  GetScheduleDayListHours,
+  GetMovieByIdSort,
 };

@@ -25,6 +25,8 @@ const Mainlgrft = () => {
   const [newcfPassword,setNewCFPassword] = useState("");
   const [opengetemailback,setopengetemailback] = useState(false);
   const [getEmailBack,setgetEmailBack] = useState("");
+  const [rank,setRank] =useState("");
+  const [point,setPoint] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
@@ -70,6 +72,8 @@ const Mainlgrft = () => {
       setEmail(decodedToken.Email);
       setPhonenumber(decodedToken.PhoneNumber);
       setRole(decodedToken.Roles);
+      setRank(decodedToken.Rank);
+      setPoint(decodedToken.Point);
     }
   }, []);
   const handleLogin = (e) => {
@@ -178,6 +182,7 @@ const Mainlgrft = () => {
                           />
                         </div>
                       </div>
+                      
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">

@@ -10,7 +10,7 @@ import { Modal } from "antd";
 import dataCinemaStage from "../data/dataCinemaStage";
 import { useDispatch } from "react-redux";
 import { signout } from "../redux/Slice/authSlice";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 const Header = ({ onSelectCinema }) => {
   const [selectedCity, setSelectedCity] = useState("");
@@ -22,21 +22,19 @@ const Header = ({ onSelectCinema }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //const currentUser = useSelector((state) => state.auth.login.currentUser);
-  const accessTokens = localStorage.getItem('accesstokens');
+  const accessTokens = localStorage.getItem("accesstokens");
   useEffect(() => {
-    
     if (accessTokens) {
       const decodedToken = jwtDecode(accessTokens);
       setNameuser(decodedToken.Name);
-      console.log("Name ",nameuser);
     }
   }, []);
-  
+
   const handleLogout = () => {
-    localStorage.removeItem('accesstokens');
-    alert('Đăng Xuất Thành Công!');
+    localStorage.removeItem("accesstokens");
+    alert("Đăng Xuất Thành Công!");
     dispatch(signout());
-    navigate('/loginandSignin')
+    navigate("/loginandSignin");
   };
   const handleSelectCinema = (cinemaName) => {
     localStorage.setItem("selectCinema", cinemaName);
@@ -167,9 +165,7 @@ const Header = ({ onSelectCinema }) => {
           </div>
         </div>
       </Modal>
-      <div
-        className=" bg-black text-white  md:px-[380px] leading-[15px] text-[13px]"
-      >
+      <div className=" bg-black text-white  md:px-[380px] leading-[15px] text-[13px]">
         <div className="sub-header-content flex items-center justify-end md:mx-1 lg:mx-2 xl:mx-5">
           {accessTokens ? (
             <>
@@ -177,7 +173,7 @@ const Header = ({ onSelectCinema }) => {
                 <li class="dropdown dropdown-user">
                   <a className="p-[2px] bg-[transparent]">
                     <span class="username username-hide-on-mobile text-[13px]">
-                    Xin Chào: {nameuser ? nameuser : "HiddenName"} 
+                      Xin Chào: {nameuser ? nameuser : "HiddenName"}
                     </span>
                   </a>
                 </li>
@@ -197,8 +193,8 @@ const Header = ({ onSelectCinema }) => {
                 <span className="download mx-1 cursor-pointer hover:underline">
                   Đăng nhập
                 </span>
-                </Link>  
-                
+              </Link>
+
               <Link to="/registernewmb">
                 <span className="customer-care mx-1 cursor-pointer border-l border-white pl-2 hover:underline">
                   Đăng ký
@@ -302,9 +298,11 @@ const Header = ({ onSelectCinema }) => {
           </ul>
         </div>
         <div className="block absolute items-center justify-center ml-[770px] mt-[-25px]">
-          <span className="mx-1 cursor-pointer menubig py-[12px] px-[5px] text-[#333333] hover:text-[#337AB7]">
-            LỊCH CHIẾU THEO RẠP
-          </span>
+          <Link to="/schedulebycinema">
+            <span className="mx-1 cursor-pointer menubig py-[12px] px-[5px] text-[#333333] hover:text-[#337AB7]">
+              LỊCH CHIẾU THEO RẠP
+            </span>
+          </Link>
           <Link to="/allmovie">
             <span className="mx-1 cursor-pointer menubig py-[12px] px-[5px] text-[#333333] hover:text-[#337AB7]">
               PHIM

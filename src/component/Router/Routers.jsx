@@ -13,6 +13,7 @@ import Room from "../roomSeat/Room";
 import RoomPay from "../roomSeat/Roompay";
 import Registercpn from "../login/Registercpn";
 import ConfirmEmail from "../login/ConfirmEmail";
+import ScheduleByCinema from "../schedulebycinema/ScheduleByCinema";
 const Routers = () => {
   return (
     <Routes>
@@ -27,6 +28,7 @@ const Routers = () => {
           element={<NewOfferChildNewSide />}
         />
       </Route>
+      <Route path="/schedulebycinema" element={<ScheduleByCinema />} />
       <Route path="/detailsFilm/:id" element={<DetailsFilm />} />
       <Route path="/allmovie" element={<Content />} />
       <Route path="/franchise" element={<Franchise />} />

@@ -245,11 +245,11 @@ const DetailsFilm = () => {
                   >
                     <a
                       href="#"
-                      className=" py-0 !px-[10px] text-center text-[18px]   relative block"
+                      className=" py-0 !px-[10px] text-center text-[18px] relative block"
                       id={index}
                     >
                       <span
-                        className="md:!text-[38px] sm:!text-[30px] "
+                        className="md:!text-[38px] sm:!text-[30px]"
                         value={selectedDay}
                       >
                         {item.day}
@@ -260,7 +260,7 @@ const DetailsFilm = () => {
                 ))}
             </ul>
             <div className="py-[15px] px-0" id="tab-content">
-              <div className="tab-pane fade in active" id="88">
+              <div className="tab-pane fade in active">
                 <div className="mx-[-15px]">
                   <div className="lg:w-[100%] col-sm-16 sm:w-[100%] relative min-h-[1px] px-[15px] my-[10px]">
                     <span className="text-lg font-bold uppercase">
@@ -407,7 +407,7 @@ const DetailsFilm = () => {
         open={openConfirmTicket}
         onCancel={closeModalConfirmTicket}
         footer={null}
-        className="!w-[850px] max-w-[100%] text-left align-middle overflow-auto h-[550px] fontos"
+        className="!w-[850px] max-w-[100%] text-left align-middle overflow-auto h-[600px] fontos"
       >
         <div
           id="datve-pop-up"
@@ -490,7 +490,7 @@ const DetailsFilm = () => {
               </table>
             </div>
             <div className="modal-footer">
-              <div className="text-center pb-[30px] ml-[340px]">
+              <div className="text-center pb-[30px] ml-[300px]">
                 {accessTokens ? (
                   <Link
                     to={`/room/${id}/${

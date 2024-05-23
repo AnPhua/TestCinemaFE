@@ -69,7 +69,7 @@ const getSneakShow = async () =>{
             <div className="t-p fade">
               <div className="md:mx-[-15px]">
                 {selectedObject.map((film) => (
-                  <ContentFilms key={film.id} {...film} />
+                  <ContentFilms key={film.id} {...film} premiereDate={activeIndex === 0 ? film.premiereDate : null}/>
                 ))}
               </div>
             </div>
