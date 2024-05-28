@@ -283,7 +283,7 @@ const ScheduleByCinema = () => {
                             2D Phụ đề
                           </span>
                         </div>
-                        {selectedMovie.schedules.map((schedule, index) => {
+                        {selectedMovie.schedules.filter(schedule => new Date(schedule.startAt) > new Date()).map((schedule, index) => {
                           const scheduleDate = new Date(schedule.startAt);
                           const selectedDate = new Date(selectedDay);
 
@@ -418,7 +418,7 @@ const ScheduleByCinema = () => {
                                 2D Phụ đề
                               </span>
                             </div>
-                            {selectedListMovie.schedules.map(
+                            {selectedListMovie.schedules.filter(schedule => new Date(schedule.startAt) > new Date()).map(
                               (schedule, index) => {
                                 const scheduleDate = new Date(schedule.startAt);
                                 const selectedDate = new Date(selectedDay);

@@ -83,6 +83,10 @@ const ContentFilms = ({
   const addLeadingZero = (number) => {
     return number < 10 ? `0${number}` : number.toString();
   };
+  const getCurrentTime = () => {
+    const current = new Date();
+    return `${addLeadingZero(current.getHours())}:${addLeadingZero(current.getMinutes())}`;
+  };
   const handleGetSchedulebyId = async()=>{
     try {
       const response = await GetSchedulesByMovie(id);
@@ -108,6 +112,7 @@ const ContentFilms = ({
       console.error('Lỗi Trong Quá Trình Lấy Dữ liệu', error);
     }
   }
+ 
   useEffect(() => {
     if (!accessTokens) {
       navigate('/loginandSignin');
@@ -345,7 +350,8 @@ const ContentFilms = ({
                     <div className="flex">
                     {dayofWeek.length > 0 &&
                       dayofWeek[activeIndex]?.listTimeinSchedules &&
-                      dayofWeek[activeIndex].listTimeinSchedules.map((seat) => (
+                      dayofWeek[activeIndex].listTimeinSchedules
+                      .map((seat) => (
                         <div
                           key={seat.id}
                           className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"

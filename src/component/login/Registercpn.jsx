@@ -4,10 +4,8 @@ import React from "react";
 import { Button, Form, Input } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom"; 
-import { useState ,useEffect} from "react";
-import {registernewUser} from "../../services/controller/AuthController";
-import { signout } from "../redux/Slice/authSlice";
+import { useState } from "react";
+import { registernewUser } from "../../services/controller/AuthController";
 const layout = {
   labelCol: {
     span: 8,
@@ -24,35 +22,30 @@ const validateMessages = {
   },
 };
 
-
 const Registercpn = () => {
-  const accessTokens = localStorage.getItem('accesstokens');
   const [username, setUserName] = useState("");
-  const [email ,setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [nameuser, setNameuser] = useState("");
-  const [phoneNumber,setPhonenumber] = useState("");
+  const [phoneNumber, setPhonenumber] = useState("");
   const [password, setPassWord] = useState("");
   const [cfpassword, setCFPassWord] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleregister = () => {
-    if(password === cfpassword){
-        const register = {
+    if (password === cfpassword) {
+      const register = {
         username: username,
-        email:email,
-        name:nameuser,
+        email: email,
+        name: nameuser,
         phoneNumber: phoneNumber,
         password: password,
       };
       registernewUser(register, dispatch, navigate);
+    } else {
+      alert("Mật Khẩu Không Trùng Khớp,Xin Thực Hiện Lại!");
+      window.location.reload();
     }
-    else{alert("Mật Khẩu Không Trùng Khớp,Xin Thực Hiện Lại!"); window.location.reload();}
   };
-  // useEffect(() => {
-  //   if (!accessTokens) {
-  //     navigate('/loginandSignin');
-  //   }
-  // }, [accessTokens, navigate]);
   return (
     <>
       <div className="px-[15px] py-[30px] mx-[375px]">
@@ -65,87 +58,98 @@ const Registercpn = () => {
           </>
         ) : (
           <> */}
-            <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
-              Đăng Ký Tài Khoản
-            </h1>
-            <Form
-              {...layout}
-              name="nest-messages"
-              onFinish={handleregister}
-              style={{
-                maxWidth: 600,
-              }}
-              validateMessages={validateMessages}
-            >
-              <Form.Item
-                name="username"
-                label="Tên Đăng Nhập"
-                rules={[{ required: true }]}
-              >
-                <Input onChange={(e)=>setUserName(e.target.value)}/>
-              </Form.Item>
-              <Form.Item
-                name="email"
-                label="Email"
-                rules={[{ required: true, type: "email" }]}
-              >
-                <Input onChange={(e)=>setEmail(e.target.value)} />
-              </Form.Item>
-              <Form.Item
-                label="Mật Khẩu"
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input.Password onChange={(e)=>setPassWord(e.target.value)}/>
-              </Form.Item>
-              <Form.Item
-                label="Xác Nhận Mật Khẩu"
-                name="confirmpassword"
-                dependencies={['password']}
-                rules={[
-                  {
-                    required: true,
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('Xác Nhận Mật Khẩu Không Đúng!'));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password onChange={(e)=>setCFPassWord(e.target.value)}/>
-              </Form.Item>
-              <Form.Item
-                name="name"
-                label="Tên Người dùng"
-                rules={[{ required: true }]}
-              >
-                <Input onChange={(e)=>setNameuser(e.target.value)}/>
-              </Form.Item>
-              <Form.Item
-                name="phoneNumber"
-                label="Số Điện Thoại"
-                rules={[{ required: true },{ pattern: /^[0-9]*$/, message: 'Số điện thoại chỉ được nhập số!' }]}
-              >
-                <Input onChange={(e)=>setPhonenumber(e.target.value)} />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
-                <Button danger type="primary" htmlType="submit">Đăng Ký</Button>
-              </Form.Item>
-            </Form>
-          {/* </>
+        <h1 className="text-xl font-[500] leading-tight tracking-tight my-text !text-[#FF4D4F] md:text-2xl  ml-[200px] mb-[30px]">
+          Đăng Ký Tài Khoản
+        </h1>
+
+        <Form
+          {...layout}
+          name="nest-messages"
+          style={{
+            maxWidth: 600,
+          }}
+          validateMessages={validateMessages}
+        >
+          <Form.Item
+            name="username"
+            label="Tên Đăng Nhập"
+            rules={[{ required: true }]}
+          >
+            <Input onChange={(e) => setUserName(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input onChange={(e) => setEmail(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Mật Khẩu"
+            name="password"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input.Password onChange={(e) => setPassWord(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            label="Xác Nhận Mật Khẩu"
+            name="confirmpassword"
+            dependencies={["password"]}
+            rules={[
+              {
+                required: true,
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Xác Nhận Mật Khẩu Không Đúng!")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password onChange={(e) => setCFPassWord(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="Tên Người dùng"
+            rules={[{ required: true }]}
+          >
+            <Input onChange={(e) => setNameuser(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label="Số Điện Thoại"
+            rules={[
+              { required: true },
+              {
+                pattern: /^[0-9]*$/,
+                message: "Số điện thoại chỉ được nhập số!",
+              },
+            ]}
+          >
+            <Input onChange={(e) => setPhonenumber(e.target.value)} />
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" danger onClick={handleregister}>
+              Đăng Ký
+            </Button>
+          </Form.Item>
+        </Form>
+
+        {/* </>
         )} */}
       </div>
       <style jsx>

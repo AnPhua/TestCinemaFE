@@ -54,6 +54,13 @@ const DetailsFilm = () => {
   const addLeadingZero = (number) => {
     return number < 10 ? `0${number}` : number.toString();
   };
+
+  const getCurrentTime = () => {
+    const current = new Date();
+    return `${addLeadingZero(current.getHours())}:${addLeadingZero(current.getMinutes())}`;
+  };
+ 
+  
   const handleGetSchedulebyId = async () => {
     try {
       const response = await GetSchedulesByMovie(id);
@@ -271,7 +278,8 @@ const DetailsFilm = () => {
                   <div className="flex">
                     {dayofWeek.length > 0 &&
                       dayofWeek[activeIndex]?.listTimeinSchedules &&
-                      dayofWeek[activeIndex].listTimeinSchedules.map((seat) => (
+                      dayofWeek[activeIndex].listTimeinSchedules
+                      .map((seat) => (
                         <div
                           key={seat.id}
                           className="xl:w-[12.5%] lg:w-[12.5%]  md:w-[18.75%]  sm:w-[31.25%]  text-center relative min-h-[1px] px-[15px]"
@@ -490,7 +498,7 @@ const DetailsFilm = () => {
               </table>
             </div>
             <div className="modal-footer">
-              <div className="text-center pb-[30px] ml-[300px]">
+              <div className="text-center pb-[30px] ml-[340px]">
                 {accessTokens ? (
                   <Link
                     to={`/room/${id}/${
