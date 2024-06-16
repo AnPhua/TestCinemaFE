@@ -55,10 +55,6 @@ const DetailsFilm = () => {
     return number < 10 ? `0${number}` : number.toString();
   };
 
-  const getCurrentTime = () => {
-    const current = new Date();
-    return `${addLeadingZero(current.getHours())}:${addLeadingZero(current.getMinutes())}`;
-  };
  
   
   const handleGetSchedulebyId = async () => {
@@ -304,7 +300,7 @@ const DetailsFilm = () => {
             </div>
 
             <br />
-            <div
+            {/* <div
               className="fb-like hidden-xs fb_iframe_widget my-7"
               data-href="https://www.betacinemas.vn/chi-tiet-phim.htm?gf=defdaed2-3776-4ed1-888e-a8531dfc5d15"
               data-layout="standard"
@@ -331,7 +327,7 @@ const DetailsFilm = () => {
                   className="border-none visible w-[450px] h-[28px]"
                 ></iframe>
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -380,7 +376,7 @@ const DetailsFilm = () => {
               ></iframe>
             </div>
             <div className="lg:w-[100%] lg:float-left relative min-h-[1px] px-[15px] margin-bottom-35">
-              <div
+              {/* <div
                 className="fb-comments fb_iframe_widget fb_iframe_widget_fluid_desktop w-[100%]"
                 data-href="https://www.betacinemas.vn/chi-tiet-phim.htm?gf=defdaed2-3776-4ed1-888e-a8531dfc5d15"
                 data-numposts="5"
@@ -405,7 +401,7 @@ const DetailsFilm = () => {
                     className="border-none visible w-[100%] h-[216px]"
                   ></iframe>
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

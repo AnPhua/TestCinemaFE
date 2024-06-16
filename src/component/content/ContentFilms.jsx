@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import hot from "../../assets/images/hot.png";
-import { useRef, useState, useContext,useEffect } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import Modal from "antd/es/modal/Modal";
 import YouTube from "react-youtube";
 import { Link } from "react-router-dom";
@@ -27,19 +27,19 @@ const ContentFilms = ({
 }) => {
   const selectcinema = useContext(PassingData);
   const [activeIndex, setActiveIndex] = useState(0);
-  const accessTokens = localStorage.getItem('accesstokens');
+  const accessTokens = localStorage.getItem("accesstokens");
   const [dayofWeek, setDayofWeek] = useState([]);
   const [openYoutube, setopenYoutube] = useState(false);
   const [openTicket, setopenTicket] = useState(false);
   const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedMovieDuration, setMovieDuration] = useState("");
-  const [selectScheduleId,setSelectScheduleId] = useState('');
+  const [selectScheduleId, setSelectScheduleId] = useState("");
   const navigate = useNavigate();
   const youtubeRef = useRef(null);
   const handleViewDetails = () => {
     navigate(`/detailsFilm/${id}`);
-    window.location.reload(); 
+    window.location.reload();
   };
   const formatDate = (inputDate) => {
     const [datePart, timePart] = inputDate.split("T");
@@ -66,7 +66,7 @@ const ContentFilms = ({
     setopenTicket(false);
   };
 
-  const viewConfirmTicket = (movieDuration,scheduleId) => {
+  const viewConfirmTicket = (movieDuration, scheduleId) => {
     setSelectScheduleId(scheduleId);
     setMovieDuration(movieDuration);
     setopenConfirmTicket(true);
@@ -85,37 +85,42 @@ const ContentFilms = ({
   };
   const getCurrentTime = () => {
     const current = new Date();
-    return `${addLeadingZero(current.getHours())}:${addLeadingZero(current.getMinutes())}`;
+    return `${addLeadingZero(current.getHours())}:${addLeadingZero(
+      current.getMinutes()
+    )}`;
   };
-  const handleGetSchedulebyId = async()=>{
+  const handleGetSchedulebyId = async () => {
     try {
       const response = await GetSchedulesByMovie(id);
       const data = response.data;
 
-      const convertedData = data.map(item => ({
+      const convertedData = data.map((item) => ({
         movieId: item.movieId,
         roomName: item.roomName,
         day: addLeadingZero(item.day),
         month: addLeadingZero(item.month),
         year: item.year,
-        dayDetails: `${addLeadingZero(item.day)}/${addLeadingZero(item.month)}/${item.year}`,
+        dayDetails: `${addLeadingZero(item.day)}/${addLeadingZero(
+          item.month
+        )}/${item.year}`,
         date: item.date,
-        listTimeinSchedules: item.listTimeinSchedules.map(schedule => ({
+        listTimeinSchedules: item.listTimeinSchedules.map((schedule) => ({
           timeDt: schedule.timeDt,
           emptySeat: schedule.emptySeat,
-          id: schedule.id
-        }))
+          id: schedule.id,
+        })),
       }));
 
       setDayofWeek(convertedData);
     } catch (error) {
-      console.error('Lỗi Trong Quá Trình Lấy Dữ liệu', error);
+      console.error("Lỗi Trong Quá Trình Lấy Dữ liệu", error);
     }
-  }
+  };
  
+  
   useEffect(() => {
     if (!accessTokens) {
-      navigate('/loginandSignin');
+      navigate("/loginandSignin");
     }
   }, [accessTokens, navigate]);
   //const selectedObject = dayofWeek[activeIndex]  || []
@@ -197,8 +202,8 @@ const ContentFilms = ({
           <div className="lg:w-[100%] md:w-[100%] sm:w-[100%]">
             <div className="h-[120px] min-h-[120px]">
               {/* <Link to={`/detailsFilm/${id}`}> */}
-                <h3
-                  className="text-center 
+              <h3
+                className="text-center 
                         sm:text-left  
                         !font-bold 
                         mt-[5px] 
@@ -213,10 +218,10 @@ const ContentFilms = ({
                         overflow-hidden
                         text-ellipsis
                         "
-                        onClick={handleViewDetails}
-                >
-                  <a className="cursor-pointer tracking-tighter">{name}</a>
-                </h3>
+                onClick={handleViewDetails}
+              >
+                <a className="cursor-pointer tracking-tighter">{name}</a>
+              </h3>
               {/* </Link> */}
               <ul className="list-none pl-0 fontsan md:text-[15px] sm:text-[14px]">
                 <li className="max-h-[50px]">
@@ -241,7 +246,7 @@ const ContentFilms = ({
             <div className="text-center pb-[30px] min-h-[85px]">
               {isSellTicket && (
                 <a
-                  href="#showtimes-pop-up"
+                  href="#muave"
                   className="fontoswa relative block btn btn-2 btn-mua-ve2 fancybox-fast-view !py-[5px] !px-[14px]"
                   onClick={() => viewTicket()}
                 >
@@ -297,7 +302,10 @@ const ContentFilms = ({
             />
 
             <h1 class="text-center inline-block w-[100%] mt-0 !text-[33px]">
-              Rạp <span id="tenrap-showtimes">{selectcinema || 'Beta Giải Phóng'}</span>
+              Rạp{" "}
+              <span id="tenrap-showtimes">
+                {selectcinema || "Beta Giải Phóng"}
+              </span>
             </h1>
 
             <div class="tab-style-1 !mb-[35px] fontos" id="content-showtimes">
@@ -373,9 +381,11 @@ const ContentFilms = ({
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </Modal>
+
       <Modal
         title={null}
         open={openConfirmTicket}
@@ -434,7 +444,9 @@ const ContentFilms = ({
                     <td class="text-center text-[23px] font-[600] ">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="rap">
-                          <span class="font-[500]">{selectcinema || 'Beta Giải Phóng'}</span>
+                          <span class="font-[500]">
+                            {selectcinema || "Beta Giải Phóng"}
+                          </span>
                         </span>
                       </h3>
                     </td>
@@ -442,7 +454,8 @@ const ContentFilms = ({
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="ngaychieu">
                           <span class="font-[500]">
-                            {selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails)} 
+                            {selectedDay ||
+                              (dayofWeek.length > 0 && dayofWeek[0].dayDetails)}
                           </span>
                         </span>
                       </h3>
@@ -450,7 +463,9 @@ const ContentFilms = ({
                     <td class="text-center text-[23px] font-[600]">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="giochieu">
-                          <span class="font-[500]">{selectedMovieDuration}</span>
+                          <span class="font-[500]">
+                            {selectedMovieDuration}
+                          </span>
                         </span>
                       </h3>
                     </td>
@@ -462,7 +477,10 @@ const ContentFilms = ({
               <div className="text-center pb-[30px] ml-[275px]">
                 {accessTokens ? (
                   <Link
-                    to={`/room/${id}/${name}/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(selectedDay || (dayofWeek.length > 0 && dayofWeek[0].dayDetails))}`}
+                    to={`/room/${id}/${name}/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(
+                      selectedDay ||
+                        (dayofWeek.length > 0 && dayofWeek[0].dayDetails)
+                    )}`}
                   >
                     <a
                       href=""

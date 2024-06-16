@@ -83,6 +83,7 @@ const GetScheduleDayListHours = async (day) => {
     `api/staff/GetSchedulesDayListHour?TheDay=${day}&pageSize=20&pageNumber=1`
   );
 };
+
 export {
   GetMovieUnreference,
   GetMovieShowing,

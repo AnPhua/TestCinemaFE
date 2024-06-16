@@ -2,8 +2,8 @@
 /* eslint-disable no-template-curly-in-string */
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import google from "../../assets/svg/google.svg";
-import fb from "../../assets/svg/facebook.svg";
+//import google from "../../assets/svg/google.svg";
+//import fb from "../../assets/svg/facebook.svg";
 import Modal from "antd/es/modal/Modal";
 import { Form ,Input,Button} from "antd";
 import { useEffect, useState } from "react";
@@ -25,8 +25,8 @@ const Mainlgrft = () => {
   const [newcfPassword,setNewCFPassword] = useState("");
   const [opengetemailback,setopengetemailback] = useState(false);
   const [getEmailBack,setgetEmailBack] = useState("");
-  const [rank,setRank] =useState("");
-  const [point,setPoint] = useState("");
+  //const [rank,setRank] =useState("");
+  //const [point,setPoint] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.login.currentUser);
@@ -72,8 +72,8 @@ const Mainlgrft = () => {
       setEmail(decodedToken.Email);
       setPhonenumber(decodedToken.PhoneNumber);
       setRole(decodedToken.Roles);
-      setRank(decodedToken.Rank);
-      setPoint(decodedToken.Point);
+      //setRank(decodedToken.Rank);
+      //setPoint(decodedToken.Point);
     }
   }, []);
   const handleLogin = (e) => {
@@ -220,7 +220,7 @@ const Mainlgrft = () => {
           <div className="px-[15px] mx-[375px]">
             <section className="bg-gray-50 dark:bg-gray-900">
               <div className="flex flex-col items-center justify-center mx-auto md:h-auto lg:py-10 ">
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <a
                     href="#"
                     className="flex !ml-[25px] transition duration-700 ease-in-out items-start  my-text bg-white shadow  border border-gray-200 hover:bg-[#f3f4f6] rounded-lg px-[1.25rem] py-[0.625rem] text-[14px] leading-[1.25rem] font-[600] my-text dark:text-white mb-[30px] mx-[5px]"
@@ -239,7 +239,7 @@ const Mainlgrft = () => {
 
                 <p className="double-line w-[45%] text-gray-500 text-[12px]">
                   Hoặc
-                </p>
+                </p> */}
 
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 ">
                   <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -334,7 +334,7 @@ const Mainlgrft = () => {
         footer={null}
         className="!w-[400px] max-w-[100%] align-middle overflow-auto mt-[150px]"
       >
-        <h3  className=" md:text-[15px] sm:text-[12px] fontos !text-[23px]  text-[#FF4D4F]  p-[10px] !w-[70%] rounded-[2px] text-center">LẤY LẠI MẬT KHẨU</h3>
+        <h3  className=" md:text-[15px] sm:text-[12px] fontos !text-[23px]  text-[#FF4D4F]  p-[10px] !w-[70%] rounded-[2px] text-center">QUÊN MẬT KHẨU</h3>
             <Form
               {...layout}
               name="Send-Email"
@@ -357,7 +357,7 @@ const Mainlgrft = () => {
                   span: 16,
                 }}
               >
-                <Button danger type="primary" htmlType="submit">Lấy Lại Mật Khẩu</Button>
+                <Button danger type="primary" htmlType="submit">Gửi đi</Button>
               </Form.Item>
             </Form>
       </Modal>

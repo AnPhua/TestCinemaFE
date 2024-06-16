@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/style-prop-object */
 
-import { useEffect, useState, useRef,useContext } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import YouTube from "react-youtube";
 import {
   GetMovieById,
@@ -20,22 +20,22 @@ const ScheduleByCinema = () => {
   const selectcinema = useContext(PassingData);
   const [dayofWeek, setDayofWeek] = useState([]);
   const navigate = useNavigate();
-  const [selectedListMovie, setSelectedListMovie] = useState("");
+  const [selectedListMovie, setSelectedListMovie] = useState([]);
   const [allDays, setAllDays] = useState([]);
-  const accessTokens = localStorage.getItem('accesstokens');
+  const accessTokens = localStorage.getItem("accesstokens");
   const [openYoutube, setOpenYoutube] = useState(false);
   const [selectedDay, setSelectedDay] = useState("");
-  const [selectedMovie, setSelectedMovie] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [movieUnref, setMovieUnref] = useState([]);
   const [openConfirmTicket, setopenConfirmTicket] = useState(() => false);
   const youtubeRef = useRef(null);
-  const [selectScheduleId,setSelectScheduleId] = useState('');
+  const [selectScheduleId, setSelectScheduleId] = useState("");
   const [trailerInfo, setTrailerInfo] = useState("");
   const [nameInfo, setNameInfo] = useState("");
   const [selectedMovieDuration, setMovieDuration] = useState("");
-  const [movieName,setMovieName] = useState("");
-  const [movieId,setMovieId] = useState("");
+  const [movieName, setMovieName] = useState("");
+  const [movieId, setMovieId] = useState("");
   const getMovieUnreference = async () => {
     let res = await GetMovieUnreference();
     if (res && res.data) {
@@ -45,7 +45,7 @@ const ScheduleByCinema = () => {
   const closeModalConfirmTicket = () => {
     setopenConfirmTicket(() => false);
   };
-  const viewConfirmTicket = (movieDuration,scheduleId,name,movieId) => {
+  const viewConfirmTicket = (movieDuration, scheduleId, name, movieId) => {
     setSelectScheduleId(scheduleId);
     setMovieDuration(movieDuration);
     setMovieName(name);
@@ -54,11 +54,11 @@ const ScheduleByCinema = () => {
   };
   function ConverDate(dateString) {
     const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-}
+  }
   const convertTimeFormat = (timeString) => {
     const timeParts = timeString.split("T")[1].split(":");
     const hour = timeParts[0];
@@ -92,7 +92,7 @@ const ScheduleByCinema = () => {
   };
   useEffect(() => {
     if (!accessTokens) {
-      navigate('/loginandSignin');
+      navigate("/loginandSignin");
     }
   }, [accessTokens, navigate]);
   const opts = {
@@ -114,32 +114,13 @@ const ScheduleByCinema = () => {
       }
     }
   };
-  const getMovieDetails = async (movieId, isListMovie) => {
-    const res = await GetMovieById(movieId);
-    if (res && res.data) {
-      if (isListMovie) {
-        setSelectedListMovie(res.data);
-      } else {
-        setSelectedMovie(res.data);
-      }
-    }
-  };
 
   const getScheduleDayListHours = async (day) => {
     const res = await GetScheduleDayListHours(day);
     if (res && res.data && res.data.length > 0) {
-      const firstMovieId = res.data[0]?.movieId;
-      const movieIds = res.data.map((item) => item.movieId).slice(1);
-
-      if (firstMovieId) {
-        await getMovieDetails(firstMovieId, false);
-      }
-
-      if (movieIds.length > 0) {
-        await Promise.all(
-          movieIds.map((movieId) => getMovieDetails(movieId, true))
-        );
-      }
+      const [firstMovie, ...restMovies] = res.data;
+      setSelectedMovie([firstMovie]);
+      setSelectedListMovie(restMovies);
     }
   };
   const formatDate = (inputDate) => {
@@ -188,149 +169,159 @@ const ScheduleByCinema = () => {
           <div class="tab-content">
             <div class="tab-pane fade in active">
               <div class="content-page">
-                {selectedMovie && selectedMovie.schedules.length > 0 && (
-                  <div class="row !mx-0 !mb-[40px]">
-                    <div class="xl:w-[31.25%] xl:float-left lg:w-[31.25%] lg:float-left md:w-[31.25%] md:float-left sm:w-[37.5%] sm:float-left relative min-h-[1px] px-[15px]">
-                      <div class="p-item product-item padding-xs margin-xs padding-sm margin-sm">
-                        <div class="pi-img-wr">
-                          {selectedMovie.rateCode === "T18" && (
-                            <span className="absolute top-[10px] left-[10px] ">
-                              <img
-                                src={require(`../../assets/images/T18.png`)}
-                                className="block max-w-[100%] h-[auto]"
-                                alt=""
-                              />
-                            </span>
-                          )}
-                          {selectedMovie.rateCode === "T16" && (
-                            <span className="absolute top-[10px] left-[10px] ">
-                              <img
-                                src={require(`../../assets/images/T16.png`)}
-                                className="block max-w-[100%] h-[auto]"
-                                alt=""
-                              />
-                            </span>
-                          )}
-                          {selectedMovie.rateCode === "T13" && (
-                            <span className="absolute top-[10px] left-[10px] ">
-                              <img
-                                src={require(`../../assets/images/T13.png`)}
-                                className="block max-w-[100%] h-[auto]"
-                                alt=""
-                              />
-                            </span>
-                          )}
-                          {selectedMovie.rateCode === "P" && (
-                            <span className="absolute top-[10px] left-[10px] ">
-                              <img
-                                src={require(`../../assets/images/P.png`)}
-                                className="block max-w-[100%] h-[auto]"
-                                alt=""
-                              />
-                            </span>
-                          )}
-                          <img
-                            class="img-responsive border-radius-20"
-                            alt=""
-                            src={selectedMovie.image}
-                          />
-                          <div className="rounded-[20px]">
-                            <a
-                              href="#"
-                              onClick={() =>
-                                viewTrailer(
-                                  selectedMovie.name,
-                                  selectedMovie.trailer
-                                )
-                              }
-                              class="fancybox-fast-view"
-                            >
-                              <i
-                                className="fpl fa fa-play-circle text-[#fff] !text-[55px] absolute top-[50%] !w-[47px] h-[47px] rounded-[47px] left-[41%] m-0 inline-block leading-[14px] text-center"
-                                aria-hidden="true"
-                              ></i>
-                            </a>
+                {selectedMovie &&
+                  selectedMovie.length > 0 &&
+                  selectedMovie.map((item, index) => (
+                    <div key={index} className="row !mx-0 !mb-[40px]">
+                      <div className="xl:w-[31.25%] xl:float-left lg:w-[31.25%] lg:float-left md:w-[31.25%] md:float-left sm:w-[37.5%] sm:float-left relative min-h-[1px] px-[15px]">
+                        <div className="p-item product-item padding-xs margin-xs padding-sm margin-sm">
+                          <div className="pi-img-wr">
+                            {item.rateCode === "T18" && (
+                              <span className="absolute top-[10px] left-[10px] ">
+                                <img
+                                  src={require(`../../assets/images/T18.png`)}
+                                  className="block max-w-[100%] h-[auto]"
+                                  alt=""
+                                />
+                              </span>
+                            )}
+                            {item.rateCode === "T16" && (
+                              <span className="absolute top-[10px] left-[10px] ">
+                                <img
+                                  src={require(`../../assets/images/T16.png`)}
+                                  className="block max-w-[100%] h-[auto]"
+                                  alt=""
+                                />
+                              </span>
+                            )}
+                            {item.rateCode === "T13" && (
+                              <span className="absolute top-[10px] left-[10px] ">
+                                <img
+                                  src={require(`../../assets/images/T13.png`)}
+                                  className="block max-w-[100%] h-[auto]"
+                                  alt=""
+                                />
+                              </span>
+                            )}
+                            {item.rateCode === "P" && (
+                              <span className="absolute top-[10px] left-[10px] ">
+                                <img
+                                  src={require(`../../assets/images/P.png`)}
+                                  className="block max-w-[100%] h-[auto]"
+                                  alt=""
+                                />
+                              </span>
+                            )}
+                            <img
+                              className="img-responsive border-radius-20"
+                              alt=""
+                              src={item.image}
+                            />
+                            <div className="rounded-[20px]">
+                              <a
+                                href="#"
+                                onClick={() =>
+                                  viewTrailer(item.name, item.trailer)
+                                }
+                                className="fancybox-fast-view"
+                              >
+                                <i
+                                  className="fpl fa fa-play-circle text-[#fff] !text-[55px] absolute top-[50%] !w-[47px] h-[47px] rounded-[47px] left-[41%] m-0 inline-block leading-[14px] text-center"
+                                  aria-hidden="true"
+                                ></i>
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="xl:w-[68.75%] xl:float-left lg:w-[68.75%] lg:float-left md:w-[68.75%] md:float-left sm:w-[62.5] sm:float-left relative min-h-[1px] px-[15px]">
-                      <div class="row">
-                        <h1 class="m-0 p-0">
-                          <Link to={`/detailsFilm/${selectedMovie.id}`}>
-                            <a className="text-[#03599D] !font-medium hover:text-red-500 hover:underline">
-                              {selectedMovie.name}
-                            </a>
-                          </Link>
-                        </h1>
-                        <ul class="blog-info">
-                          <li>
-                            <i class="fa fa-tags"></i>
-                            {selectedMovie.movieTypeName}
-                          </li>
-                          <li>
-                            <i class="fa fa-clock-o"></i>
-                            {selectedMovie.movieDuration} phút
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="row">
-                        <div
-                          class="lg:w-[100%] lg:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left relative min-h-[1px] px-[15px] my-[10px]"
-                          style={{ paddingLeft: "unset" }}
-                        >
-                          <span className="!text-[18px] !font-[600] !uppercase">
-                            2D Phụ đề
-                          </span>
+                      <div className="xl:w-[68.75%] xl:float-left lg:w-[68.75%] lg:float-left md:w-[68.75%] md:float-left sm:w-[62.5] sm:float-left relative min-h-[1px] px-[15px]">
+                        <div className="row">
+                          <h1 className="m-0 p-0">
+                            <Link to={`/detailsFilm/${item.movieId}`}>
+                              <a className="text-[#03599D] !font-medium hover:text-red-500 hover:underline">
+                                {item.name}
+                              </a>
+                            </Link>
+                          </h1>
+                          <ul className="blog-info">
+                            <li>
+                              <i className="fa fa-tags"></i>
+                              {item.movieTypeName}
+                            </li>
+                            <li>
+                              <i className="fa fa-clock-o"></i>
+                              {item.movieDuration} phút
+                            </li>
+                          </ul>
                         </div>
-                        {selectedMovie.schedules.filter(schedule => new Date(schedule.startAt) > new Date()).map((schedule, index) => {
-                          const scheduleDate = new Date(schedule.startAt);
-                          const selectedDate = new Date(selectedDay);
+                        <div className="row">
+                          <div
+                            className="lg:w-[100%] lg:float-left md:w-[100%] md:float-left sm:w-[100%] sm:float-left relative min-h-[1px] px-[15px] my-[10px]"
+                            style={{ paddingLeft: "unset" }}
+                          >
+                            <span className="!text-[18px] !font-[600] !uppercase">
+                              2D Phụ đề
+                            </span>
+                          </div>
+                          {item.listTimeinSchedules.map((schedule, index) => {
+                            const scheduleDate = new Date(schedule.startAt);
+                            const selectedDate = new Date(selectedDay);
 
-                          if (
-                            scheduleDate.getDate() === selectedDate.getDate() &&
-                            scheduleDate.getMonth() ===
-                              selectedDate.getMonth() &&
-                            scheduleDate.getFullYear() ===
-                              selectedDate.getFullYear()
-                          ) {
-                            return (
-                              <div
-                                style={{ paddingLeft: "unset" }}
-                                className="xl:w-[12.5%] xl:float-left lg:w-[12.5%] lg:float-left md:w-[12.5%] md:float-left sm:w-[43.75%] sm:float-left sm:mb-[10px]  text-center mt-3 !mr-[10px]"
-                                key={index}
-                              >
-                                <div>
-                                  <a
-                                    onClick={() => viewConfirmTicket(convertTimeFormat(schedule.startAt),schedule.id,schedule.movieName,selectedMovie.id)}
-                                    className="w-[100%] btn default show-in fancybox-fast-view hover:!bg-[#d3d3d3] hover:!text-red-500 cursor-pointer"
-                                   
-                                  >
-                                    {convertTimeFormat(schedule.startAt)}
-                                  </a>
-                                  <div class="text-[13px] pt-[5px]">
-                                    {schedule.emptySeat} ghế trống
+                            if (
+                              scheduleDate.getDate() ===
+                                selectedDate.getDate() &&
+                              scheduleDate.getMonth() ===
+                                selectedDate.getMonth() &&
+                              scheduleDate.getFullYear() ===
+                                selectedDate.getFullYear()
+                            ) {
+                              return (
+                                <div
+                                  style={{ paddingLeft: "unset" }}
+                                  className="xl:w-[12.5%] xl:float-left lg:w-[12.5%] lg:float-left md:w-[12.5%] md:float-left sm:w-[43.75%] sm:float-left sm:mb-[10px] text-center mt-3 !mr-[10px]"
+                                  key={index}
+                                >
+                                  <div>
+                                    <a
+                                      onClick={() =>
+                                        viewConfirmTicket(
+                                          convertTimeFormat(schedule.startAt),
+                                          schedule.id,
+                                          item.name,
+                                          item.movieId
+                                        )
+                                      }
+                                      className="w-[100%] btn default show-in fancybox-fast-view hover:!bg-[#d3d3d3] hover:!text-red-500 cursor-pointer"
+                                    >
+                                      {convertTimeFormat(schedule.startAt)}
+                                    </a>
+                                    <div className="text-[13px] pt-[5px]">
+                                      {schedule.emptySeat} ghế trống
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          } else {
-                            return null;
-                          }
-                        })}
+                              );
+                            } else {
+                              return null;
+                            }
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  ))}
 
-                {selectedListMovie &&
-                  selectedListMovie.schedules.length > 0 && (
-                    <div class="row !mx-0 padding-xs">
-                      <div class="lg:w-[50%] lg:float-left md:w-[100%] md:float-left col-b col-b-xs col-b-sm padding-xs-left padding-xs-right padding-sm-left padding-sm-right  relative min-h-[1px] px-[15px]">
+                <div class="row !mx-0 padding-xs">
+                  {selectedListMovie &&
+                    selectedListMovie.length > 0 &&
+                    selectedListMovie.map((item, index) => (
+                      <div
+                        key={index}
+                        class="lg:w-[50%] lg:float-left md:w-[100%] md:float-left col-b col-b-xs col-b-sm padding-xs-left padding-xs-right padding-sm-left padding-sm-right  relative min-h-[1px] px-[15px]"
+                      >
                         <div class="xl:w-[56.42%] xl:float-left lg:w-[68.75%] lg:float-left md:w-[31.25%] md:float-left sm:w-[37.5%] sm:float-left relative min-h-[1px] ">
                           <div class="p-item product-item p-0">
                             <div class="pi-img-wr">
-                              {selectedListMovie.rateCode === "T18" && (
+                              {item.rateCode === "T18" && (
                                 <span className="absolute top-[10px] left-[10px] ">
                                   <img
                                     src={require(`../../assets/images/T18.png`)}
@@ -339,7 +330,7 @@ const ScheduleByCinema = () => {
                                   />
                                 </span>
                               )}
-                              {selectedListMovie.rateCode === "T16" && (
+                              {item.rateCode === "T16" && (
                                 <span className="absolute top-[10px] left-[10px] ">
                                   <img
                                     src={require(`../../assets/images/T16.png`)}
@@ -348,7 +339,7 @@ const ScheduleByCinema = () => {
                                   />
                                 </span>
                               )}
-                              {selectedListMovie.rateCode === "T13" && (
+                              {item.rateCode === "T13" && (
                                 <span className="absolute top-[10px] left-[10px] ">
                                   <img
                                     src={require(`../../assets/images/T13.png`)}
@@ -357,7 +348,7 @@ const ScheduleByCinema = () => {
                                   />
                                 </span>
                               )}
-                              {selectedListMovie.rateCode === "P" && (
+                              {item.rateCode === "P" && (
                                 <span className="absolute top-[10px] left-[10px] ">
                                   <img
                                     src={require(`../../assets/images/P.png`)}
@@ -369,16 +360,13 @@ const ScheduleByCinema = () => {
                               <img
                                 class="img-responsive border-radius-20"
                                 alt=""
-                                src={selectedListMovie.image}
+                                src={item.image}
                               />
                               <div class="rounded-[20px]">
                                 <a
                                   href="#trailer-pop-up"
                                   onClick={() =>
-                                    viewTrailer(
-                                      selectedListMovie.name,
-                                      selectedListMovie.trailer
-                                    )
+                                    viewTrailer(item.name, item.trailer)
                                   }
                                   class="fancybox-fast-view"
                                 >
@@ -394,20 +382,20 @@ const ScheduleByCinema = () => {
                         <div class="xl:w-[43.58%] xl:float-left lg:w-[31.25%] lg:float-left md:w-[31.25%] md:float-left sm:w-[37.5%] sm:float-left relative min-h-[1px] ">
                           <div class="row">
                             <h2 className="m-0 p-0">
-                              <Link to={`/detailsFilm/${selectedListMovie.id}`}>
+                              <Link to={`/detailsFilm/${item.movieId}`}>
                                 <a className="!text-[#03599d] !font-medium  hover:underline">
-                                  {selectedListMovie.name}
+                                  {item.name}
                                 </a>
                               </Link>
                             </h2>
                             <ul className="blog-info">
                               <li>
                                 <i class="fa fa-tags"></i>
-                                {selectedListMovie.movieTypeName}
+                                {item.movieTypeName}
                               </li>
                               <li>
                                 <i class="fa fa-clock-o"></i>
-                                {selectedListMovie.movieDuration} phút
+                                {item.movieDuration} phút
                               </li>
                             </ul>
                             <div
@@ -418,46 +406,51 @@ const ScheduleByCinema = () => {
                                 2D Phụ đề
                               </span>
                             </div>
-                            {selectedListMovie.schedules.filter(schedule => new Date(schedule.startAt) > new Date()).map(
-                              (schedule, index) => {
-                                const scheduleDate = new Date(schedule.startAt);
-                                const selectedDate = new Date(selectedDay);
+                            {item.listTimeinSchedules.map((schedule, index) => {
+                              const scheduleDate = new Date(schedule.startAt);
+                              const selectedDate = new Date(selectedDay);
 
-                                if (
-                                  scheduleDate.getDate() ===
-                                    selectedDate.getDate() &&
-                                  scheduleDate.getMonth() ===
-                                    selectedDate.getMonth() &&
-                                  scheduleDate.getFullYear() ===
-                                    selectedDate.getFullYear()
-                                ) {
-                                  return (
-                                    <div
-                                      key={index}
-                                      style={{ paddingLeft: "unset" }}
-                                      className="xl:w-[30.5%] xl:float-left lg:w-[12.5%] lg:float-left md:w-[12.5%] md:float-left sm:w-[43.75%] sm:float-left sm:mb-[10px]  text-center mt-3 !mr-[10px] "
+                              if (
+                                scheduleDate.getDate() ===
+                                  selectedDate.getDate() &&
+                                scheduleDate.getMonth() ===
+                                  selectedDate.getMonth() &&
+                                scheduleDate.getFullYear() ===
+                                  selectedDate.getFullYear()
+                              ) {
+                                return (
+                                  <div
+                                    key={index}
+                                    style={{ paddingLeft: "unset" }}
+                                    className="xl:w-[30.5%] xl:float-left lg:w-[12.5%] lg:float-left md:w-[12.5%] md:float-left sm:w-[43.75%] sm:float-left sm:mb-[10px]  text-center mt-3 !mr-[10px] "
+                                  >
+                                    <a
+                                      className="w-[100%] btn default show-in fancybox-fast-view hover:!bg-[#d3d3d3] hover:!text-red-500 cursor-pointer"
+                                      onClick={() =>
+                                        viewConfirmTicket(
+                                          convertTimeFormat(schedule.startAt),
+                                          schedule.id,
+                                          item.name,
+                                          item.movieId
+                                        )
+                                      }
                                     >
-                                      <a
-                                        className="w-[100%] btn default show-in fancybox-fast-view hover:!bg-[#d3d3d3] hover:!text-red-500 cursor-pointer"
-                                        onClick={() => viewConfirmTicket(convertTimeFormat(schedule.startAt),schedule.id,schedule.movieName,selectedListMovie.id)}
-                                      >
-                                        {convertTimeFormat(schedule.startAt)}
-                                      </a>
-                                      <div class="text-[13px] pt-[5px]">
-                                        {schedule.emptySeat} ghế trống
-                                      </div>
+                                      {convertTimeFormat(schedule.startAt)}
+                                    </a>
+                                    <div class="text-[13px] pt-[5px]">
+                                      {schedule.emptySeat} ghế trống
                                     </div>
-                                  );
-                                } else {
-                                  return null;
-                                }
+                                  </div>
+                                );
+                              } else {
+                                return null;
                               }
-                            )}
+                            })}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                </div>
               </div>
             </div>
           </div>
@@ -598,7 +591,9 @@ const ScheduleByCinema = () => {
                     <td class="text-center text-[23px] font-[600] ">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="rap">
-                          <span class="font-[500]">{selectcinema || 'Beta Giải Phóng'}</span>
+                          <span class="font-[500]">
+                            {selectcinema || "Beta Giải Phóng"}
+                          </span>
                         </span>
                       </h3>
                     </td>
@@ -606,7 +601,8 @@ const ScheduleByCinema = () => {
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="ngaychieu">
                           <span class="font-[500]">
-                            {ConverDate(selectedDay) || (dayofWeek.length > 0 && dayofWeek[0].dayDetails)} 
+                            {ConverDate(selectedDay) ||
+                              (dayofWeek.length > 0 && dayofWeek[0].dayDetails)}
                           </span>
                         </span>
                       </h3>
@@ -614,7 +610,9 @@ const ScheduleByCinema = () => {
                     <td class="text-center text-[23px] font-[600]">
                       <h3 className="leading-[1.5em] mt-[20px] mb-[10px]">
                         <span id="giochieu">
-                          <span class="font-[500]">{selectedMovieDuration}</span>
+                          <span class="font-[500]">
+                            {selectedMovieDuration}
+                          </span>
                         </span>
                       </h3>
                     </td>
@@ -626,7 +624,10 @@ const ScheduleByCinema = () => {
               <div className="text-center pb-[30px] ml-[340px]">
                 {accessTokens ? (
                   <Link
-                    to={`/room/${movieId}/${movieName}/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(ConverDate(selectedDay) || (dayofWeek.length > 0 && dayofWeek[0].dayDetails))}`}
+                    to={`/room/${movieId}/${movieName}/${selectScheduleId}/${selectedMovieDuration}/${encodeURIComponent(
+                      ConverDate(selectedDay) ||
+                        (dayofWeek.length > 0 && dayofWeek[0].dayDetails)
+                    )}`}
                   >
                     <a
                       href=""
